@@ -20,6 +20,9 @@ module.exports = {
 					appendTsSuffixTo: [/\.vue$/],
 				}
 			}]
+		},
+		experiments: {
+			topLevelAwait: true
 		}
 	}
 }

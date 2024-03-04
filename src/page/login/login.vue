@@ -31,7 +31,6 @@
   <script>
   import axios from 'axios';
   import CryptoJS from 'crypto-js';
-  // 密码加密函数
 // 密码加密函数
 function hashPassword(password) {
     const salt = '8nuWjDlIY5Aw+i7q5v04tQ=='; // 这里使用固定的 salt 值
@@ -55,7 +54,7 @@ function hashPassword(password) {
 	methods: {
 		login() {
         const hashedPassword = hashPassword(this.loginPassword);
-        axios.post('http://localhost:9090/api/auth/login', {
+        axios.post('http://localhost:9090/api/users/login', {
             username: this.loginUsername,
             password: hashedPassword
         }).then(response => {
@@ -68,7 +67,7 @@ function hashPassword(password) {
     },
     register() {
         const hashedPassword = hashPassword(this.registerPassword);
-        axios.post('http://localhost:9090/api/auth/register', {
+        axios.post('http://localhost:9090/api/users/register', {
             username: this.registerUsername,
             password: hashedPassword
         }).then(response => {
