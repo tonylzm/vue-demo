@@ -43,10 +43,10 @@
 			</el-table-column>
 			<el-table-column label="操作" width="200" align="center">
 				<template v-slot="scope">
-					<el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='我再想想' icon="el-icon-info"
-						icon-color="red" title="您确定删除吗？" @confirm="del(scope.row.id)">
+					<el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
+						icon-color="red" title="开启后密码解开" @confirm="decrpyt(scope.row.name)">
 						<template #reference>
-							<el-button type="danger" slot="reference">删除 <i class="el-icon-remove-outline"></i>
+							<el-button type="danger" slot="reference">验证出卷人身份 <i class="el-icon-remove-outline"></i>
 							</el-button>
 						</template>
 					</el-popconfirm>
@@ -100,14 +100,6 @@
 		data() {
 			return {
 				tableData: [
-
-					{
-						id: 24,
-						name: '新建 文本文档.txt',
-						type: 'text/plain',
-						size: 121,
-						url: 'src\\main\\resources\\static\\files\\新建 文本文档.txt',
-					}
 				],
 				name: '',
 				multipleSelection: [],
@@ -175,6 +167,23 @@
 				}).catch(error => {
 					console.error('Error downloading file:', error);
 					this.$message.error('下载失败');
+				});
+			},
+			decrpyt(name){
+				axios.post('http://localhost:9090/api/files/decrypt', null, {
+					params: {
+						fileName: name
+					}
+				})
+				.then(response => {
+					if (response.status === 200) {
+						this.$message.success('验证成功');
+					}
+				})
+				.catch(error => {
+					// Handle errors here
+					console.error('Error decrypting file:', error);
+					this.$message.error('验证失败');
 				});
 			},
 			preview(fileName) {
