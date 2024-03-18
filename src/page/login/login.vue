@@ -3,6 +3,7 @@
 	  <h2>登录</h2>
 	  <form @submit.prevent="login">
 		<div>
+      <i class="el-icon-edit"></i>
 		  <label>用户名：</label>
 		  <input type="text" v-model="loginUsername" required>
 		</div>
@@ -26,6 +27,8 @@
 		<button type="submit">注册</button>
 	  </form>
 	</div>
+
+  
   </template>
   
   <script>

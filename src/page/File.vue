@@ -6,9 +6,13 @@
 			<el-button type="warning" @click="reset">重置</el-button>
 		</div>
 		<div style="margin: 10px 0">
-			<el-upload action="http://localhost:9090/api/upload/upload" :show-file-list="false"
+			<el-upload action="http://localhost:9090/api/upload/upload" 
+			    :show-file-list="false"
+				:before-upload="beforeUpload"
+				:data="{ username: 'your_username_value', from: 'your_from_value' }"
+				:on-progress="handleFileUploadProgress"  
 				:on-success="handleFileUploadSuccess" style="display: inline-block" accept=".pdf">
-				<el-button type="primary" class="ml-5">上传文件 <i class="el-icon-top"></i></el-button>
+				<el-button type="primary" class="ml-5">上传文件 <i class="el-icon-upload"></i></el-button>
 			</el-upload>
 			<el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="No, Thanks" :icon="InfoFilled"
 				icon-color="#626AEF" title="Are you sure to delete this?" @confirm="delBatch">
@@ -16,18 +20,26 @@
 					<el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove-outline"></i></el-button>
 				</template>
 			</el-popconfirm>
-
+			
 		</div>
+		<div>  
+			<el-progress  
+				v-if="showProgress"  
+				:text-inside="true"  
+				:stroke-width="26"  
+				:percentage="uploadProgress"  
+			></el-progress>   
+    	</div>  
 		<el-table :data="tableData" border stripe :header-cell-class-name="'headerBg'"
 			@selection-change="handleSelectionChange">
 			<el-table-column type="selection" width="55"></el-table-column>
 			<el-table-column prop="id" label="ID" width="80"></el-table-column>
 			<el-table-column prop="name" label="文件名称"></el-table-column>
-			<el-table-column prop="type" label="文件类型"></el-table-column>
+			<el-table-column prop="produced" label="出卷人"></el-table-column>
 			<el-table-column prop="size" label="文件大小(kb)"></el-table-column>
 			<el-table-column label="下载">
 				<template v-slot="scope">
-					<el-button type="primary" @click="download(scope.row.name)">下载</el-button>
+					<el-button type="primary" @click="download(scope.row.name)" ><i class="el-icon-download"></i> 下载</el-button>
 				</template>
 			</el-table-column>
 			<el-table-column label="加载预览">
@@ -109,6 +121,9 @@
 				previewModalVisible: false, // 控制模态框的显示/隐藏
                 previewData: '', // 存储预览数据
 				visible : false,
+				username: 'your_username_value',
+				uploadProgress: 0, 
+				showProgress: false, // 是否显示进度条 
 				innerDrawer :false
 			}
 		},
@@ -117,6 +132,25 @@
 			this.loadData();
 		},
 		methods: {
+			beforeUpload(file) {
+				// 添加额外的参数
+				this.uploadProgress = 0;
+				this.showProgress = true; // 显示进度条 
+				this.uploadParams = {
+					username: 'your_username_value',
+					from: 'your_from_value'
+				};
+			return true; // 继续上传
+			},
+			handleFileUploadProgress(event, file, fileList) {  
+				// 文件上传进度的处理逻辑  
+				this.uploadProgress = parseInt((event.percent || 0), 10); // 将进度转换为整数百分比  
+			}, 
+			handleFileUploadSuccess(response, file, fileList) {
+				this.$message.success('上传成功');
+				this.hideProgressAfterDelay(); 
+				this.loadData();
+			},
 			loadData() {
 				axios.get('http://localhost:9090/api/files/page', {
 					params: {
@@ -140,6 +174,14 @@
 					console.error('Error loading data:', error);
 				});
 			},
+			hideProgressAfterDelay() {  
+			// 延迟2秒后隐藏进度条  
+			this.$nextTick(() => {  
+				setTimeout(() => {  
+				this.showProgress = false;  
+				}, 2000);  
+			});  
+			}, 
 			handlePageChange(pageNum) {
 				this.pageNum = pageNum;
 				this.loadData();
