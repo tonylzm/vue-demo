@@ -7,7 +7,8 @@
 		</div>
 		<div style="margin: 10px 0">
 			<el-upload action="https://localhost:8443/api/upload/upload" :show-file-list="false"
-				:before-upload="beforeUpload" :data="{ username: 'your_username_value', from: 'your_from_value', }"
+				:before-upload="beforeUpload"
+				:data="{ username: 'your_username_value', from: 'your_from_value', md5: md5Value }"
 				:on-progress="handleFileUploadProgress" :on-success="handleFileUploadSuccess"
 				style="display: inline-block" accept=".pdf">
 				<el-button type="primary" class="ml-5">上传文件 <i class="el-icon-upload"></i></el-button>
@@ -101,6 +102,7 @@
 
 <script>
 import axios from 'axios';
+import md5 from 'js-md5';
 export default {
 	data() {
 		return {
@@ -118,7 +120,8 @@ export default {
 			uploadProgress: 0,
 			showProgress: false, // 是否显示进度条 
 			innerDrawer: false,
-			uploadParams: null
+			uploadParams: null,
+			md5Value: ''
 		}
 	},
 
@@ -127,10 +130,27 @@ export default {
 	},
 	methods: {
 		beforeUpload(file) {
-			// 添加额外的参数
-			this.uploadProgress = 0;
-			this.showProgress = true; // 显示进度条   
-			return true; // 继续上传
+			// 添加额外的参数  
+			if (!file) return false; // 如果文件不存在，返回false，停止上传  
+
+			return new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.onload = (event) => {
+					const arrayBuffer = event.target.result;
+					const hash = md5.arrayBuffer(arrayBuffer);
+					// 将 ArrayBuffer 转换为字符串  
+					const hashString = Array.prototype.map.call(new Uint8Array(hash), x => ('00' + x.toString(16)).slice(-2)).join('');
+					this.md5Value = hashString;
+					console.log('md5Value', this.md5Value);
+					this.uploadProgress = 0;
+					this.showProgress = true; // 显示进度条  
+					resolve(true); // 当MD5计算完成后，允许上传  
+				};
+				reader.onerror = (error) => {
+					reject(error); // 如果读取文件出错，则拒绝Promise  
+				};
+				reader.readAsArrayBuffer(file);
+			});
 		},
 		handleFileUploadProgress(event, file, fileList) {
 			// 文件上传进度的处理逻辑  
