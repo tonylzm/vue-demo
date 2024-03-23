@@ -8,7 +8,7 @@
 		<div style="margin: 10px 0">
 			<el-upload action="https://localhost:8443/api/upload/upload" :show-file-list="false"
 				:before-upload="beforeUpload"
-				:data="{ username: 'your_username_value', from: 'your_from_value', md5: md5Value }"
+				:data="{ username: 'your_username_value', from: 'your_from_value', md5: md5Value, blob: blob, secretKey: secretKey }"
 				:on-progress="handleFileUploadProgress" :on-success="handleFileUploadSuccess"
 				style="display: inline-block" accept=".pdf">
 				<el-button type="primary" class="ml-5">上传文件 <i class="el-icon-upload"></i></el-button>
@@ -121,7 +121,9 @@ export default {
 			showProgress: false, // 是否显示进度条 
 			innerDrawer: false,
 			uploadParams: null,
-			md5Value: ''
+			md5Value: '',
+			blob: null,
+			secretKey: null,
 		}
 	},
 
@@ -142,6 +144,16 @@ export default {
 					const hashString = Array.prototype.map.call(new Uint8Array(hash), x => ('00' + x.toString(16)).slice(-2)).join('');
 					this.md5Value = hashString;
 					console.log('md5Value', this.md5Value);
+
+
+					//使用AES加密
+					const secretKey = CryptoJS.lib.WordArray.random(128 / 8); // 生成密钥
+					const encrypted = CryptoJS.AES.encrypt(arrayBuffer, secretKey.toString());
+					//将加密后文件上传
+					this.blob = new Blob([encrypted.toString()], { type: 'application/pdf' });
+					this.secretKey = secretKey;
+
+
 					this.uploadProgress = 0;
 					this.showProgress = true; // 显示进度条  
 					resolve(true); // 当MD5计算完成后，允许上传  
