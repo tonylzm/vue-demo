@@ -41,6 +41,14 @@ function hashPassword(password) {
     iterations: iterations
   });
   return hashedPassword.toString(CryptoJS.enc.Hex);
+  const salt = '8nuWjDlIY5Aw+i7q5v04tQ=='; // 这里使用固定的 salt 值
+  const keySize = 256 / 32; // 输出密钥的大小（单位：字节）
+  const iterations = 1000; // 迭代次数
+  const hashedPassword = CryptoJS.PBKDF2(password, salt, {
+    keySize: keySize,
+    iterations: iterations
+  });
+  return hashedPassword.toString(CryptoJS.enc.Hex);
 }
 export default {
   data() {
