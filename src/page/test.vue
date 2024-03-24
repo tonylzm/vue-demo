@@ -1,32 +1,64 @@
 <template>
     <div>
-        <input type="file" @change="onFileChange" />
-        <p v-if="md5Value">文件的MD5值：{{ md5Value }}</p>
+        <input type="file" @change="handleFileUpload" />
+        <button @click="encryptFile">加密</button>
+        <button @click="decryptFile">解密</button>
     </div>
 </template>
 
 <script>
-import md5 from 'js-md5';
+import CryptoJS from 'crypto-js';
+import { saveAs } from 'file-saver';
 
 export default {
     data() {
         return {
-            md5Value: '',
+            selectedFile: null,
+            key: null,
         };
     },
     methods: {
-        onFileChange(e) {
-            const file = e.target.files[0];
-            if (!file) return;
+        handleFileUpload(event) {
+            this.selectedFile = event.target.files[0];
+        },
+        async encryptFile() {
+            if (!this.selectedFile) {
+                alert('请先选择文件！');
+                return;
+            }
+
             const reader = new FileReader();
-            reader.onload = (event) => {
-                const arrayBuffer = event.target.result;
-                const hash = md5.arrayBuffer(arrayBuffer);
-                // 将 ArrayBuffer 转换为字符串
-                const hashString = Array.prototype.map.call(new Uint8Array(hash), x => ('00' + x.toString(16)).slice(-2)).join('');
-                this.md5Value = hashString;
+            reader.onload = async (e) => {
+                const fileContent = e.target.result;
+                const secretKey = CryptoJS.lib.WordArray.random(128 / 8); // 生成密钥  
+                const encrypted = CryptoJS.AES.encrypt(fileContent, secretKey.toString());
+
+                // 密钥保存为.key文件  
+                const keyBlob = new Blob([secretKey.toString()], { type: 'text/plain' });
+                saveAs(keyBlob, `${this.selectedFile.name}.key`);
+
+                // 加密文件保存  
+                const encryptedBlob = new Blob([encrypted.toString()], { type: 'text/plain' });
+                saveAs(encryptedBlob, this.selectedFile.name);
+
+                this.key = secretKey; // 保存密钥用于解密  
             };
-            reader.readAsArrayBuffer(file);
+            reader.readAsText(this.selectedFile);
+        },
+        async decryptFile() {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                const encryptedContent = e.target.result;
+                const keyBlob = await fetch(`${this.selectedFile.name}.key`).then(r => r.blob());
+                const keyReader = new FileReader();
+                keyReader.onload = (keyEvent) => {
+                    const decrypted = CryptoJS.AES.decrypt(encryptedContent, keyEvent.target.result);
+                    const originalFileBlob = new Blob([decrypted.toString(CryptoJS.enc.Utf8)], { type: 'text/plain' });
+                    saveAs(originalFileBlob, this.selectedFile.name);
+                };
+                keyReader.readAsText(keyBlob);
+            };
+            reader.readAsText(this.selectedFile);
         },
     },
 };
