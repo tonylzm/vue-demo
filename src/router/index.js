@@ -17,12 +17,6 @@ const routes = [{
 	name: 'file',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/new.vue'),
 
-},
-{
-	path: '/test',
-	name: 'file',
-	component: () => import( /*webpackChunkName:'Home'*/ '@/page/test.vue'),
-
 }
 ]
 

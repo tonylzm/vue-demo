@@ -1,4 +1,4 @@
-<template>
+<!-- <template>
     <div>
         <input type="file" @change="handleFileUpload" />
         <button @click="encryptFile">加密</button>
@@ -62,4 +62,4 @@ export default {
         },
     },
 };
-</script>
+</script> -->
