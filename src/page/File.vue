@@ -6,24 +6,19 @@
 			<el-button type="warning" @click="reset">重置</el-button>
 		</div>
 		<div style="margin: 10px 0">
-			<el-upload action="https://localhost:8443/api/upload/upload" :show-file-list="false"
-				:before-upload="beforeUpload"
-				:data="{ username: 'your_username_value', from: 'your_from_value', md5: md5Value, blob: blob, secretKey: secretKey }"
-				:on-progress="handleFileUploadProgress" :on-success="handleFileUploadSuccess"
-				style="display: inline-block" accept=".pdf">
-				<el-button type="primary" class="ml-5">上传文件 <i class="el-icon-upload"></i></el-button>
-			</el-upload>
+			<el-button type="primary" slot="reference" @click="handleUpload">上传文件 <i
+					class="el-icon-remove-outline"></i></el-button>
 			<el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="No, Thanks" :icon="InfoFilled"
 				icon-color="#626AEF" title="Are you sure to delete this?" @confirm="delBatch">
 				<template #reference>
-					<el-button type="danger" slot="reference">批量删除 <i class="el-icon-remove-outline"></i></el-button>
+					<el-button type="danger" slot="reference">上传文件 <i class="el-icon-remove-outline"></i></el-button>
 				</template>
 			</el-popconfirm>
 
 		</div>
 		<div>
-			<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
-				:percentage="uploadProgress"></el-progress>
+			<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26" :percentage="uploadProgress"
+				:color="progressColor" :format="formatText"></el-progress>
 		</div>
 		<el-table :data="tableData" border stripe :header-cell-class-name="'headerBg'"
 			@selection-change="handleSelectionChange">
@@ -121,9 +116,12 @@ export default {
 			showProgress: false, // 是否显示进度条 
 			innerDrawer: false,
 			uploadParams: null,
+
 			md5Value: '',
-			blob: null,
-			secretKey: null,
+			encryptedFile: null,
+			keyString: '',
+			fileName: '',
+			progressColor: ''
 		}
 	},
 
@@ -131,47 +129,109 @@ export default {
 		this.loadData();
 	},
 	methods: {
-		beforeUpload(file) {
-			// 添加额外的参数  
-			if (!file) return false; // 如果文件不存在，返回false，停止上传  
+		handleUpload() {
+			// 用户选择文件
+			const fileInput = document.createElement('input');
+			fileInput.type = 'file';
+			fileInput.addEventListener('change', async () => {
+				const file = fileInput.files[0];
+				this.fileName = file.name;
+				console.log('fileName', this.fileName);
+				return new Promise(async (resolve, reject) => {
+					const reader = new FileReader();
+					reader.onload = async (event) => {
+						const arrayBuffer = event.target.result;
+						const hash = md5.arrayBuffer(arrayBuffer);
+						// 将 ArrayBuffer 转换为字符串  
+						const hashString = Array.prototype.map.call(new Uint8Array(hash), x => ('00' + x.toString(16)).slice(-2)).join('');
+						this.md5Value = hashString;
+						console.log('md5Value', this.md5Value);
+						try {
+							// 生成加密密钥
+							const key = await window.crypto.subtle.generateKey(
+								{ name: 'AES-GCM', length: 256 },
+								true,
+								['encrypt', 'decrypt']
+							);
+							// 导出密钥为字符串格式
+							const exportedKey = await window.crypto.subtle.exportKey('raw', key);
+							this.keyString = btoa(String.fromCharCode.apply(null, new Uint8Array(exportedKey)));
+							console.log('加密密钥:', this.keyString);
 
-			return new Promise((resolve, reject) => {
-				const reader = new FileReader();
-				reader.onload = (event) => {
-					const arrayBuffer = event.target.result;
-					const hash = md5.arrayBuffer(arrayBuffer);
-					// 将 ArrayBuffer 转换为字符串  
-					const hashString = Array.prototype.map.call(new Uint8Array(hash), x => ('00' + x.toString(16)).slice(-2)).join('');
-					this.md5Value = hashString;
-					console.log('md5Value', this.md5Value);
+							const fileBuffer = arrayBuffer;
+							console.log(12)
+							const encryptedData = await window.crypto.subtle.encrypt(
+								{ name: 'AES-GCM', iv: new Uint8Array(12) },
+								key,
+								fileBuffer
+							);
+							this.encryptedFile = new Blob([encryptedData], { type: 'application/pdf' });
 
-
-					//使用AES加密
-					const secretKey = CryptoJS.lib.WordArray.random(128 / 8); // 生成密钥
-					const encrypted = CryptoJS.AES.encrypt(arrayBuffer, secretKey.toString());
-					//将加密后文件上传
-					this.blob = new Blob([encrypted.toString()], { type: 'application/pdf' });
-					this.secretKey = secretKey;
-
-
-					this.uploadProgress = 0;
-					this.showProgress = true; // 显示进度条  
-					resolve(true); // 当MD5计算完成后，允许上传  
-				};
-				reader.onerror = (error) => {
-					reject(error); // 如果读取文件出错，则拒绝Promise  
-				};
-				reader.readAsArrayBuffer(file);
+							this.Upload();
+						} catch (error) {
+							console.error(error);
+						}
+					};
+					reader.onerror = (error) => {
+						console.log(2)
+					};
+					reader.readAsArrayBuffer(file);
+				});
 			});
+			fileInput.click();
 		},
-		handleFileUploadProgress(event, file, fileList) {
-			// 文件上传进度的处理逻辑  
-			this.uploadProgress = parseInt((event.percent || 0), 10); // 将进度转换为整数百分比  
+		Upload() {
+			// 构建 FormData 对象，用于发送文件
+			const formData = new FormData();
+			this.uploadProgress = 0;
+			// 将需要加密的文件或文件信息放入 FormData 对象
+			formData.append('encryptedFile', this.encryptedFile);
+			formData.append('md5', this.md5Value);
+			formData.append('key', this.keyString);
+			formData.append('fileName', this.fileName);
+			formData.append('username', "usts");
+			formData.append('from', "usts");
+			var that = this;
+			var xhr = new XMLHttpRequest();
+			this.showProgress = true;
+			xhr.open('POST', 'https://localhost:8443/api/upload/upload');
+			// 上传完成后的回调函数
+			xhr.onload = function () {
+				if (xhr.status === 200) {
+					//弹出上传成功
+					that.$message.success('上传成功');
+					setTimeout(() => {
+						that.showProgress = false;
+					}, 1000);
+					that.loadData();
+				} else {
+					that.progressColor = 'OrangeRed';
+					that.$message.error('上传失败');
+					setTimeout(() => {
+						that.showProgress = false;
+					}, 2000);
+					console.log('上传出错');
+				}
+			};
+			// 获取上传进度
+			xhr.upload.onprogress = function (event) {
+				if (event.lengthComputable) {
+					var percent = Math.floor(event.loaded / event.total * 100);
+					that.uploadProgress = parseInt(percent);
+
+				}
+			};
+			xhr.send(formData);
 		},
-		handleFileUploadSuccess(response, file, fileList) {
-			this.$message.success('上传成功');
-			this.hideProgressAfterDelay();
-			this.loadData();
+
+		formatText(percentage) {
+			// 自定义格式化文本
+			if (percentage < 100) {
+				return '正在校验 ' + percentage + '%';
+			} else {
+				this.progressColor = 'LimeGreen';
+				return '正在上传,请稍后...';
+			}
 		},
 		loadData() {
 			axios.get('https://localhost:8443/api/files/page', {

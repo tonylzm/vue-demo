@@ -1,31 +1,29 @@
-import CryptoJS from 'crypto-js';
-
-export default {
-    //随机生成指定数量的16进制key
-    generatekey(num) {
-        let library = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        let key = "";
-        for (var i = 0; i < num; i++) {
-            let randomPoz = Math.floor(Math.random() * library.length);
-            key += library.substring(randomPoz, randomPoz + 1);
-        }
-        return key;
-    },
-
-    //加密
-    encrypt(word, keyStr) {
-        keyStr = keyStr ? keyStr : 'abcdsxyzhkj12345'; //判断是否存在ksy，不存在就用定义好的key
-        var key = CryptoJS.enc.Utf8.parse(keyStr);
-        var srcs = CryptoJS.enc.Utf8.parse(word);
-        var encrypted = CryptoJS.AES.encrypt(srcs, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 });
-        return encrypted.toString();
-    },
-    //解密
-    decrypt(word, keyStr) {
-        keyStr = keyStr ? keyStr : 'abcdsxyzhkj12345';
-        var key = CryptoJS.enc.Utf8.parse(keyStr);
-        var decrypt = CryptoJS.AES.decrypt(word, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 });
-        return CryptoJS.enc.Utf8.stringify(decrypt).toString();
+async function encryptFile(file) {
+    if (!file) {
+        alert('请选择要加密的文件');
+        return null;
     }
 
+    // 生成加密密钥
+    const key = await window.crypto.subtle.generateKey(
+        { name: 'AES-GCM', length: 256 },
+        true,
+        ['encrypt', 'decrypt']
+    );
+
+    // 导出密钥为字符串格式
+    const exportedKey = await window.crypto.subtle.exportKey('raw', key);
+    const keyString = btoa(String.fromCharCode.apply(null, new Uint8Array(exportedKey)));
+    console.log('加密密钥:', keyString);
+
+    const fileBuffer = await file.arrayBuffer();
+    const encryptedData = await window.crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: new Uint8Array(12) },
+        key,
+        fileBuffer
+    );
+
+    const encryptedFile = new Blob([encryptedData], { type: 'application/pdf' });
+
+    return { encryptedFile, key: keyString };
 }
