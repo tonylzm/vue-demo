@@ -98,6 +98,8 @@
 <script>
 import axios from 'axios';
 import md5 from 'js-md5';
+import JSEncrypt from 'jsencrypt';
+import CryptoJS from 'crypto-js';
 export default {
 	data() {
 		return {
@@ -121,7 +123,8 @@ export default {
 			encryptedFile: null,
 			keyString: '',
 			fileName: '',
-			progressColor: ''
+			progressColor: '',
+			encryptedAESKey: '',
 		}
 	},
 
@@ -145,7 +148,7 @@ export default {
 						// 将 ArrayBuffer 转换为字符串  
 						const hashString = Array.prototype.map.call(new Uint8Array(hash), x => ('00' + x.toString(16)).slice(-2)).join('');
 						this.md5Value = hashString;
-						console.log('md5Value', this.md5Value);
+						// console.log('md5Value', this.md5Value);
 						try {
 							// 生成加密密钥
 							const key = await window.crypto.subtle.generateKey(
@@ -156,17 +159,19 @@ export default {
 							// 导出密钥为字符串格式
 							const exportedKey = await window.crypto.subtle.exportKey('raw', key);
 							this.keyString = btoa(String.fromCharCode.apply(null, new Uint8Array(exportedKey)));
-							console.log('加密密钥:', this.keyString);
-
 							const fileBuffer = arrayBuffer;
-							console.log(12)
+							//console.log(12)
 							const encryptedData = await window.crypto.subtle.encrypt(
 								{ name: 'AES-GCM', iv: new Uint8Array(12) },
 								key,
 								fileBuffer
 							);
 							this.encryptedFile = new Blob([encryptedData], { type: 'application/pdf' });
-
+							// 从后端API获取RSA公钥  
+							const publicKey = await this.getPublicKeyFromServer();
+							// 使用公钥加密AES密钥  
+							this.encryptedAESKey = this.encryptAESKeyWithPublicKey(publicKey.toString(CryptoJS.enc.Base64), this.keyString);
+							//console.log('encryptedAESKey', this.encryptedAESKey);
 							this.Upload();
 						} catch (error) {
 							console.error(error);
@@ -187,8 +192,8 @@ export default {
 			// 将需要加密的文件或文件信息放入 FormData 对象
 			formData.append('encryptedFile', this.encryptedFile);
 			formData.append('md5', this.md5Value);
-			formData.append('key', this.keyString);
 			formData.append('fileName', this.fileName);
+			formData.append('aesKey', this.encryptedAESKey);
 			formData.append('username', "usts");
 			formData.append('from', "usts");
 			var that = this;
@@ -232,6 +237,32 @@ export default {
 				this.progressColor = 'LimeGreen';
 				return '正在上传,请稍后...';
 			}
+		},
+		// 从后端API获取公钥的新方法  
+		async getPublicKeyFromServer() {
+			try {
+				const response = await fetch('https://localhost:8443/api/upload/public');
+				if (!response.ok) {
+					throw new Error(`HTTP error! status: ${response.status}`);
+				}
+				const publicKeyData = await response.text();
+				// 如果后端返回的是Base64编码的公钥字符串，你可能需要进行解码
+				// 使用 CryptoJS.enc.Base64.parse() 来解码
+				const publicKey = CryptoJS.enc.Base64.parse(publicKeyData);
+				// 返回解码后的公钥
+				return publicKey;
+			} catch (error) {
+				// 捕获并处理任何异常
+				console.error('Failed to fetch public key from server', error);
+				// 返回一个空的值或者一个默认值，具体根据你的需求来决定
+				return null;
+			}
+		},
+		encryptAESKeyWithPublicKey(publicKey, aesKeyBase64) {
+			const encrypt = new JSEncrypt();
+			encrypt.setPublicKey(publicKey);
+			const encryptedAESKey = encrypt.encrypt(aesKeyBase64);
+			return encryptedAESKey;
 		},
 		loadData() {
 			axios.get('https://localhost:8443/api/files/page', {
