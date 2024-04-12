@@ -10,6 +10,7 @@ import axios from 'axios';
 import md5 from 'js-md5';
 import JSEncrypt from 'jsencrypt';
 import CryptoJS from 'crypto-js';
+import forge from 'node-forge';
 export default {
   data() {
     return {
@@ -65,6 +66,7 @@ export default {
               // 使用公钥加密AES密钥  
               this.encryptedAESKey = this.encryptAESKeyWithPublicKey(publicKey.toString(CryptoJS.enc.Base64), this.keyString);
               console.log('encryptedAESKey', this.encryptedAESKey);
+              const data = await this.sendVerifyInfo();
               this.Upload();
             } catch (error) {
               console.error(error);
@@ -133,6 +135,52 @@ export default {
         // 返回一个空的值或者一个默认值，具体根据你的需求来决定
         return null;
       }
+    },
+    //向后端发送验证信息，信息为随机生成的字符串，包含用户名时间，ip地址等信息
+    async sendVerifyInfo() {
+      try {
+        // 生成随机字符串和其他信息
+
+        const hashedPassword = this.encryptedAESKey;
+        const username = "usts";
+        const time = this.getCurrentTime();
+        const ipAddress = await this.getIPAddress(); // 这里假设你有一个获取 IP 地址的方法
+        console.log(hashedPassword)
+        // 构建发送给后端的数据
+        const data = {
+          hashedPassword,
+          username,
+          time,
+          ipAddress
+          // 可以根据需要添加其他信息
+        };
+
+        // 发送 POST 请求给后端
+        const response = await axios.post('https://localhost:8443/api/users/test', data);
+
+        // 处理后端的响应
+        console.log(response.data);
+      } catch (error) {
+        console.error('发送验证信息失败:', error);
+        //弹出提示
+        this.$message.error('非法登录');
+      }
+    },
+
+    async getIPAddress() {
+      try {
+        const response = await axios.get('https://api.ipify.org?format=json');
+        return response.data.ip;
+      } catch (error) {
+        console.error('获取 IP 地址失败:', error);
+        return null;
+      }
+    },
+    getCurrentTime() {
+      const currentTime = new Date();
+      // 将时间格式化为字符串，你可以根据需要进行调整
+      const formattedTime = currentTime.toISOString(); // 返回 ISO 格式的字符串，例如："2024-04-12T12:30:00.000Z"
+      return formattedTime;
     },
     encryptAESKeyWithPublicKey(publicKey, aesKeyBase64) {
       const encrypt = new JSEncrypt();

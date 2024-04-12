@@ -19,7 +19,8 @@
           </div>
           <br />
           <div class="button-container">
-            <el-button style="width:50%;margin-bottom:30px;" type="primary">登录</el-button>
+            <el-button style="width:50%;margin-bottom:30px;" type="primary" @click="login">登录</el-button>
+
           </div>
         </div>
       </el-card>
@@ -53,8 +54,9 @@ export default {
   },
   methods: {
     login() {
-      const hashedPassword = hashPassword(this.loginPassword);
-      axios.post('http://localhost:9090/api/users/login', {
+      //const hashedPassword = hashPassword(this.loginPassword);
+      const hashedPassword = this.loginPassword;
+      axios.post('https://localhost:8443/api/users/login', {
         username: this.loginUsername,
         password: hashedPassword
       }).then(response => {
@@ -67,7 +69,7 @@ export default {
     },
     register() {
       const hashedPassword = hashPassword(this.registerPassword);
-      axios.post('http://localhost:9090/api/users/register', {
+      axios.post('https://localhost:8443/api/users/register', {
         username: this.registerUsername,
         password: hashedPassword
       }).then(response => {
