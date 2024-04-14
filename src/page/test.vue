@@ -10,7 +10,6 @@ import axios from 'axios';
 import md5 from 'js-md5';
 import JSEncrypt from 'jsencrypt';
 import CryptoJS from 'crypto-js';
-import forge from 'node-forge';
 export default {
   data() {
     return {
