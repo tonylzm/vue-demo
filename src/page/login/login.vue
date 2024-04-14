@@ -1,5 +1,6 @@
 <template>
-  <div class="body">
+  <div id="login">
+    <div class="body">
     <div class="login-page">
       <el-card class="box-card">
         <div slot="header" class="clearfix">
@@ -7,24 +8,59 @@
         </div>
         <br />
         <div class="login-form">
-          <div>
-            <el-form-item label="用户名">
-              <el-input placeholder="请输入用户名" v-model="loginUsername" required auto-complete="off"></el-input>
-            </el-form-item>
-          </div>
-          <div>
-            <el-form-item label="密码">
-              <el-input placeholder="请输入密码" type="password" v-model="loginPassword" required></el-input>
-            </el-form-item>
-          </div>
-          <br />
-          <div class="button-container">
-            <el-button style="width:50%;margin-bottom:30px;" type="primary" @click="login">登录</el-button>
-
-          </div>
+          <el-form :model="form"  ref="loginForm">
+                    <el-form-item prop="name">
+                        <el-input type="text" name="name" v-model="form.loginUsername" auto-complete="off" placeholder="请输入用户名" required>
+                            <template slot="prepend"><i style="font-size:20px" class="el-icon-user"></i></template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item prop="password">
+                        <el-input type="password" name="password" v-model="form.loginPassword" auto-complete="off" placeholder="请输入密码" required>
+                            <template slot="prepend"><i style="font-size:20px" class="el-icon-key"></i></template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button style="width: 210px;" type="primary" @click="handleLogin"
+                                   :loading="loading">登录</el-button>
+                        <el-button style="width: 110px;" @click="showRegistrationForm()">注册</el-button>
+                    </el-form-item>
+                </el-form>
         </div>
       </el-card>
     </div>
+  </div>
+  </div>
+
+  <div id="register">
+    <div class="body">
+    <div class="login-page">
+      <el-card class="box-card">
+        <div slot="header" class="clearfix">
+          <span class="login-title">注册</span>
+        </div>
+        <br />
+        <div class="login-form">
+          <el-form :model="form"  ref="loginForm">
+                    <el-form-item prop="name">
+                        <el-input type="text" name="name" v-model="form.loginUsername" auto-complete="off" placeholder="请输入用户名" required>
+                            <template slot="prepend"><i style="font-size:20px" class="el-icon-user"></i></template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item prop="password">
+                        <el-input type="password" name="password" v-model="form.loginPassword" auto-complete="off" placeholder="请输入密码" required>
+                            <template slot="prepend"><i style="font-size:20px" class="el-icon-key"></i></template>
+                        </el-input>
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button style="width: 210px;" type="primary" @click="handleLogin"
+                                   :loading="loading">注册</el-button>
+                        <el-button style="width: 110px;" @click="showRegistrationForm()">登录</el-button>
+                    </el-form-item>
+                </el-form>
+        </div>
+      </el-card>
+    </div>
+  </div>
   </div>
 </template>
 
@@ -49,15 +85,20 @@ export default {
       loginUsername: '',
       loginPassword: '',
       registerUsername: '',
-      registerPassword: ''
+      registerPassword: '',
+      form:{
+        loginUsername:'',
+        loginPassword:''
+
+      }
     };
   },
   methods: {
     login() {
       //const hashedPassword = hashPassword(this.loginPassword);
-      const hashedPassword = this.loginPassword;
+      const hashedPassword = this.form.loginPassword;
       axios.post('https://localhost:8443/api/users/login', {
-        username: this.loginUsername,
+        username: this.form.loginUsername,
         password: hashedPassword
       }).then(response => {
         console.log('登录成功:', response.data);
@@ -79,7 +120,11 @@ export default {
         console.error('注册失败:', error);
         // 处理注册失败逻辑
       });
-    }
+    },
+    showRegistrationForm() {
+                document.getElementById("login").style.display = "none";
+                document.getElementById("register").style.display = "block";
+            }
   }
 };
 </script>

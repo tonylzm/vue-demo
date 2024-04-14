@@ -1,7 +1,7 @@
 <template>
   <div class="common-layout">
       <el-container>
-          <el-aside width="200px">
+          <el-aside width="200px" >
               <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
                   <el-sub-menu index="1">
                       <template #title>
@@ -37,7 +37,7 @@
                       <el-icon>
                           <setting />
                       </el-icon>
-                      <span>个人管理r</span>
+                      <span>个人管理</span>
                   </el-menu-item>
               </el-menu>
           </el-aside>
@@ -47,7 +47,14 @@
       </el-container>
   </div>
 </template>
-
+<style>
+.common-layout {
+    height: 800px;
+}
+.el-aside {
+    height: 800px;
+}
+</style>
 <script>
 
 
@@ -58,7 +65,6 @@ export default {
         flowSrc: '',
       };
       },
-      
       methods:{
         switchPage:function (){
         var iframe=document.querySelector("iframe");
