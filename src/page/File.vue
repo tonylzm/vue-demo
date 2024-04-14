@@ -6,8 +6,66 @@
 			<el-button type="warning" @click="reset">重置</el-button>
 		</div>
 		<div style="margin: 10px 0">
-			<el-button type="primary" slot="reference" @click="handleUpload">上传文件 <i
-					class="el-icon-remove-outline"></i></el-button>
+			<el-button type="primary" @click="drawer = true">试卷信息填写</el-button>
+			<el-drawer v-model="drawer" title="试卷信息登记表格" :append-to-body="true" :before-close="handleClose" size="40%">
+				<div>
+					<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
+						:percentage="uploadProgress"></el-progress>
+				</div>
+				<el-form ref="form" :model="form" label-width="120px">
+					<el-form-item label="考试名称">
+						<el-input v-model="form.name"></el-input>
+					</el-form-item>
+					<el-form-item label="试卷上传">
+						<el-button type="primary" slot="reference" @click="handleUpload">上传文件 <i
+								class="el-icon-upload"></i></el-button>
+						<template v-if="this.encryptedFile !== null">
+							<i class="el-icon-check" style="color: green;"></i>
+						</template>
+						<template v-else>
+							<i class="el-icon-error" style="color: red;"></i>
+						</template>
+					</el-form-item>
+					<el-form-item label="考试班级">
+						<el-input v-model="form.class"></el-input>
+					</el-form-item>
+					<el-form-item label="考试方式">
+						<el-select v-model="form.region" placeholder="请选择考试方式">
+							<el-option label="开卷考试" value="开卷考试"></el-option>
+							<el-option label="闭卷考试" value="闭卷考试"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="所属院系">
+						<el-select v-model="form.college" placeholder="请选择院系">
+							<el-option label="电子与信息工程学院" value="电子与信息工程学院"></el-option>
+							<el-option label="马克思主义学院" value="马克思主义学院"></el-option>
+							<el-option label="环境工程学院" value="环境工程学院"></el-option>
+							<el-option label="天平学院" value="天平学院"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="考试开始时间">
+						<el-col :span="11">
+							<el-date-picker type="date" placeholder="选择日期" v-model="form.date1"
+								style="width: 100%;"></el-date-picker>
+						</el-col>
+						<el-col class="line" :span="2">-</el-col>
+						<el-col :span="11">
+							<el-time-picker placeholder="选择时间" v-model="form.date2"
+								style="width: 100%;"></el-time-picker>
+						</el-col>
+					</el-form-item>
+					<el-form-item label="信息保存">
+						<el-switch v-model="form.delivery" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"></el-switch>
+					</el-form-item>
+					<el-form-item label="备注">
+						<el-input type="textarea" v-model="form.desc"></el-input>
+					</el-form-item>
+					<el-form-item>
+						<el-button type="primary" @click="onSubmit">信息上传</el-button>
+						<el-button>取消</el-button>
+					</el-form-item>
+				</el-form>
+			</el-drawer>
 			<el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="No, Thanks" :icon="InfoFilled"
 				icon-color="#626AEF" title="Are you sure to delete this?" @confirm="delBatch">
 				<template #reference>
@@ -40,7 +98,7 @@
 			</el-table-column>
 			<el-table-column label="启用">
 				<template v-slot="scope">
-					<el-switch v-model="scope.row.enable" active-color="#13ce66" inactive-color="#ccc"
+					<el-switch v-model="scope.row.enable" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
 						@change="changeEnable(scope.row)"></el-switch>
 				</template>
 			</el-table-column>
@@ -106,6 +164,7 @@ export default {
 			tableData: [
 			],
 			name: '',
+			direction: 'rtl',
 			multipleSelection: [],
 			pageNum: 1,
 			pageSize: 10,
@@ -117,8 +176,18 @@ export default {
 			uploadProgress: 0,
 			showProgress: false, // 是否显示进度条 
 			innerDrawer: false,
+			drawer: false,
 			uploadParams: null,
-
+			form: {
+				name: '',
+				class: '',
+				region: '',
+				college: '',
+				date1: '',
+				date2: '',
+				delivery: false,
+				desc: ''
+			},
 			md5Value: '',
 			encryptedFile: null,
 			fileName: '',
@@ -131,6 +200,34 @@ export default {
 		this.loadData();
 	},
 	methods: {
+		changeEnable(row) {
+			console.log(row);
+
+		},
+		handleClose(done) {
+			this.$confirm('确认关闭？')
+				.then(_ => {
+					if (this.form.delivery === false) {
+						this.form = {
+							name: '',
+							class: '',
+							region: '',
+							college: '',
+							date1: '',
+							date2: '',
+							delivery: false,
+							desc: ''
+						};
+					}
+					this.encryptedFile = null;
+					done();
+				})
+				.catch(_ => { });
+		},
+		onSubmit() {
+			this.Upload();
+			console.log('submit!');
+		},
 		handleUpload() {
 			// 用户选择文件
 			const fileInput = document.createElement('input');
@@ -173,7 +270,7 @@ export default {
 							this.encryptedAESKey = this.encryptAESKeyWithPublicKey(publicKey.toString(CryptoJS.enc.Base64), keyString);
 							console.log('encryptedAESKey', this.encryptedAESKey);
 							const data = await this.sendVerifyInfo();
-							this.Upload();
+							//this.Upload();
 						} catch (error) {
 							console.error(error);
 						}
@@ -197,6 +294,7 @@ export default {
 			formData.append('aesKey', this.encryptedAESKey);
 			formData.append('username', "usts");
 			formData.append('from', "usts");
+			formData.append('info', JSON.stringify(this.form));
 			var that = this;
 			var xhr = new XMLHttpRequest();
 			this.showProgress = true;
