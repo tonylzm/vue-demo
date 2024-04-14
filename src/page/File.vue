@@ -7,7 +7,7 @@
 		</div>
 		<div style="margin: 10px 0">
 			<el-button type="primary" @click="drawer = true">试卷信息填写</el-button>
-			<el-drawer v-model="drawer" title="试卷信息登记表格" :append-to-body="true" :before-close="handleClose" size="50%">
+			<el-drawer v-model="drawer" title="试卷信息登记表格" :append-to-body="true" :before-close="handleClose" size="40%">
 				<div>
 					<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
 						:percentage="uploadProgress"></el-progress>
@@ -55,7 +55,7 @@
 						</el-col>
 					</el-form-item>
 					<el-form-item label="信息保存">
-						<el-switch v-model="form.delivery"></el-switch>
+						<el-switch v-model="form.delivery" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"></el-switch>
 					</el-form-item>
 					<el-form-item label="备注">
 						<el-input type="textarea" v-model="form.desc"></el-input>
@@ -98,7 +98,7 @@
 			</el-table-column>
 			<el-table-column label="启用">
 				<template v-slot="scope">
-					<el-switch v-model="scope.row.enable" active-color="#13ce66" inactive-color="#ccc"
+					<el-switch v-model="scope.row.enable" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
 						@change="changeEnable(scope.row)"></el-switch>
 				</template>
 			</el-table-column>
@@ -200,6 +200,10 @@ export default {
 		this.loadData();
 	},
 	methods: {
+		changeEnable(row) {
+			console.log(row);
+
+		},
 		handleClose(done) {
 			this.$confirm('确认关闭？')
 				.then(_ => {
