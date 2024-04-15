@@ -1,66 +1,68 @@
 <template>
   <div id="login">
     <div class="body">
-    <div class="login-page">
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span class="login-title">登录</span>
-        </div>
-        <br />
-        <div class="login-form">
-          <el-form :model="form"  ref="loginForm">
-                    <el-form-item prop="name">
-                        <el-input type="text" name="name" v-model="form.loginUsername" auto-complete="off" placeholder="请输入用户名" required>
-                            <template slot="prepend"><i style="font-size:20px" class="el-icon-user"></i></template>
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item prop="password">
-                        <el-input type="password" name="password" v-model="form.loginPassword" auto-complete="off" placeholder="请输入密码" required>
-                            <template slot="prepend"><i style="font-size:20px" class="el-icon-key"></i></template>
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button style="width: 210px;" type="primary" @click="login"
-                                   :loading="loading">登录</el-button>
-                        <el-button style="width: 110px;" @click="showRegistrationForm()">注册</el-button>
-                    </el-form-item>
-                </el-form>
-        </div>
-      </el-card>
+      <div class="login-page">
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span class="login-title">登录</span>
+          </div>
+          <br />
+          <div class="login-form">
+            <el-form :model="form" ref="loginForm">
+              <el-form-item prop="name">
+                <el-input type="text" name="name" v-model="form.loginUsername" auto-complete="off" placeholder="请输入用户名"
+                  required>
+                  <template slot="prepend"><i style="font-size:20px" class="el-icon-user"></i></template>
+                </el-input>
+              </el-form-item>
+              <el-form-item prop="password">
+                <el-input type="password" name="password" v-model="form.loginPassword" auto-complete="off"
+                  placeholder="请输入密码" required>
+                  <template slot="prepend"><i style="font-size:20px" class="el-icon-key"></i></template>
+                </el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button style="width: 210px;" type="primary" @click="login" :loading="loading">登录</el-button>
+                <el-button style="width: 110px;" @click="showRegistrationForm()">注册</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
+        </el-card>
+      </div>
     </div>
-  </div>
   </div>
 
   <div id="register">
     <div class="body">
-    <div class="login-page">
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span class="login-title">注册</span>
-        </div>
-        <br />
-        <div class="login-form">
-          <el-form :model="form"  ref="loginForm">
-                    <el-form-item prop="name">
-                        <el-input type="text" name="name" v-model="form.loginUsername" auto-complete="off" placeholder="请输入用户名" required>
-                            <template slot="prepend"><i style="font-size:20px" class="el-icon-user"></i></template>
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item prop="password">
-                        <el-input type="password" name="password" v-model="form.loginPassword" auto-complete="off" placeholder="请输入密码" required>
-                            <template slot="prepend"><i style="font-size:20px" class="el-icon-key"></i></template>
-                        </el-input>
-                    </el-form-item>
-                    <el-form-item>
-                        <el-button style="width: 210px;" type="primary" @click="handleLogin"
-                                   :loading="loading">注册</el-button>
-                        <el-button style="width: 110px;" @click="showRegistrationForm()">登录</el-button>
-                    </el-form-item>
-                </el-form>
-        </div>
-      </el-card>
+      <div class="login-page">
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span class="login-title">注册</span>
+          </div>
+          <br />
+          <div class="login-form">
+            <el-form :model="form" ref="loginForm">
+              <el-form-item prop="name">
+                <el-input type="text" name="name" v-model="form.loginUsername" auto-complete="off" placeholder="请输入用户名"
+                  required>
+                  <template slot="prepend"><i style="font-size:20px" class="el-icon-user"></i></template>
+                </el-input>
+              </el-form-item>
+              <el-form-item prop="password">
+                <el-input type="password" name="password" v-model="form.loginPassword" auto-complete="off"
+                  placeholder="请输入密码" required>
+                  <template slot="prepend"><i style="font-size:20px" class="el-icon-key"></i></template>
+                </el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button style="width: 210px;" type="primary" @click="handleLogin" :loading="loading">注册</el-button>
+                <el-button style="width: 110px;" @click="showRegistrationForm()">登录</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
+        </el-card>
+      </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -81,14 +83,14 @@ function hashPassword(password) {
   return hashedPassword.toString(CryptoJS.enc.Hex);
 }
 export default {
-  
+
   data() {
     return {
       registerUsername: '',
       registerPassword: '',
-      form:{
-        loginUsername:'',
-        loginPassword:''
+      form: {
+        loginUsername: '',
+        loginPassword: ''
       }
     };
   },
@@ -124,9 +126,9 @@ export default {
       });
     },
     showRegistrationForm() {
-                document.getElementById("login").style.display = "none";
-                document.getElementById("register").style.display = "block";
-            }
+      document.getElementById("login").style.display = "none";
+      document.getElementById("register").style.display = "block";
+    }
   }
 };
 </script>

@@ -2,11 +2,17 @@
 	<div>
 		<div style="margin: 10px 0">
 			<el-input style="width: 200px" placeholder="请输入名称" suffix-icon="el-icon-search" v-model="name"></el-input>
-			<el-button class="ml-5" type="primary" @click="loadData">搜索</el-button>
-			<el-button type="warning" @click="reset">重置</el-button>
+			<el-button class="ml-5" type="primary" @click="loadData">搜索<el-icon>
+					<Search />
+				</el-icon></el-button>
+			<el-button type="warning" @click="reset">重置<el-icon>
+					<Refresh />
+				</el-icon></el-button>
 		</div>
 		<div style="margin: 10px 0">
-			<el-button type="primary" @click="drawer = true">试卷信息填写<i class="el-icon-s-promotion"></i></el-button>
+			<el-button type="primary" @click="drawer = true">试卷信息填写<el-icon>
+					<Promotion />
+				</el-icon></el-button>
 			<el-drawer v-model="drawer" title="试卷信息登记表格" :append-to-body="true" :before-close="handleClose" size="40%">
 				<div>
 					<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
@@ -21,13 +27,18 @@
 						<el-input v-model="form.name"></el-input>
 					</el-form-item>
 					<el-form-item label="试卷上传">
-						<el-button type="primary" slot="reference" @click="handleUpload">上传文件 <i
-								class="el-icon-upload"></i></el-button>
+						<el-button type="primary" slot="reference" @click="handleUpload">上传文件 <el-icon>
+								<Document />
+							</el-icon></el-button>
 						<template v-if="this.encryptedFile !== null">
-							<i class="el-icon-check" style="color: green;"></i>
+							<el-icon color="green">
+								<SuccessFilled />
+							</el-icon>
 						</template>
 						<template v-else>
-							<i class="el-icon-error" style="color: red;"></i>
+							<el-icon color="red">
+								<CircleCloseFilled />
+							</el-icon>
 						</template>
 					</el-form-item>
 					<el-form-item label="考试班级">
@@ -66,17 +77,21 @@
 						<el-input type="textarea" v-model="form.desc"></el-input>
 					</el-form-item>
 					<el-form-item>
-						<el-button type="primary" @click="onSubmit">信息上传</el-button>
-						<el-button>取消</el-button>
+						<el-button type="primary" @click="onSubmit">信息上传<el-icon>
+								<Upload />
+							</el-icon></el-button>
+						<el-button>取消<el-icon>
+								<Close />
+							</el-icon></el-button>
 					</el-form-item>
 				</el-form>
 			</el-drawer>
-			<el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="No, Thanks" :icon="InfoFilled"
+			<!-- <el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="No, Thanks" :icon="InfoFilled"
 				icon-color="#626AEF" title="Are you sure to delete this?" @confirm="delBatch">
 				<template #reference>
 					<el-button type="danger" slot="reference">上传文件 <i class="el-icon-remove-outline"></i></el-button>
 				</template>
-			</el-popconfirm>
+			</el-popconfirm> -->
 
 		</div>
 		<div>
@@ -92,13 +107,17 @@
 			<el-table-column prop="size" label="文件大小(kb)"></el-table-column>
 			<el-table-column label="下载">
 				<template v-slot="scope">
-					<el-button type="primary" @click="download(scope.row.name)"><i class="el-icon-download"></i>
+					<el-button type="primary" @click="download(scope.row.name)"><el-icon>
+							<Download />
+						</el-icon>
 						下载</el-button>
 				</template>
 			</el-table-column>
 			<el-table-column label="加载预览">
 				<template v-slot="scope">
-					<el-button type="primary" @click="preview(scope.row.name)">加载预览</el-button>
+					<el-button type="primary" @click="preview(scope.row.name)">加载预览<el-icon>
+							<Monitor />
+						</el-icon></el-button>
 				</template>
 			</el-table-column>
 			<el-table-column label="启用">
@@ -113,7 +132,9 @@
 					<el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
 						icon-color="red" title="开启后密码解开" @confirm="decrpyt(scope.row.name)">
 						<template #reference>
-							<el-button type="danger" slot="reference">验证出卷人身份 <i class="el-icon-remove-outline"></i>
+							<el-button type="danger" slot="reference">验证出卷人身份 <el-icon>
+									<Checked />
+								</el-icon>
 							</el-button>
 						</template>
 					</el-popconfirm>
