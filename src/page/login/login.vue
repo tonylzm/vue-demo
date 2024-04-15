@@ -20,7 +20,7 @@
                         </el-input>
                     </el-form-item>
                     <el-form-item>
-                        <el-button style="width: 210px;" type="primary" @click="handleLogin"
+                        <el-button style="width: 210px;" type="primary" @click="login"
                                    :loading="loading">登录</el-button>
                         <el-button style="width: 110px;" @click="showRegistrationForm()">注册</el-button>
                     </el-form-item>
@@ -66,6 +66,7 @@
 
 
 <script>
+import router from '../../router'; // 导入Vue Router实例
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 // 密码加密函数
@@ -80,16 +81,14 @@ function hashPassword(password) {
   return hashedPassword.toString(CryptoJS.enc.Hex);
 }
 export default {
+  
   data() {
     return {
-      loginUsername: '',
-      loginPassword: '',
       registerUsername: '',
       registerPassword: '',
       form:{
         loginUsername:'',
         loginPassword:''
-
       }
     };
   },
@@ -102,7 +101,9 @@ export default {
         password: hashedPassword
       }).then(response => {
         console.log('登录成功:', response.data);
+        this.$message.success('登录成功');
         // 处理登录成功逻辑
+        router.push('/exercise'); // 替换 '/new-page' 为你想要跳转的页面路径
       }).catch(error => {
         console.error('登录失败:', error);
         // 处理登录失败逻辑
@@ -114,6 +115,7 @@ export default {
         username: this.registerUsername,
         password: hashedPassword
       }).then(response => {
+
         console.log('注册成功:', response.data);
         // 处理注册成功逻辑
       }).catch(error => {
