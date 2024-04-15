@@ -12,14 +12,25 @@ const routes = [{
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/File.vue'),
 
 }, {
-	path: '/2',
-	name: 'test',
+	path: '/ok',
+	name: 'test1',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test.vue')
+},
+{
+	path: '/3',
+	name: 'test',
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test2.vue')
 },
 {
 	path: '/hello',
 	name: 'file',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/new.vue'),
+
+},
+{
+	path: '/exercise',
+	name: 'file',
+	component: () => import( /*webpackChunkName:'Home'*/ '@/page/exercise.vue'),
 
 },
 {

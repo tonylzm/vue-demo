@@ -1,34 +1,82 @@
 <template>
-  <div class="body">
-    <div class="login-page">
-      <el-card class="box-card">
-        <div slot="header" class="clearfix">
-          <span class="login-title">登录</span>
-        </div>
-        <br />
-        <div class="login-form">
-          <div>
-            <el-form-item label="用户名">
-              <el-input placeholder="请输入用户名" v-model="loginUsername" required auto-complete="off"></el-input>
-            </el-form-item>
-          </div>
-          <div>
-            <el-form-item label="密码">
-              <el-input placeholder="请输入密码" type="password" v-model="loginPassword" required></el-input>
-            </el-form-item>
+  <div id="login">
+    <div class="body">
+      <div class="login-page">
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span class="login-title">登录</span>
           </div>
           <br />
-          <div class="button-container">
-            <el-button style="width:50%;margin-bottom:30px;" type="primary">登录</el-button>
+          <div class="login-form">
+            <el-form :model="form" ref="loginForm">
+              <el-form-item prop="name">
+                <el-input type="text" name="name" v-model="form.loginUsername" auto-complete="off" placeholder="请输入用户名"
+                  required>
+                  <template #prepend>
+                    <el-icon>
+                      <User />
+                    </el-icon>
+                  </template>
+                </el-input>
+              </el-form-item>
+              <el-form-item prop="password">
+                <el-input type="password" name="password" v-model="form.loginPassword" auto-complete="off"
+                  placeholder="请输入密码" required>
+                  <template #prepend>
+                    <el-icon>
+                      <Lock />
+                    </el-icon>
+                  </template>
+                </el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button style="width: 210px;" type="primary" @click="login" :loading="loading">登录</el-button>
+                <el-button style="width: 110px;" @click="showRegistrationForm()">注册</el-button>
+              </el-form-item>
+            </el-form>
           </div>
-        </div>
-      </el-card>
+        </el-card>
+      </div>
+    </div>
+  </div>
+
+  <div id="register">
+    <div class="body">
+      <div class="login-page">
+        <el-card class="box-card">
+          <div slot="header" class="clearfix">
+            <span class="login-title">注册</span>
+          </div>
+          <br />
+          <div class="login-form">
+            <el-form :model="form" ref="loginForm">
+              <el-form-item prop="name">
+                <el-input type="text" name="name" v-model="form.loginUsername" auto-complete="off" placeholder="请输入用户名"
+                  required>
+                  <template slot="prepend"><i style="font-size:20px" class="el-icon-user"></i></template>
+                </el-input>
+              </el-form-item>
+              <el-form-item prop="password">
+                <el-input type="password" name="password" v-model="form.loginPassword" auto-complete="off"
+                  placeholder="请输入密码" required>
+                  <template slot="prepend"><i style="font-size:20px" class="el-icon-key"></i></template>
+                </el-input>
+              </el-form-item>
+              <el-form-item>
+                <el-button style="width: 210px;" type="primary" @click="handleLogin" :loading="loading">注册</el-button>
+                <el-button style="width: 110px;" @click="showRegistrationForm()">登录</el-button>
+              </el-form-item>
+            </el-form>
+          </div>
+        </el-card>
+      </div>
     </div>
   </div>
 </template>
 
 
 <script>
+import router from '../../router'; // 导入Vue Router实例
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
 // 密码加密函数
@@ -43,23 +91,29 @@ function hashPassword(password) {
   return hashedPassword.toString(CryptoJS.enc.Hex);
 }
 export default {
+
   data() {
     return {
-      loginUsername: '',
-      loginPassword: '',
       registerUsername: '',
-      registerPassword: ''
+      registerPassword: '',
+      form: {
+        loginUsername: '',
+        loginPassword: ''
+      }
     };
   },
   methods: {
     login() {
-      const hashedPassword = hashPassword(this.loginPassword);
-      axios.post('http://localhost:9090/api/users/login', {
-        username: this.loginUsername,
+      //const hashedPassword = hashPassword(this.loginPassword);
+      const hashedPassword = this.form.loginPassword;
+      axios.post('https://localhost:8443/api/users/login', {
+        username: this.form.loginUsername,
         password: hashedPassword
       }).then(response => {
         console.log('登录成功:', response.data);
+        this.$message.success('登录成功');
         // 处理登录成功逻辑
+        router.push('/exercise'); // 替换 '/new-page' 为你想要跳转的页面路径
       }).catch(error => {
         console.error('登录失败:', error);
         // 处理登录失败逻辑
@@ -67,16 +121,21 @@ export default {
     },
     register() {
       const hashedPassword = hashPassword(this.registerPassword);
-      axios.post('http://localhost:9090/api/users/register', {
+      axios.post('https://localhost:8443/api/users/register', {
         username: this.registerUsername,
         password: hashedPassword
       }).then(response => {
+
         console.log('注册成功:', response.data);
         // 处理注册成功逻辑
       }).catch(error => {
         console.error('注册失败:', error);
         // 处理注册失败逻辑
       });
+    },
+    showRegistrationForm() {
+      document.getElementById("login").style.display = "none";
+      document.getElementById("register").style.display = "block";
     }
   }
 };

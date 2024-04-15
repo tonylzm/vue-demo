@@ -2,18 +2,108 @@
 	<div>
 		<div style="margin: 10px 0">
 			<el-input style="width: 200px" placeholder="请输入名称" suffix-icon="el-icon-search" v-model="name"></el-input>
-			<el-button class="ml-5" type="primary" @click="loadData">搜索</el-button>
-			<el-button type="warning" @click="reset">重置</el-button>
+			<el-button class="ml-5" type="primary" @click="loadData">搜索<el-icon>
+					<Search />
+				</el-icon></el-button>
+			<el-button type="warning" @click="reset">重置<el-icon>
+					<Refresh />
+				</el-icon></el-button>
 		</div>
 		<div style="margin: 10px 0">
-			<el-button type="primary" slot="reference" @click="handleUpload">上传文件 <i
-					class="el-icon-remove-outline"></i></el-button>
-			<el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="No, Thanks" :icon="InfoFilled"
+			<el-button type="primary" @click="drawer = true">试卷信息填写<el-icon>
+					<Promotion />
+				</el-icon></el-button>
+			<el-drawer v-model="drawer" title="试卷信息登记表格" :append-to-body="true" :before-close="handleClose" size="40%">
+				<div style="margin-top: -20px;">
+					<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
+						:percentage="uploadProgress"></el-progress>
+				</div>
+				<div style="margin-bottom: 20px;">
+					<el-tag type="primary"><span v-if="countdown > 0">请在{{ countdown }}秒内完成操作</span>
+						<span v-else>倒计时结束</span></el-tag>
+					<el-tooltip class="box-item" effect="light" content="当倒计时开始后，你需要在120秒内完成上传操作，否则将会取消上传"
+						placement="bottom">
+						<el-icon color="#1E90FF">
+							<InfoFilled />
+						</el-icon>
+					</el-tooltip>
+				</div>
+				<el-form ref="form" :model="form" label-width="120px">
+					<el-form-item label="考试名称">
+						<el-input v-model="form.name"></el-input>
+					</el-form-item>
+					<el-form-item label="试卷上传">
+						<el-button type="primary" slot="reference" @click="handleUpload">上传文件 <el-icon>
+								<Document />
+							</el-icon></el-button>
+						<template v-if="this.encryptedFile !== null">
+							<el-icon color="green">
+								<SuccessFilled />
+							</el-icon>
+						</template>
+						<template v-else>
+							<el-icon color="red">
+								<CircleCloseFilled />
+							</el-icon>
+						</template>
+					</el-form-item>
+					<el-form-item label="考试班级">
+						<el-input v-model="form.class"></el-input>
+					</el-form-item>
+					<el-form-item label="考试方式">
+						<el-select v-model="form.region" placeholder="请选择考试方式">
+							<el-option label="开卷考试" value="开卷考试"></el-option>
+							<el-option label="闭卷考试" value="闭卷考试"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="所属院系">
+						<el-select v-model="form.college" placeholder="请选择院系">
+							<el-option label="电子与信息工程学院" value="电子与信息工程学院"></el-option>
+							<el-option label="马克思主义学院" value="马克思主义学院"></el-option>
+							<el-option label="环境工程学院" value="环境工程学院"></el-option>
+							<el-option label="天平学院" value="天平学院"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="考试开始时间">
+						<el-col :span="11">
+							<el-date-picker type="date" placeholder="选择日期" v-model="form.date1"
+								style="width: 100%;"></el-date-picker>
+						</el-col>
+						<el-col class="line" :span="2">-</el-col>
+						<el-col :span="11">
+							<el-time-picker placeholder="选择时间" v-model="form.date2"
+								style="width: 100%;"></el-time-picker>
+						</el-col>
+					</el-form-item>
+					<el-form-item label="信息保存">
+						<el-switch v-model="form.delivery"
+							style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"></el-switch>
+						<el-tooltip class="box-item" effect="light" content="开启此按钮后,你输入的信息将会得到保存直至下次登录"
+							placement="bottom">
+							<el-icon color="#1E90FF">
+								<InfoFilled />
+							</el-icon>
+						</el-tooltip>
+					</el-form-item>
+					<el-form-item label="备注">
+						<el-input type="textarea" v-model="form.desc"></el-input>
+					</el-form-item>
+					<el-form-item>
+						<el-button type="primary" @click="onSubmit">信息上传<el-icon>
+								<Upload />
+							</el-icon></el-button>
+						<el-button @click="handleClose">取消<el-icon>
+								<Close />
+							</el-icon></el-button>
+					</el-form-item>
+				</el-form>
+			</el-drawer>
+			<!-- <el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="No, Thanks" :icon="InfoFilled"
 				icon-color="#626AEF" title="Are you sure to delete this?" @confirm="delBatch">
 				<template #reference>
 					<el-button type="danger" slot="reference">上传文件 <i class="el-icon-remove-outline"></i></el-button>
 				</template>
-			</el-popconfirm>
+			</el-popconfirm> -->
 
 		</div>
 		<div>
@@ -29,18 +119,23 @@
 			<el-table-column prop="size" label="文件大小(kb)"></el-table-column>
 			<el-table-column label="下载">
 				<template v-slot="scope">
-					<el-button type="primary" @click="download(scope.row.name)"><i class="el-icon-download"></i>
+					<el-button type="primary" @click="download(scope.row.name)"><el-icon>
+							<Download />
+						</el-icon>
 						下载</el-button>
 				</template>
 			</el-table-column>
 			<el-table-column label="加载预览">
 				<template v-slot="scope">
-					<el-button type="primary" @click="preview(scope.row.name)">加载预览</el-button>
+					<el-button type="primary" @click="preview(scope.row.name)">加载预览<el-icon>
+							<Monitor />
+						</el-icon></el-button>
 				</template>
 			</el-table-column>
 			<el-table-column label="启用">
 				<template v-slot="scope">
-					<el-switch v-model="scope.row.enable" active-color="#13ce66" inactive-color="#ccc"
+					<el-switch v-model="scope.row.enable"
+						style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
 						@change="changeEnable(scope.row)"></el-switch>
 				</template>
 			</el-table-column>
@@ -49,7 +144,9 @@
 					<el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
 						icon-color="red" title="开启后密码解开" @confirm="decrpyt(scope.row.name)">
 						<template #reference>
-							<el-button type="danger" slot="reference">验证出卷人身份 <i class="el-icon-remove-outline"></i>
+							<el-button type="danger" slot="reference">验证出卷人身份 <el-icon>
+									<Checked />
+								</el-icon>
 							</el-button>
 						</template>
 					</el-popconfirm>
@@ -106,6 +203,7 @@ export default {
 			tableData: [
 			],
 			name: '',
+			direction: 'rtl',
 			multipleSelection: [],
 			pageNum: 1,
 			pageSize: 10,
@@ -117,14 +215,25 @@ export default {
 			uploadProgress: 0,
 			showProgress: false, // 是否显示进度条 
 			innerDrawer: false,
+			drawer: false,
 			uploadParams: null,
-
+			form: {
+				name: '',
+				class: '',
+				region: '',
+				college: '',
+				date1: '',
+				date2: '',
+				delivery: false,
+				desc: ''
+			},
 			md5Value: '',
 			encryptedFile: null,
-			keyString: '',
 			fileName: '',
 			progressColor: '',
 			encryptedAESKey: '',
+			countdown: 120, // 初始化倒计时为120秒
+			timer: null,
 		}
 	},
 
@@ -132,8 +241,48 @@ export default {
 		this.loadData();
 	},
 	methods: {
-		handleUpload() {
+		changeEnable(row) {
+			console.log(row);
+		},
+		reset() {
+			this.name = '';
+		},
+		handleClose(done) {
+			this.$confirm('确认关闭？')
+				.then(_ => {
+					this.drawer = false;
+					if (this.form.delivery === false) {
+						this.form = {
+							name: '',
+							class: '',
+							region: '',
+							college: '',
+							date1: '',
+							date2: '',
+							delivery: false,
+							desc: ''
+						};
+					}
+					this.encryptedFile = null;
+					this.countdown = 120;
+					clearInterval(this.timer);;
+					done();
+				})
+				.catch(_ => { });
+		},
+		onSubmit() {
+			this.Upload();
+			console.log('submit!');
+		},
+		async handleUpload() {
 			// 用户选择文件
+			const data = await this.sendVerifyInfo();
+			console.log(data);
+			//如果非法登录，文件删除
+			if (data == '非法登录') {
+				this.$message.error('请检查你的IP地址');
+				return;
+			}
 			const fileInput = document.createElement('input');
 			fileInput.type = 'file';
 			fileInput.addEventListener('change', async () => {
@@ -148,7 +297,7 @@ export default {
 						// 将 ArrayBuffer 转换为字符串  
 						const hashString = Array.prototype.map.call(new Uint8Array(hash), x => ('00' + x.toString(16)).slice(-2)).join('');
 						this.md5Value = hashString;
-						// console.log('md5Value', this.md5Value);
+						console.log('md5Value', this.md5Value);
 						try {
 							// 生成加密密钥
 							const key = await window.crypto.subtle.generateKey(
@@ -158,8 +307,9 @@ export default {
 							);
 							// 导出密钥为字符串格式
 							const exportedKey = await window.crypto.subtle.exportKey('raw', key);
-							this.keyString = btoa(String.fromCharCode.apply(null, new Uint8Array(exportedKey)));
+							const keyString = btoa(String.fromCharCode.apply(null, new Uint8Array(exportedKey)));
 							const fileBuffer = arrayBuffer;
+							console.log('keyString', keyString);
 							//console.log(12)
 							const encryptedData = await window.crypto.subtle.encrypt(
 								{ name: 'AES-GCM', iv: new Uint8Array(12) },
@@ -170,9 +320,24 @@ export default {
 							// 从后端API获取RSA公钥  
 							const publicKey = await this.getPublicKeyFromServer();
 							// 使用公钥加密AES密钥  
-							this.encryptedAESKey = this.encryptAESKeyWithPublicKey(publicKey.toString(CryptoJS.enc.Base64), this.keyString);
-							//console.log('encryptedAESKey', this.encryptedAESKey);
-							this.Upload();
+							this.encryptedAESKey = this.encryptAESKeyWithPublicKey(publicKey.toString(CryptoJS.enc.Base64), keyString);
+							const data = await this.sendVerifyInfo();
+							//如果非法登录，文件删除
+							if (data === '非法登录') {
+								this.$message.error('验证失败，已取消上传');
+								this.encryptedFile = null;
+								return;
+							}
+							if (this.encryptedFile) {
+								this.$message.warning('倒计时开始，请在120秒内完成上传操作');
+								this.timer = setInterval(() => {
+									if (this.countdown > 0) {
+										this.countdown--;
+									} else {
+										clearInterval(this.timer);
+									}
+								}, 1000);
+							}
 						} catch (error) {
 							console.error(error);
 						}
@@ -196,6 +361,7 @@ export default {
 			formData.append('aesKey', this.encryptedAESKey);
 			formData.append('username', "usts");
 			formData.append('from', "usts");
+			formData.append('info', JSON.stringify(this.form));
 			var that = this;
 			var xhr = new XMLHttpRequest();
 			this.showProgress = true;
@@ -209,6 +375,9 @@ export default {
 						that.showProgress = false;
 					}, 1000);
 					that.loadData();
+					that.encryptedFile = null;
+					clearInterval(that.timer); // 上传成功后暂停计时
+					that.countdown = 120; // 重置倒计时
 				} else {
 					that.progressColor = 'OrangeRed';
 					that.$message.error('上传失败');
@@ -257,6 +426,52 @@ export default {
 				// 返回一个空的值或者一个默认值，具体根据你的需求来决定
 				return null;
 			}
+		},
+		//向后端发送验证信息，信息为随机生成的字符串，包含用户名时间，ip地址等信息
+		async sendVerifyInfo() {
+			try {
+				// 生成随机字符串和其他信息
+				const hashedPassword = this.encryptedAESKey;
+				const username = "usts";
+				const time = this.getCurrentTime();
+				const ipAddress = await this.getIPAddress(); // 这里假设你有一个获取 IP 地址的方法
+				console.log(hashedPassword)
+				// 构建发送给后端的数据
+				const data = {
+					hashedPassword,
+					username,
+					time,
+					ipAddress
+					// 可以根据需要添加其他信息
+				};
+				// 发送 POST 请求给后端
+				const response = await axios.post('https://localhost:8443/api/users/test', data);
+				// 处理后端的响应
+				console.log(response.data);
+				this.$message.success('验证成功');
+
+				return response.data;
+			} catch (error) {
+				this.$message.error('非法登录');
+
+				return '非法登录';
+			}
+		},
+
+		async getIPAddress() {
+			try {
+				const response = await axios.get('https://api.ipify.org?format=json');
+				return response.data.ip;
+			} catch (error) {
+				console.error('获取 IP 地址失败:', error);
+				return null;
+			}
+		},
+		getCurrentTime() {
+			const currentTime = new Date();
+			// 将时间格式化为字符串，你可以根据需要进行调整
+			const formattedTime = currentTime.toISOString(); // 返回 ISO 格式的字符串，例如："2024-04-12T12:30:00.000Z"
+			return formattedTime;
 		},
 		encryptAESKeyWithPublicKey(publicKey, aesKeyBase64) {
 			const encrypt = new JSEncrypt();
