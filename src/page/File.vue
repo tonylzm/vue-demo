@@ -18,9 +18,9 @@
 					<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
 						:percentage="uploadProgress"></el-progress>
 				</div>
-				<div>
-					<span v-if="countdown > 0">{{ countdown }}秒倒计时</span>
-					<span v-else>倒计时结束</span>
+				<div style="margin-bottom: 20px; margin-top: -10px">
+					<el-tag type="primary"><span v-if="countdown > 0">请在{{ countdown }}秒内完成操作</span>
+						<span v-else>倒计时结束</span></el-tag>
 				</div>
 				<el-form ref="form" :model="form" label-width="120px">
 					<el-form-item label="考试名称">
@@ -262,8 +262,9 @@ export default {
 		async handleUpload() {
 			// 用户选择文件
 			const data = await this.sendVerifyInfo();
+			console.log(data);
 			//如果非法登录，文件删除
-			if (data === '非法登录') {
+			if (data == '非法登录') {
 				this.$message.error('请检查你的IP地址');
 				return;
 			}
@@ -313,6 +314,7 @@ export default {
 								return;
 							}
 							if (this.encryptedFile) {
+								this.$message.warning('倒计时开始，请在120秒内完成上传操作');
 								this.timer = setInterval(() => {
 									if (this.countdown > 0) {
 										this.countdown--;
@@ -432,9 +434,11 @@ export default {
 				// 处理后端的响应
 				console.log(response.data);
 				this.$message.success('验证成功');
+
 				return response.data;
 			} catch (error) {
 				this.$message.error('非法登录');
+
 				return '非法登录';
 			}
 		},

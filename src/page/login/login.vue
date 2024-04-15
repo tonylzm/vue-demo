@@ -12,13 +12,21 @@
               <el-form-item prop="name">
                 <el-input type="text" name="name" v-model="form.loginUsername" auto-complete="off" placeholder="请输入用户名"
                   required>
-                  <template slot="prepend"><i style="font-size:20px" class="el-icon-user"></i></template>
+                  <template #prepend>
+                    <el-icon>
+                      <User />
+                    </el-icon>
+                  </template>
                 </el-input>
               </el-form-item>
               <el-form-item prop="password">
                 <el-input type="password" name="password" v-model="form.loginPassword" auto-complete="off"
                   placeholder="请输入密码" required>
-                  <template slot="prepend"><i style="font-size:20px" class="el-icon-key"></i></template>
+                  <template #prepend>
+                    <el-icon>
+                      <Lock />
+                    </el-icon>
+                  </template>
                 </el-input>
               </el-form-item>
               <el-form-item>
