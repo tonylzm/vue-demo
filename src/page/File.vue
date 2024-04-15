@@ -14,13 +14,19 @@
 					<Promotion />
 				</el-icon></el-button>
 			<el-drawer v-model="drawer" title="试卷信息登记表格" :append-to-body="true" :before-close="handleClose" size="40%">
-				<div>
+				<div style="margin-top: -20px;">
 					<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
 						:percentage="uploadProgress"></el-progress>
 				</div>
-				<div style="margin-bottom: 20px; margin-top: -10px">
+				<div style="margin-bottom: 20px;">
 					<el-tag type="primary"><span v-if="countdown > 0">请在{{ countdown }}秒内完成操作</span>
 						<span v-else>倒计时结束</span></el-tag>
+					<el-tooltip class="box-item" effect="light" content="当倒计时开始后，你需要在120秒内完成上传操作，否则将会取消上传"
+						placement="bottom">
+						<el-icon color="#1E90FF">
+							<InfoFilled />
+						</el-icon>
+					</el-tooltip>
 				</div>
 				<el-form ref="form" :model="form" label-width="120px">
 					<el-form-item label="考试名称">
@@ -72,6 +78,12 @@
 					<el-form-item label="信息保存">
 						<el-switch v-model="form.delivery"
 							style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"></el-switch>
+						<el-tooltip class="box-item" effect="light" content="开启此按钮后,你输入的信息将会得到保存直至下次登录"
+							placement="bottom">
+							<el-icon color="#1E90FF">
+								<InfoFilled />
+							</el-icon>
+						</el-tooltip>
 					</el-form-item>
 					<el-form-item label="备注">
 						<el-input type="textarea" v-model="form.desc"></el-input>
@@ -80,7 +92,7 @@
 						<el-button type="primary" @click="onSubmit">信息上传<el-icon>
 								<Upload />
 							</el-icon></el-button>
-						<el-button>取消<el-icon>
+						<el-button @click="handleClose">取消<el-icon>
 								<Close />
 							</el-icon></el-button>
 					</el-form-item>
@@ -231,11 +243,14 @@ export default {
 	methods: {
 		changeEnable(row) {
 			console.log(row);
-
+		},
+		reset() {
+			this.name = '';
 		},
 		handleClose(done) {
 			this.$confirm('确认关闭？')
 				.then(_ => {
+					this.drawer = false;
 					if (this.form.delivery === false) {
 						this.form = {
 							name: '',
