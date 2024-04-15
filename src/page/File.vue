@@ -6,11 +6,15 @@
 			<el-button type="warning" @click="reset">重置</el-button>
 		</div>
 		<div style="margin: 10px 0">
-			<el-button type="primary" @click="drawer = true">试卷信息填写</el-button>
+			<el-button type="primary" @click="drawer = true">试卷信息填写<i class="el-icon-s-promotion"></i></el-button>
 			<el-drawer v-model="drawer" title="试卷信息登记表格" :append-to-body="true" :before-close="handleClose" size="40%">
 				<div>
 					<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
 						:percentage="uploadProgress"></el-progress>
+				</div>
+				<div>
+					<span v-if="countdown > 0">{{ countdown }}秒倒计时</span>
+					<span v-else>倒计时结束</span>
 				</div>
 				<el-form ref="form" :model="form" label-width="120px">
 					<el-form-item label="考试名称">
@@ -55,7 +59,8 @@
 						</el-col>
 					</el-form-item>
 					<el-form-item label="信息保存">
-						<el-switch v-model="form.delivery" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"></el-switch>
+						<el-switch v-model="form.delivery"
+							style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"></el-switch>
 					</el-form-item>
 					<el-form-item label="备注">
 						<el-input type="textarea" v-model="form.desc"></el-input>
@@ -98,7 +103,8 @@
 			</el-table-column>
 			<el-table-column label="启用">
 				<template v-slot="scope">
-					<el-switch v-model="scope.row.enable" style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
+					<el-switch v-model="scope.row.enable"
+						style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
 						@change="changeEnable(scope.row)"></el-switch>
 				</template>
 			</el-table-column>
@@ -193,6 +199,8 @@ export default {
 			fileName: '',
 			progressColor: '',
 			encryptedAESKey: '',
+			countdown: 120, // 初始化倒计时为120秒
+			timer: null,
 		}
 	},
 
@@ -220,6 +228,8 @@ export default {
 						};
 					}
 					this.encryptedFile = null;
+					this.countdown = 120;
+					clearInterval(this.timer);;
 					done();
 				})
 				.catch(_ => { });
@@ -228,8 +238,14 @@ export default {
 			this.Upload();
 			console.log('submit!');
 		},
-		handleUpload() {
+		async handleUpload() {
 			// 用户选择文件
+			const data = await this.sendVerifyInfo();
+			//如果非法登录，文件删除
+			if (data === '非法登录') {
+				this.$message.error('请检查你的IP地址');
+				return;
+			}
 			const fileInput = document.createElement('input');
 			fileInput.type = 'file';
 			fileInput.addEventListener('change', async () => {
@@ -268,9 +284,22 @@ export default {
 							const publicKey = await this.getPublicKeyFromServer();
 							// 使用公钥加密AES密钥  
 							this.encryptedAESKey = this.encryptAESKeyWithPublicKey(publicKey.toString(CryptoJS.enc.Base64), keyString);
-							console.log('encryptedAESKey', this.encryptedAESKey);
 							const data = await this.sendVerifyInfo();
-							//this.Upload();
+							//如果非法登录，文件删除
+							if (data === '非法登录') {
+								this.$message.error('验证失败，已取消上传');
+								this.encryptedFile = null;
+								return;
+							}
+							if (this.encryptedFile) {
+								this.timer = setInterval(() => {
+									if (this.countdown > 0) {
+										this.countdown--;
+									} else {
+										clearInterval(this.timer);
+									}
+								}, 1000);
+							}
 						} catch (error) {
 							console.error(error);
 						}
@@ -308,6 +337,9 @@ export default {
 						that.showProgress = false;
 					}, 1000);
 					that.loadData();
+					that.encryptedFile = null;
+					clearInterval(that.timer); // 上传成功后暂停计时
+					that.countdown = 120; // 重置倒计时
 				} else {
 					that.progressColor = 'OrangeRed';
 					that.$message.error('上传失败');
@@ -378,10 +410,11 @@ export default {
 				const response = await axios.post('https://localhost:8443/api/users/test', data);
 				// 处理后端的响应
 				console.log(response.data);
+				this.$message.success('验证成功');
+				return response.data;
 			} catch (error) {
-				console.error('发送验证信息失败:', error);
-				//弹出提示
 				this.$message.error('非法登录');
+				return '非法登录';
 			}
 		},
 
