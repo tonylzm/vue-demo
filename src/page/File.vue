@@ -9,6 +9,7 @@
 					<Refresh />
 				</el-icon></el-button>
 		</div>
+
 		<div style="margin: 10px 0">
 			<el-button type="primary" @click="drawer = true">试卷信息填写<el-icon>
 					<Promotion />
@@ -144,7 +145,7 @@
 					<el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
 						icon-color="red" title="开启后密码解开" @confirm="decrpyt(scope.row.name)">
 						<template #reference>
-							<el-button type="danger" slot="reference">验证出卷人身份 <el-icon>
+							<el-button type="danger" slot="reference" :disabled="scope.row.decrypt">解密该试卷<el-icon>
 									<Checked />
 								</el-icon>
 							</el-button>
@@ -548,6 +549,12 @@ export default {
 				.then(response => {
 					if (response.status === 200) {
 						this.$message.success('验证成功');
+						//将该行的解密该试卷按钮变成不可点击
+						this.tableData.forEach((item) => {
+							if (item.name === name) {
+								item.decrypt = true;
+							}
+						});
 					}
 				})
 				.catch(error => {
