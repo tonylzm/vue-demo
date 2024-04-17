@@ -32,6 +32,12 @@ const routes = [{
 	name: 'file',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/exercise.vue'),
 
+},
+{
+	path: '/home',
+	name: 'home',
+	component: () => import( /*webpackChunkName:'Home'*/ '@/page/home.vue'),
+
 }
 ]
 
