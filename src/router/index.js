@@ -34,6 +34,12 @@ const routes = [{
 
 },
 {
+	path: '/administrotor',
+	name: 'file',
+	component: () => import( /*webpackChunkName:'Home'*/ '@/page/administrotor.vue'),
+
+},
+{
 	path: '/home',
 	name: 'home',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/home.vue'),
