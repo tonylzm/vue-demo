@@ -75,10 +75,15 @@ export default {
                 username: this.username,
                 password: hashedPassword
             }).then(response => {
-                console.log('登录成功:', response.data);
-                this.$message.success('登录成功');
-                // 处理登录成功逻辑
-                router.push('/exercise'); // 替换 '/new-page' 为你想要跳转的页面路径
+                console.log('登录成功:', response.data.code);
+                if (response.data.code === 200) {
+                    this.$message.success('登录成功');
+                    // 处理登录成功逻辑
+                    router.push('/exercise'); // 替换 '/new-page' 为你想要跳转的页面路径
+                } else {
+                    this.$message.error('登录失败');
+                    // 处理登录失败逻辑
+                }
             }).catch(error => {
                 console.error('登录失败:', error);
                 // 处理登录失败逻辑
@@ -101,6 +106,7 @@ export default {
     height: 100vh;
     background-color: aquamarine;
     background: url("https://images.pexels.com/photos/936722/pexels-photo-936722.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1") no-repeat;
+    /* background: url("@/page/login/Screenshot_20240419_204337_com.huawei.photos.png") no-repeat; */
     background-size: cover;
 }
 

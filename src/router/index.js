@@ -4,14 +4,16 @@ import {
 } from "vue-router"
 const routes = [{
 	path: '/1',
-	name: 'login',
+	name: 'login1',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/login.vue')
-}, {
+}
+,{
 	path: '/',
 	name: 'files',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/File.vue'),
 
-}, {
+}
+, {
 	path: '/ok',
 	name: 'test1',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test.vue')
@@ -23,19 +25,19 @@ const routes = [{
 },
 {
 	path: '/hello',
-	name: 'file',
+	name: 'new',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/new.vue'),
 
 },
 {
 	path: '/exercise',
-	name: 'file',
+	name: 'exercise',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/exercise.vue'),
 
 },
 {
 	path: '/administrotor',
-	name: 'file',
+	name: 'administrotor',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/administrotor.vue'),
 
 },
@@ -44,7 +46,8 @@ const routes = [{
 	name: 'home',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/home.vue'),
 
-},{
+},
+{
 	path: '/4',
 	name: 'login',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/logintest.vue')
