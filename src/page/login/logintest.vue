@@ -75,7 +75,6 @@ export default {
                 username: this.username,
                 password: hashedPassword
             }).then(response => {
-                console.log('登录成功:', response.data.code);
                 if (response.data.code === 200) {
                     this.$message.success('登录成功');
                     // 处理登录成功逻辑

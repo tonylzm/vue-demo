@@ -128,7 +128,7 @@
 			</el-table-column>
 			<el-table-column label="加载预览">
 				<template v-slot="scope">
-					<el-button type="primary" @click="preview(scope.row.name)">加载预览<el-icon>
+					<el-button type="primary" @click="preview(scope.row.name, scope.row.decrypt)">加载预览<el-icon>
 							<Monitor />
 						</el-icon></el-button>
 				</template>
@@ -180,7 +180,7 @@
 					关闭
 				</el-button>
 				<div>
-					<el-button @click="innerDrawer = true">Click me!</el-button>
+					<el-button @click="innerDrawer = true" :disabled="!this.canclick">Click me!</el-button>
 					<el-drawer v-model="innerDrawer" title="I'm inner Drawer" :append-to-body="true"
 						:before-close="handleClose">
 						<p>_(:зゝ∠)_</p>
@@ -198,6 +198,7 @@ import axios from 'axios';
 import md5 from 'js-md5';
 import JSEncrypt from 'jsencrypt';
 import CryptoJS from 'crypto-js';
+import { ElLoading } from 'element-plus';
 export default {
 	data() {
 		return {
@@ -235,6 +236,9 @@ export default {
 			encryptedAESKey: '',
 			countdown: 120, // 初始化倒计时为120秒
 			timer: null,
+			fullscreenLoading: false,
+			canclick: false,
+			ipAddress: '',
 		}
 	},
 
@@ -430,8 +434,19 @@ export default {
 		},
 		//向后端发送验证信息，信息为随机生成的字符串，包含用户名时间，ip地址等信息
 		async sendVerifyInfo() {
+			// 生成随机字符串和其他信息
+			const loading = ElLoading.service({
+				lock: true,
+				text: '正在对你进行身份认证，请稍等...',
+				background: 'rgba(0, 0, 0, 0.7)',
+			});
+			let timerId; // 定时器 ID
 			try {
-				// 生成随机字符串和其他信息
+				// 处理后端的响应
+				timerId = setTimeout(() => {
+					// 如果请求没有完成，更改加载文本  
+					loading.setText('网络开小差了，正在拼命加载...');
+				}, 3000); // 2秒后触发
 				const hashedPassword = this.encryptedAESKey;
 				const username = "usts";
 				const time = this.getCurrentTime();
@@ -445,24 +460,29 @@ export default {
 					ipAddress
 					// 可以根据需要添加其他信息
 				};
+
 				// 发送 POST 请求给后端
 				const response = await axios.post('https://localhost:8443/api/users/test', data);
-				// 处理后端的响应
+
 				console.log(response.data);
+				clearTimeout(timerId);
+				loading.close();
 				this.$message.success('验证成功');
-
 				return response.data;
-			} catch (error) {
-				this.$message.error('非法登录');
 
+			} catch (error) {
+				clearTimeout(timerId);
+				loading.close();
+				this.$message.error('非法登录');
 				return '非法登录';
 			}
 		},
 
 		async getIPAddress() {
 			try {
-				const response = await axios.get('https://api.ipify.org?format=json');
-				return response.data.ip;
+				const response = await axios.get('http://ip-api.com/json/');
+				//https://api.ipify.org/?format=json 也可以获取ip地址
+				return response.data.query;
 			} catch (error) {
 				console.error('获取 IP 地址失败:', error);
 				return null;
@@ -563,7 +583,7 @@ export default {
 					this.$message.error('验证失败');
 				});
 		},
-		preview(fileName) {
+		preview(fileName, decrypt) {
 			axios.get(`https://localhost:8443/api/files/preview?fileName=${fileName}`, { responseType: 'blob' })
 				.then(response => {
 					// 成功获取预览数据后，加载到 <iframe> 中预览	
@@ -578,6 +598,7 @@ export default {
 							viewer.src = URL.createObjectURL(pdfData);
 						}, 100); // 等待1秒后设置src
 					});
+					this.canclick = decrypt;
 				})
 				.catch(error => {
 					console.error('Error loading preview:', error);
