@@ -24,7 +24,7 @@
                         <el-input placeholder="请输入内容" v-model="form.faculty" :disabled="true"></el-input>
                     </el-form-item>
                     <el-form-item label="真实姓名">
-                        <el-input v-model="form.name"></el-input>
+                        <el-input v-model="form.real_name"></el-input>
                     </el-form-item>
                     <el-form-item label="用户名">
                         <el-input v-model="form.username"></el-input>
@@ -51,31 +51,14 @@
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
-            <el-table-column prop="name" label="真实姓名"></el-table-column>
+            <el-table-column prop="real_name" label="真实姓名"></el-table-column>
             <el-table-column prop="username" label="用户名"></el-table-column>
             <el-table-column prop="password" label="密码"></el-table-column>
-            <el-table-column prop="permission" label="用户权限"></el-table-column>
-            <el-table-column label="下载">
-                <template v-slot="scope">
-                    <el-button type="primary" @click="download(scope.row.name)"><el-icon>
-                            <Download />
-                        </el-icon>
-                        下载</el-button>
-                </template>
-            </el-table-column>
+            <el-table-column prop="colleage" label="学院"></el-table-column>
+
 
             <el-table-column label="操作" width="200" align="center">
-                <template v-slot="scope">
-                    <el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
-                        icon-color="red" title="开启后密码解开" @confirm="decrpyt(scope.row.name)">
-                        <template #reference>
-                            <el-button type="danger" slot="reference">验证出卷人身份 <el-icon>
-                                    <Checked />
-                                </el-icon>
-                            </el-button>
-                        </template>
-                    </el-popconfirm>
-                </template>
+                <el-button type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
             </el-table-column>
         </el-table>
     </div>
@@ -91,14 +74,15 @@ export default {
 
             tableData: [{
                 id: '1',
-                name: '张天赐',
+                real_name: '张天赐',
                 username: 'ztc',
                 password: '123',
+                colleage: '电子与信息工程',
 
             },],
             form: {
                 faculty: '',
-                name: '',
+                real_name: '',
                 username: '',
                 password: '',
                 checkpassword: '',
