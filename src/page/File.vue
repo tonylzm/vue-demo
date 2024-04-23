@@ -1,5 +1,16 @@
 <template>
 	<div>
+		<div class="top-bar">
+			<span class="username">
+				<el-icon>
+					<UserFilled />
+				</el-icon> 欢迎你: {{ username }}
+				<el-select v-model="selectedOption" placeholder="操作" @change="handleOptionChange" class="custom-select">
+					<el-option label="退出登录" value="logout"></el-option>
+					<el-option label="切换登录" value="switchUser"></el-option>
+				</el-select>
+			</span>
+		</div>
 		<div style="margin: 10px 0">
 			<el-input style="width: 200px" placeholder="请输入名称" suffix-icon="el-icon-search" v-model="name"></el-input>
 			<el-button class="ml-5" type="primary" @click="loadData">搜索<el-icon>
@@ -9,18 +20,10 @@
 					<Refresh />
 				</el-icon></el-button>
 
-		<div class="top-bar">
-			<span class="username">
-			<el-icon><UserFilled /></el-icon> 欢迎你: {{ username }}
-			<el-select v-model="selectedOption" placeholder="操作" @change="handleOptionChange" class="custom-select">
-            	<el-option label="退出登录" value="logout"></el-option>
-      			<el-option label="切换登录" value="switchUser"></el-option>
-    		</el-select>
-			</span>
-		</div>
+
 
 		</div>
-		<div style="margin: 10px 0"> 
+		<div style="margin: 10px 0">
 			<el-button type="primary" @click="drawer = true">试卷信息填写<el-icon>
 					<Promotion />
 				</el-icon></el-button>
@@ -230,7 +233,7 @@ export default {
 			showProgress: false, // 是否显示进度条 
 			innerDrawer: false,
 			drawer: false,
-			
+
 			uploadParams: null,
 			form: {
 				name: '',
@@ -253,7 +256,7 @@ export default {
 			canclick: false,
 			ipAddress: '',
 			selectedOption: '' // 对账号选择的值
-		
+
 		}
 	},
 
@@ -621,16 +624,16 @@ export default {
 		},
 		handleOptionChange() {//对账号的选择
 			if (this.selectedOption === 'logout') {
-        	this.logout();
-      		} else if (this.selectedOption === 'switchUser') {
-        	this.switchUser();
-     		}
-     		 this.selectedOption = ''; // 重置选择器的值
-    	},
-		logout(){
+				this.logout();
+			} else if (this.selectedOption === 'switchUser') {
+				this.switchUser();
+			}
+			this.selectedOption = ''; // 重置选择器的值
+		},
+		logout() {
 			router.push('/4');
 		},
-		switchUser(){
+		switchUser() {
 			router.push('/4');
 		}
 	}
@@ -639,22 +642,26 @@ export default {
 
 <style>
 .top-bar {
-  display: flex;
-  justify-content: flex-end;
-  align-items: right;
-  margin-right: 10px;
+	display: flex;
+	justify-content: flex-end;
+	align-items: right;
+	margin-right: 10px;
 }
+
 .custom-select {
-  width: 80px; /* 设置选择框宽度 */
-  margin-left: auto; /* 靠右对齐 */
+	width: 80px;
+	/* 设置选择框宽度 */
+	margin-left: auto;
+	/* 靠右对齐 */
 }
+
 .username {
-  display: flex;
-  align-items: center;
+	display: flex;
+	align-items: center;
 }
 
 .username el-icon {
-  margin-right: 5px; /* 调整图标与文字之间的间距 */
+	margin-right: 5px;
+	/* 调整图标与文字之间的间距 */
 }
-
 </style>
