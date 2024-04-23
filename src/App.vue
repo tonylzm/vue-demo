@@ -1,7 +1,7 @@
 <template>
   <div id="app">
-    <Sidebar />
-    <div class="content">
+    <Sidebar v-if="!hideSidebar" />
+    <div class="content" :class="{ 'full-width': hideSidebar }">
       <router-view></router-view>
     </div>
   </div>
@@ -16,7 +16,6 @@ export default defineComponent({
   components: {
     Sidebar
   },
-
   computed: {
     hideSidebar() {
       // 检查当前路由的 meta 字段是否设置为不显示侧边栏
@@ -51,5 +50,14 @@ export default defineComponent({
   padding-left: 50px;
   margin-left: 200px;
   /* 这里是侧边栏的宽度 */
+}
+
+/* 可以根据需要添加样式 */
+.full-width {
+  width: 100%;
+  padding: 0;
+  /* 确保没有额外的内边距 */
+  margin: 0;
+  /* 确保没有额外的外边距 */
 }
 </style>
