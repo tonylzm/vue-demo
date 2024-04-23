@@ -53,7 +53,10 @@ const routes = [{
 {
 	path: '/4',
 	name: 'login',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/logintest.vue')
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/logintest.vue'),
+	meta: {
+        hideSidebar: true // 标记不显示侧边栏
+      }
 },
 {
 	path: '/5',
