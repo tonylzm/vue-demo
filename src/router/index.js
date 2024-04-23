@@ -5,7 +5,10 @@ import {
 const routes = [{
 	path: '/1',
 	name: 'login1',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/login.vue')
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/login.vue'),
+	meta: {
+        hideSidebar: true // 标记不显示侧边栏
+      }
 }
 ,{
 	path: '/',
@@ -51,6 +54,11 @@ const routes = [{
 	path: '/4',
 	name: 'login',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/logintest.vue')
+},
+{
+	path: '/5',
+	name: 'college',
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/college.vue')
 }
 ]
 
