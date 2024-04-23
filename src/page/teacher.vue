@@ -10,11 +10,12 @@
       <p>邮箱:{{ teacher.email }}</p>  
       <p>联系电话:{{ teacher.email }}</p>
       <div class="action-buttons">  
+        <el-button type="primary" @click="sendMessage">修改密码</el-button>  
         <el-button type="primary" @click="sendMessage">发送消息</el-button>  
         <el-button type="text" @click="viewCourses">查看课程</el-button>  
         <el-button type="danger" @click="contactAdmin">联系管理员</el-button>  
       </div>  
-    </div>  
+    </div> 
   </div>  
 </template>  
   
@@ -71,6 +72,6 @@ export default {
   
 .action-buttons {  
   margin-top: 20px;  
-  text-align: right;  
+  text-align: center;  
 }  
 </style>
