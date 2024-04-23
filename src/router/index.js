@@ -7,13 +7,13 @@ const routes = [{
 	name: 'login1',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/login.vue')
 }
-,{
+	, {
 	path: '/',
 	name: 'files',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/File.vue'),
 
 }
-, {
+	, {
 	path: '/ok',
 	name: 'test1',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test.vue')
@@ -51,7 +51,12 @@ const routes = [{
 	path: '/4',
 	name: 'login',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/logintest.vue')
-}
+},
+{
+	path: '/personalcentre',
+	name: 'personalcentre',
+	component: () => import( /*webpackChunkName:'Home'*/ '@/page/personalcentre.vue')
+},
 ]
 
 const router = createRouter({
