@@ -69,7 +69,7 @@ export default {
     },
     methods: {
         handleSubmit() {
-            //const hashedPassword = hashPassword(this.loginPassword);
+            //const hashedPassword = hashPassword(this.password);
             const hashedPassword = this.password;
             axios.post('https://localhost:8443/api/users/login', {
                 username: this.username,

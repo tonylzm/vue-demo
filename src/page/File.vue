@@ -8,9 +8,19 @@
 			<el-button type="warning" @click="reset">重置<el-icon>
 					<Refresh />
 				</el-icon></el-button>
+
+		<div class="top-bar">
+			<span class="username">
+			<el-icon><UserFilled /></el-icon> 欢迎你: {{ username }}
+			<el-select v-model="selectedOption" placeholder="操作" @change="handleOptionChange" class="custom-select">
+            	<el-option label="退出登录" value="logout"></el-option>
+      			<el-option label="切换登录" value="switchUser"></el-option>
+    		</el-select>
+			</span>
 		</div>
 
-		<div style="margin: 10px 0">
+		</div>
+		<div style="margin: 10px 0"> 
 			<el-button type="primary" @click="drawer = true">试卷信息填写<el-icon>
 					<Promotion />
 				</el-icon></el-button>
@@ -133,13 +143,13 @@
 						</el-icon></el-button>
 				</template>
 			</el-table-column>
-			<el-table-column label="启用">
+			<!-- <el-table-column label="启用">
 				<template v-slot="scope">
 					<el-switch v-model="scope.row.enable"
 						style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
 						@change="changeEnable(scope.row)"></el-switch>
 				</template>
-			</el-table-column>
+			</el-table-column> -->
 			<el-table-column label="操作" width="200" align="center">
 				<template v-slot="scope">
 					<el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
@@ -194,6 +204,7 @@
 </template>
 
 <script>
+import router from '../router'; // 导入Vue Router实例
 import axios from 'axios';
 import md5 from 'js-md5';
 import JSEncrypt from 'jsencrypt';
@@ -219,6 +230,7 @@ export default {
 			showProgress: false, // 是否显示进度条 
 			innerDrawer: false,
 			drawer: false,
+			
 			uploadParams: null,
 			form: {
 				name: '',
@@ -240,6 +252,8 @@ export default {
 			fullscreenLoading: false,
 			canclick: false,
 			ipAddress: '',
+			selectedOption: '' // 对账号选择的值
+		
 		}
 	},
 
@@ -604,11 +618,43 @@ export default {
 				.catch(error => {
 					this.$message.error('加载预览失败');
 				});
+		},
+		handleOptionChange() {//对账号的选择
+			if (this.selectedOption === 'logout') {
+        	this.logout();
+      		} else if (this.selectedOption === 'switchUser') {
+        	this.switchUser();
+     		}
+     		 this.selectedOption = ''; // 重置选择器的值
+    	},
+		logout(){
+			router.push('/4');
+		},
+		switchUser(){
+			router.push('/4');
 		}
 	}
 }
 </script>
 
 <style>
-/* Your styles here */
+.top-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: right;
+  margin-right: 10px;
+}
+.custom-select {
+  width: 80px; /* 设置选择框宽度 */
+  margin-left: auto; /* 靠右对齐 */
+}
+.username {
+  display: flex;
+  align-items: center;
+}
+
+.username el-icon {
+  margin-right: 5px; /* 调整图标与文字之间的间距 */
+}
+
 </style>
