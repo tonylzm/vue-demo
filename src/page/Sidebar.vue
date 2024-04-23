@@ -2,7 +2,7 @@
     <div class="sidebar">
         <el-row class="tac">
             <el-col :span="50" :border="false">
-                <h5 class="mb-2">Default colors</h5>
+                <img src="../page/login/th.jpg" alt="Image" style="width: 200px; height: auto;" />
                 <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
                     <el-sub-menu index="1">
                         <template #title>
@@ -68,7 +68,7 @@ export default {
     position: fixed;
     top: 0;
     left: 0;
-    padding: 20px;
+    padding-top: 10px;
     width: auto;
 }
 </style>
