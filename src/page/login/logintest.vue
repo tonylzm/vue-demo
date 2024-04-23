@@ -78,6 +78,9 @@ export default {
                 if (response.data.code === 200) {
                     this.$message.success('登录成功');
                     // 处理登录成功逻辑
+                    //将用户信息保存到本地存储
+                    localStorage.clear();
+                    localStorage.setItem('user', JSON.stringify(response.data.body));
                     router.push('/exercise'); // 替换 '/new-page' 为你想要跳转的页面路径
                 } else {
                     this.$message.error('登录失败');

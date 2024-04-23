@@ -213,7 +213,8 @@ export default {
 			previewModalVisible: false, // 控制模态框的显示/隐藏
 			previewData: '', // 存储预览数据
 			visible: false,
-			username: 'your_username_value',
+			username: JSON.parse(localStorage.getItem('user')).username,
+			college: JSON.parse(localStorage.getItem('user')).college,
 			uploadProgress: 0,
 			showProgress: false, // 是否显示进度条 
 			innerDrawer: false,
@@ -292,8 +293,8 @@ export default {
 			fileInput.type = 'file';
 			fileInput.addEventListener('change', async () => {
 				const file = fileInput.files[0];
-				this.fileName = file.name;
-				console.log('fileName', this.fileName);
+				this.fileName = this.username + file.name;
+				//console.log('fileName', this.fileName);
 				return new Promise(async (resolve, reject) => {
 					const reader = new FileReader();
 					reader.onload = async (event) => {
@@ -302,7 +303,7 @@ export default {
 						// 将 ArrayBuffer 转换为字符串  
 						const hashString = Array.prototype.map.call(new Uint8Array(hash), x => ('00' + x.toString(16)).slice(-2)).join('');
 						this.md5Value = hashString;
-						console.log('md5Value', this.md5Value);
+						//console.log('md5Value', this.md5Value);
 						try {
 							// 生成加密密钥
 							const key = await window.crypto.subtle.generateKey(
@@ -314,8 +315,7 @@ export default {
 							const exportedKey = await window.crypto.subtle.exportKey('raw', key);
 							const keyString = btoa(String.fromCharCode.apply(null, new Uint8Array(exportedKey)));
 							const fileBuffer = arrayBuffer;
-							console.log('keyString', keyString);
-							//console.log(12)
+							//console.log('keyString', keyString);
 							const encryptedData = await window.crypto.subtle.encrypt(
 								{ name: 'AES-GCM', iv: new Uint8Array(12) },
 								key,
@@ -344,11 +344,11 @@ export default {
 								}, 1000);
 							}
 						} catch (error) {
-							console.error(error);
+							this.$message.error('加密失败');
 						}
 					};
 					reader.onerror = (error) => {
-						console.log(2)
+						this.$message.error('文件读取失败');
 					};
 					reader.readAsArrayBuffer(file);
 				});
@@ -364,8 +364,8 @@ export default {
 			formData.append('md5', this.md5Value);
 			formData.append('fileName', this.fileName);
 			formData.append('aesKey', this.encryptedAESKey);
-			formData.append('username', "usts");
-			formData.append('from', "usts");
+			formData.append('username', this.username);
+			formData.append('from', this.college);
 			formData.append('info', JSON.stringify(this.form));
 			var that = this;
 			var xhr = new XMLHttpRequest();
@@ -385,7 +385,7 @@ export default {
 					that.countdown = 120; // 重置倒计时
 				} else {
 					that.progressColor = 'OrangeRed';
-					that.$message.error('上传失败');
+					that.$message.error('上传失败！' + xhr.responseText);
 					setTimeout(() => {
 						that.showProgress = false;
 					}, 2000);
@@ -397,7 +397,6 @@ export default {
 				if (event.lengthComputable) {
 					var percent = Math.floor(event.loaded / event.total * 100);
 					that.uploadProgress = parseInt(percent);
-
 				}
 			};
 			xhr.send(formData);
@@ -440,7 +439,8 @@ export default {
 				text: '正在对你进行身份认证，请稍等...',
 				background: 'rgba(0, 0, 0, 0.7)',
 			});
-			let timerId; // 定时器 ID
+			let timerId;
+			// 定时器 ID
 			try {
 				// 处理后端的响应
 				timerId = setTimeout(() => {
@@ -448,7 +448,7 @@ export default {
 					loading.setText('网络开小差了，正在拼命加载...');
 				}, 3000); // 2秒后触发
 				const hashedPassword = this.encryptedAESKey;
-				const username = "usts";
+				const username = this.username;
 				const time = this.getCurrentTime();
 				const ipAddress = await this.getIPAddress(); // 这里假设你有一个获取 IP 地址的方法
 				console.log(hashedPassword)
@@ -494,6 +494,7 @@ export default {
 			const formattedTime = currentTime.toISOString(); // 返回 ISO 格式的字符串，例如："2024-04-12T12:30:00.000Z"
 			return formattedTime;
 		},
+		// 使用 RSA 公钥加密 AES 密钥的方法
 		encryptAESKeyWithPublicKey(publicKey, aesKeyBase64) {
 			const encrypt = new JSEncrypt();
 			encrypt.setPublicKey(publicKey);
@@ -501,10 +502,11 @@ export default {
 			return encryptedAESKey;
 		},
 		loadData() {
-			axios.get('https://localhost:8443/api/files/page', {
+			axios.get('https://localhost:8443/api/files/pageByProduced', {
 				params: {
 					pageNum: this.pageNum,
 					pageSize: this.pageSize,
+					produced: this.username,
 					name: this.name
 				}
 			}).then(response => {
@@ -579,7 +581,6 @@ export default {
 				})
 				.catch(error => {
 					// Handle errors here
-					console.error('Error decrypting file:', error);
 					this.$message.error('验证失败');
 				});
 		},
@@ -601,7 +602,7 @@ export default {
 					this.canclick = decrypt;
 				})
 				.catch(error => {
-					console.error('Error loading preview:', error);
+					this.$message.error('加载预览失败');
 				});
 		}
 	}
