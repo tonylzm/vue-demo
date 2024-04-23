@@ -12,7 +12,7 @@
                         </template>
 
                         <el-menu-item index="1-1" @click="switchPage">试卷上传</el-menu-item>
-                        <el-menu-item index="1-2">试卷审查</el-menu-item>
+                        <el-menu-item index="1-2"  @click="sPage2">试卷审查</el-menu-item>
 
                         <!-- <el-sub-menu index="1-1">
                           <template #title>试卷审查</template>
@@ -21,7 +21,7 @@
 
                     </el-sub-menu>
 
-                    <el-menu-item index="/">
+                    <el-menu-item index="/1">
                         <el-icon>
                             <document />
                         </el-icon>
@@ -35,11 +35,11 @@
                       <span>Navigator Three</span>
                   </el-menu-item> -->
 
-                    <el-menu-item index="4">
+                    <el-menu-item index="4" @click="sPage2">
                         <el-icon>
                             <setting />
                         </el-icon>
-                        <span>个人管理</span>
+                        <span >个人管理</span>
                     </el-menu-item>
                 </el-menu>
             </el-aside>
@@ -60,17 +60,21 @@
 }
 </style>
 <script>
+import router from '../router'; // 导入Vue Router实例
 export default {
     data: function () {
         return {
             loading: true,
-            flowSrc: '',
+            flowSrc: '/4',
         };
     },
     methods: {
         switchPage: function () {
+            router.push('/1');
+        },
+        sPage2: function () {
             var iframe = document.querySelector("iframe");
-            iframe.src = "/1";
+            iframe.src = '/1';
         },
     }
 }
