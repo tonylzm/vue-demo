@@ -21,7 +21,8 @@ const routes = [{
 	, {
 	path: '/ok',
 	name: 'test1',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test.vue')
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['user','check'] } 
 },
 {
 	path: '/3',
@@ -88,15 +89,11 @@ router.beforeEach((to, from, next) => {
 	const isLoggedIn = !!localStorage.getItem('user'); // Check if user is logged in
 	const user = JSON.parse(localStorage.getItem('user'));
 	const userRole = user ? user.role : null; // Get user role
-	console.log(userRole)
-	if (to.meta.requiresAuth && !isLoggedIn) {
-		console.log(1)
-	  next('/login'); // Redirect to login page if authentication is required but user is not logged in
+	if (to.meta.requiresAuth && !isLoggedIn) {	
+	  next('/4'); // Redirect to login page if authentication is required but user is not logged in
 	} else if (to.meta.requiredRoles && !to.meta.requiredRoles.includes(userRole)) {
-		console.log(2)
 	  next('/unauthorized'); // Redirect to unauthorized page if user's role doesn't match required roles
 	} else {
-		console.log(to.meta.requiredRoles)
 	  next(); // Proceed to the requested page
 	}
   })
