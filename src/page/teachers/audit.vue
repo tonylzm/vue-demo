@@ -330,6 +330,11 @@ export default {
 				} = response.data.body;
 				console.log(content)
 				this.tableData = content;
+                this.tableData.forEach((item) => {
+					item.status = item.check.checkStatus;
+                    item.class_check= item.check.classCheck;
+                    item.college_check= item.check.collegeCheck;
+				});
 				this.total = totalElements;
 				this.pageNum = number + 1;
 			}).catch(error => {
@@ -439,6 +444,7 @@ export default {
 				} = response.data;
 				console.log(content)
 				this.historyData = content;
+                
 				this.total = totalElements;
 				this.pageNum = number + 1;
 			}).catch(error => {
