@@ -611,7 +611,7 @@ export default {
 					this.canclick = decrypt;
 				})
 				.catch(error => {
-					this.$message.error('加载预览失败');
+					this.$message.error('文件已经删除');
 				});
 		}
 	}

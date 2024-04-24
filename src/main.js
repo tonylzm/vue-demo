@@ -17,6 +17,9 @@ app.use(router)
 app.use(ElementPlus, {
 	locale: zhCn
 })
+function logout() {
+	localStorage.clear();
+  }
 // 捕获全局范围内的运行时错误
 window.onerror = function(message, source, lineno, colno, error) {
 	// 在这里可以根据需要进行错误处理，比如记录错误信息，然后重定向到404页面
@@ -27,6 +30,12 @@ window.onerror = function(message, source, lineno, colno, error) {
 	return true
   }
 
+  //如果sessionStorage中没有user信息，那么跳转到登录页面
+  if (sessionStorage.getItem('user')===null) {
+	logout();
+  }
+
+  
 for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 	app.component(key, component)
 }
