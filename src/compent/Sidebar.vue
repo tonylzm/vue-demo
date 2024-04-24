@@ -48,6 +48,11 @@
 <script>
 export default {
     name: 'Sidebar',
+    created() {
+        // 在组件创建时获取用户权限信息
+        const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).username : null;
+        this.hasPermission = user && user.role === 'user'; // 假设只有管理员有权限访问
+    },
     methods: {
         gotoItemOne() {
             this.$router.push('/');

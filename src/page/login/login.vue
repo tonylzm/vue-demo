@@ -113,7 +113,7 @@ export default {
         console.log('登录成功:', response.data);
         this.$message.success('登录成功');
         // 处理登录成功逻辑
-        router.push('/exercise'); // 替换 '/new-page' 为你想要跳转的页面路径
+        router.push('/'); // 替换 '/new-page' 为你想要跳转的页面路径
       }).catch(error => {
         console.error('登录失败:', error);
         // 处理登录失败逻辑
