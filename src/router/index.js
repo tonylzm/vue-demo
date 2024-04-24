@@ -34,12 +34,6 @@ const routes = [{
 
 },
 {
-	path: '/exercise',
-	name: 'exercise',
-	component: () => import( /*webpackChunkName:'Home'*/ '@/page/exercise.vue'),
-
-},
-{
 	path: '/administrotor',
 	name: 'administrotor',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/administrotor.vue'),
@@ -68,7 +62,12 @@ const routes = [{
 {
 	path: '/teacher',
 	name: 'teacher',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/teacher.vue')
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/teachers/teacher.vue')
+},
+{
+	path: '/audit',
+	name: 'audit',
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/teachers/audit.vue')
 }
 
 ]
