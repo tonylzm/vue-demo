@@ -71,6 +71,11 @@ const routes = [{
 	path: '/teacher',
 	name: 'teacher',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/teacher.vue')
+},
+{
+	path: '/personalcentre',
+	name: 'personalcentre',
+	component: () => import( /*webpackChunkName:'Home'*/ '@/page/personalcentre.vue'),
 }, {
 	path: '/unauthorized',
 	name: '404',
