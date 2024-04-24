@@ -7,16 +7,17 @@ const routes = [{
 	name: 'login1',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/login.vue'),
 	meta: {
-        hideSidebar: true // 标记不显示侧边栏
-      }
+		hideSidebar: true, // 标记不显示侧边栏
+		hideHeader: true // 标记不显示头部
+	}
 }
-,{
+	, {
 	path: '/',
 	name: 'files',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/File.vue'),
 
 }
-, {
+	, {
 	path: '/ok',
 	name: 'test1',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test.vue')
@@ -55,8 +56,9 @@ const routes = [{
 	name: 'login',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/logintest.vue'),
 	meta: {
-        hideSidebar: true // 标记不显示侧边栏
-      }
+		hideSidebar: true, // 标记不显示侧边栏，
+		hideHeader: true // 标记不显示头部
+	}
 },
 {
 	path: '/5',
@@ -68,6 +70,7 @@ const routes = [{
 	name: 'teacher',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/teacher.vue')
 }
+
 ]
 
 const router = createRouter({

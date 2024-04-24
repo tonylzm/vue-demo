@@ -1,16 +1,5 @@
 <template>
 	<div>
-		<div class="top-bar">
-			<span class="username">
-				<el-icon>
-					<UserFilled />
-				</el-icon> 欢迎你: {{ username }}
-				<el-select v-model="selectedOption" placeholder="操作" @change="handleOptionChange" class="custom-select">
-					<el-option label="退出登录" value="logout"></el-option>
-					<el-option label="切换登录" value="switchUser"></el-option>
-				</el-select>
-			</span>
-		</div>
 		<div style="margin: 10px 0">
 			<el-input style="width: 200px" placeholder="请输入名称" suffix-icon="el-icon-search" v-model="name"></el-input>
 			<el-button class="ml-5" type="primary" @click="loadData">搜索<el-icon>
@@ -621,47 +610,9 @@ export default {
 				.catch(error => {
 					this.$message.error('加载预览失败');
 				});
-		},
-		handleOptionChange() {//对账号的选择
-			if (this.selectedOption === 'logout') {
-				this.logout();
-			} else if (this.selectedOption === 'switchUser') {
-				this.switchUser();
-			}
-			this.selectedOption = ''; // 重置选择器的值
-		},
-		logout() {
-			router.push('/4');
-		},
-		switchUser() {
-			router.push('/4');
 		}
 	}
 }
 </script>
 
-<style>
-.top-bar {
-	display: flex;
-	justify-content: flex-end;
-	align-items: right;
-	margin-right: 10px;
-}
-
-.custom-select {
-	width: 80px;
-	/* 设置选择框宽度 */
-	margin-left: auto;
-	/* 靠右对齐 */
-}
-
-.username {
-	display: flex;
-	align-items: center;
-}
-
-.username el-icon {
-	margin-right: 5px;
-	/* 调整图标与文字之间的间距 */
-}
-</style>
+<style></style>
