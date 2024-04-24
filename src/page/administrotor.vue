@@ -21,7 +21,7 @@
                 </div>
                 <el-form ref="form" :model="form" label-width="120px">
                     <el-form-item label="院系">
-                        <el-input placeholder="请输入内容" v-model="form.faculty" :disabled="true"></el-input>
+                        <el-input placeholder="请输入内容" v-model="form.college" :disabled="true"></el-input>
                     </el-form-item>
                     <el-form-item label="真实姓名">
                         <el-input v-model="form.real_name"></el-input>
@@ -65,6 +65,8 @@
 </template>
 <style></style>
 <script>
+import axios from 'axios';
+import { ElLoading } from 'element-plus';
 export default {
     data: function () {
         return {
@@ -77,11 +79,11 @@ export default {
                 real_name: '张天赐',
                 username: 'ztc',
                 password: '123',
-                colleage: '电子与信息工程',
+                college: '电子与信息工程',
 
             },],
             form: {
-                faculty: '',
+                college: JSON.parse(localStorage.getItem('user')).college,
                 real_name: '',
                 username: '',
                 password: '',
@@ -121,7 +123,30 @@ export default {
                 .catch(_ => { });
         },
         onSubmit() {
-            // this.Upload();
+            const loading = ElLoading.service({
+                lock: true,
+                text: '正在注册用户，请稍等...',
+                background: 'rgba(0, 0, 0, 0.7)',
+            });
+            const data = {
+                username: this.form.username,
+                password: this.form.password,
+                realName: this.form.real_name,
+                college: this.form.college,
+            }
+            axios.post('https://localhost:8443/api/users/check_register', data, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(response => {
+                console.log(response.data)
+                loading.close();
+                this.$message.success('注册成功');
+            }).catch(error => {
+                console.error('Error loading data:', error);
+                loading.close();
+                this.$message.error('注册失败');
+            });
             console.log('submit!');
         },
     }
