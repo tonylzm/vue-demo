@@ -1,7 +1,7 @@
 <template>  
   <div class="teacher-profile">  
     <div class="profile-photo">  
-      <img :src="teacher.photoUrl" alt="Teacher Photo" />  
+      <img :src="src/page/login/Screenshot_20240419_204337_com.huawei.photos.png" alt="Teacher Photo" />  
     </div>  
     <div class="profile-info">  
       <h2>姓名:{{ teacher.name }}</h2>  
