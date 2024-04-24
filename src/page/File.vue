@@ -120,6 +120,7 @@
 			<el-table-column prop="name" label="文件名称"></el-table-column>
 			<el-table-column prop="produced" label="出卷人"></el-table-column>
 			<el-table-column prop="size" label="文件大小(kb)"></el-table-column>
+			<el-table-column prop="checkStatus" label="审核状态"></el-table-column>
 			<el-table-column label="下载">
 				<template v-slot="scope">
 					<el-button type="primary" @click="download(scope.row.name)"><el-icon>
@@ -523,8 +524,10 @@ export default {
 					totalElements,
 					number
 				} = response.data.body;
-				console.log(content)
 				this.tableData = content;
+				this.tableData.forEach((item) => {
+					item.checkStatus = item.check.checkStatus;
+				});
 				this.total = totalElements;
 				this.pageNum = number + 1;
 			}).catch(error => {

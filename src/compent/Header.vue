@@ -36,9 +36,11 @@ export default {
             this.selectedOption = ''; // 重置选择器的值
         },
         logout() {
+            localStorage.clear();
             router.push('/4');
         },
         switchUser() {
+            localStorage.clear();
             router.push('/4');
         }
     }
