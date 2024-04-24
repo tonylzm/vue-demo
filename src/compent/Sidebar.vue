@@ -2,7 +2,6 @@
     <div class="sidebar">
         <el-row class="tac">
             <el-col :span="50" :border="false">
-                <img src="../page/login/th.jpg" alt="Image" style="width: 200px; height: auto;" />
                 <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
                     <el-sub-menu index="1">
                         <template #title>
@@ -24,7 +23,9 @@
                         </el-sub-menu>
                     </el-sub-menu>
                     <el-menu-item index="2">
-                        <el-icon><icon-menu /></el-icon>
+                        <el-icon>
+                            <Menu />
+                        </el-icon>
                         <span>Navigator Two</span>
                     </el-menu-item>
                     <el-menu-item index="3" disabled>
@@ -66,9 +67,6 @@ export default {
 <style>
 .sidebar {
     position: fixed;
-    top: 0;
-    left: 0;
-    padding-top: 10px;
     width: auto;
 }
 </style>

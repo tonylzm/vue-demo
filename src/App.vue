@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+    <Header v-if="!hideHeader" />
     <Sidebar v-if="!hideSidebar" />
     <div class="content" :class="{ 'full-width': hideSidebar }">
       <router-view></router-view>
@@ -9,17 +10,24 @@
 
 <script>
 import { defineComponent } from "vue";
-import Sidebar from '@/page/Sidebar.vue';
+import Sidebar from '@/compent/Sidebar.vue';
+import Header from '@/compent/Header.vue';
+
 
 export default defineComponent({
   name: 'App',
   components: {
-    Sidebar
+    Sidebar,
+    Header
   },
   computed: {
     hideSidebar() {
       // 检查当前路由的 meta 字段是否设置为不显示侧边栏
       return this.$route.meta.hideSidebar || false
+    },
+    hideHeader() {
+      // 检查当前路由的 meta 字段是否设置为不显示头部
+      return this.$route.meta.hideHeader || false
     }
   },
   setup() {
@@ -47,7 +55,6 @@ export default defineComponent({
 
 <style>
 .content {
-  padding-left: 50px;
   margin-left: 200px;
   /* 这里是侧边栏的宽度 */
 }
