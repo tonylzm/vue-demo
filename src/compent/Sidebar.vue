@@ -11,7 +11,8 @@
                             <span>Navigator One</span>
                         </template>
                         <el-menu-item-group title="Group One">
-                            <el-menu-item index="1-1" @click="gotoItemOne">item one</el-menu-item>
+                            <el-menu-item index="1-1" @click="gotoItemOne" :disabled="!hasPermission">item
+                                one</el-menu-item>
                             <el-menu-item index="1-2">item two</el-menu-item>
                         </el-menu-item-group>
                         <el-menu-item-group title="Group Two">
@@ -49,6 +50,11 @@
 <script>
 export default {
     name: 'Sidebar',
+    created() {
+        // 在组件创建时获取用户权限信息
+        const user = JSON.parse(localStorage.getItem('user'));
+        this.hasPermission = user && user.role === 'user'; // 假设只有管理员有权限访问
+    },
     methods: {
         gotoItemOne() {
             this.$router.push('/');
