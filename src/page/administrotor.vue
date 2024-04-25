@@ -19,27 +19,33 @@
                     <el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
                         :percentage="uploadProgress"></el-progress>
                 </div>
-                <el-form ref="form" :model="form" label-width="120px">
+                <el-form ref="form" :model="form" label-width="120px" :rules="rules">
                     <el-form-item label="院系">
                         <el-input placeholder="请输入内容" v-model="form.college" :disabled="true"></el-input>
                     </el-form-item>
-                    <el-form-item label="真实姓名">
+                    <el-form-item label="真实姓名" prop="real_name">
                         <el-input v-model="form.real_name"></el-input>
                     </el-form-item>
-                    <el-form-item label="用户名">
+                    <el-form-item label="用户名" prop="username">
                         <el-input v-model="form.username"></el-input>
                     </el-form-item>
-                    <el-form-item label="密码">
-                        <el-input v-model="form.password"></el-input>
+                    <el-form-item label="密码" prop="password">
+                        <el-input v-model="form.password" autocomplete="off" show-password></el-input>
                     </el-form-item>
-                    <el-form-item label="确认密码">
-                        <el-input v-model="form.checkpassword"></el-input>
+                    <el-form-item label="确认密码" prop="checkpassword">
+                        <el-input v-model="form.checkpassword" autocomplete="off" show-password></el-input>
+                    </el-form-item>
+                    <el-form-item label="手机号" prop="tel">
+                        <el-input v-model="form.tel"></el-input>
+                    </el-form-item>
+                    <el-form-item label="邮箱" prop="email">
+                        <el-input v-model="form.email"></el-input>
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="onSubmit">确认<el-icon>
                                 <Upload />
                             </el-icon></el-button>
-                        <el-button @click="handleClose">取消<el-icon>
+                        <el-button @click="resetForm('form')">重置<el-icon>
                                 <Close />
                             </el-icon></el-button>
                     </el-form-item>
@@ -55,6 +61,8 @@
             <el-table-column prop="username" label="用户名"></el-table-column>
             <el-table-column prop="password" label="密码"></el-table-column>
             <el-table-column prop="college" label="学院"></el-table-column>
+            <el-table-column prop="tel" label="手机号"></el-table-column>
+            <el-table-column prop="email" label="邮箱"></el-table-column>
 
 
             <el-table-column label="操作" width="200" align="center">
@@ -77,6 +85,27 @@ import axios from 'axios';
 import { ElLoading } from 'element-plus';
 export default {
     data: function () {
+
+        // 校验密码
+        var validatePass = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入密码'));
+            } else {
+                if (this.form.checkpassword !== '') {
+                    this.$refs.form.validateField('checkpassword');
+                }
+                callback();
+            }
+        };
+        var validatePass2 = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请再次输入密码'));
+            } else if (value !== this.form.password) {
+                callback(new Error('两次输入密码不一致!'));
+            } else {
+                callback();
+            }
+        };
         return {
             loading: true,
             flowSrc: '',
@@ -91,7 +120,70 @@ export default {
                 username: '',
                 password: '',
                 checkpassword: '',
+                tel: '',
+                email: '',
 
+            },
+            rules: {
+                real_name: [
+                    {
+                        required: true,
+                        message: '请输入真实姓名',
+                        trigger: 'blur'
+                    },
+                    {
+                        pattern: /^[\u4e00-\u9fa5]+$/,
+                        message: '姓名必须是中文',
+                        trigger: 'blur'
+                    }
+                ],
+                username: [
+                    {
+                        required: true,
+                        message: '请输入用户名',
+                        trigger: 'blur'
+                    },
+                    {
+                        pattern: /^[a-zA-Z0-9_\u4e00-\u9fa5]+$/,
+                        message: '用户名只能包含英文、中文、下划线',
+                        trigger: 'blur'
+                    }
+                ],
+                password: [
+                    { validator: validatePass, trigger: 'blur' },
+                    {
+                        pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,16}$/,
+                        message: '密码必须包含数字、英文且至少8位最长16位',
+                        trigger: 'blur'
+                    }
+                ],
+                checkpassword: [
+                    { validator: validatePass2, trigger: 'blur' }
+                ],
+                tel: [
+                    {
+                        required: true,
+                        message: '请输入手机号',
+                        trigger: 'blur'
+                    },
+                    {
+                        pattern: /^[1-9]\d{10}$/,
+                        message: '手机号格式不正确',
+                        trigger: 'blur'
+                    }
+                ],
+                email: [
+                    {
+                        required: true,
+                        message: '请输入邮箱',
+                        trigger: 'blur'
+                    },
+                    {
+                        type: 'email',
+                        message: '邮箱格式不正确',
+                        trigger: 'blur'
+                    }
+                ],
             },
         };
     },
@@ -116,6 +208,8 @@ export default {
                         username: '',
                         password: '',
                         checkpassword: '',
+                        tel: '',
+                        email: '',
                         delivery: false,
                         desc: ''
                     };
@@ -135,6 +229,8 @@ export default {
                 password: this.form.password,
                 realName: this.form.real_name,
                 college: this.form.college,
+                tel: this.form.tel,
+                email: this.form.email,
             }
             axios.post('https://localhost:8443/api/users/check_register', data, {
                 headers: {
@@ -210,6 +306,10 @@ export default {
                 .catch(() => {
                     this.$message.info('取消删除');
                 });
+        },
+        // 重置
+        resetForm(formName) {
+            this.$refs[formName].resetFields();
         },
     }
 };
