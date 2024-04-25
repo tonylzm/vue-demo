@@ -132,7 +132,7 @@ export default {
             // this.Upload();
             console.log(this.form.prepassword);
             console.log(this.form.newpassword);
-            console.log(this.form.conpassword);
+            console.log(this.conpassword);
         },
         Upload() {
             // 构建 FormData 对象，用于发送文件
