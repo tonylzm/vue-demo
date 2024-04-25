@@ -27,30 +27,28 @@ const routes = [{
 {
 	path: '/3',
 	name: 'test',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test2.vue')
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test2.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
 },
 {
 	path: '/hello',
 	name: 'new',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/new.vue'),
-
-},
-{
-	path: '/exercise',
-	name: 'exercise',
-	component: () => import( /*webpackChunkName:'Home'*/ '@/page/exercise.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
 
 },
 {
 	path: '/administrotor',
 	name: 'administrotor',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/administrotor.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
 
 },
 {
 	path: '/home',
 	name: 'home',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/home.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
 
 },
 {
@@ -65,21 +63,31 @@ const routes = [{
 {
 	path: '/5',
 	name: 'college',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/college.vue')
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/college.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
 },
 {
 	path: '/teacher',
 	name: 'teacher',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/teacher.vue')
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/teachers/teacher.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+},
+{
+	path: '/audit',
+	name: 'audit',
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/teachers/audit.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
 },
 {
 	path: '/personalcentre',
 	name: 'personalcentre',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/personalcentre.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
 }, {
 	path: '/unauthorized',
 	name: '404',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/error/404.vue')
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/error/404.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
 }
 
 ]

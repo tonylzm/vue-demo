@@ -81,6 +81,9 @@ export default {
                     //将用户信息保存到本地存储
                     localStorage.clear();
                     localStorage.setItem('user', JSON.stringify(response.data.body));
+                    //将用户信息保存到sessionStorage
+                    sessionStorage.clear();
+                    sessionStorage.setItem('user', JSON.stringify(response.data.body));
                     router.push('/'); // 替换 '/new-page' 为你想要跳转的页面路径
                 } else {
                     this.$message.error('登录失败');
