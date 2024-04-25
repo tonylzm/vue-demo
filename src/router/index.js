@@ -69,7 +69,8 @@ const routes = [{
 {
 	path: '/teacher',
 	name: 'teacher',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/teachers/teacher.vue')
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/teachers/teacher.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
 },
 {
 	path: '/audit',

@@ -3,8 +3,7 @@
         <div class="Box">
             <div class="left">
                 <div class="centerBox">
-                    <img src="https://img0.baidu.com/it/u=2804005887,994501744&fm=253&fmt=auto&app=138&f=JPEG?w=200&h=200"
-                        alt="">
+                    <img src="../login/OIP-C (7).jpg" alt="">
                     <h4>苏州科技大学试卷管理系统</h4>
                     <p>USTS Paper Manage</p>
                 </div>
@@ -37,7 +36,7 @@
                         <el-button type="primary" class="loginBtn" @click="handleSubmit">登录</el-button>
                     </el-form-item>
                     <el-form-item>
-                        <p class="no">没有账号？<el-link type="primary" @click="handleRegister">立即注册</el-link></p>
+                        <!-- <p class="no">没有账号？<el-link type="primary" @click="handleRegister">立即注册</el-link></p> -->
                     </el-form-item>
                 </el-form>
 
@@ -110,7 +109,8 @@ export default {
 .body {
     height: 100vh;
     background-color: aquamarine;
-    background: url("https://images.pexels.com/photos/936722/pexels-photo-936722.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1") no-repeat;
+    /* background: url("https://images.pexels.com/photos/936722/pexels-photo-936722.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1") no-repeat; */
+    background: url("@/page/login/IMG_20240425_192514.jpg") no-repeat;
     /* background: url("@/page/login/Screenshot_20240419_204337_com.huawei.photos.png") no-repeat; */
     background-size: cover;
 }
@@ -144,7 +144,7 @@ export default {
     position: relative;
     width: 60%;
     height: 100%;
-    background-color: rgba(255, 255, 255, 1);
+    background-color: rgba(255, 255, 255, 0.75);
 }
 
 .login-title {

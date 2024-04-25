@@ -24,30 +24,31 @@
             <el-table-column prop="status" label="审核状态"></el-table-column>
             <el-table-column prop="class_check" label="审核的主任"></el-table-column>
             <el-table-column prop="college_check" label="审核的院长"></el-table-column>
-           
+
             <el-table-column label="操作" width="200" align="center">
                 <template v-slot="scope">
-					<el-button type="primary" @click="handleViewHistory(scope.row.name)"><el-icon>
-							<Download />
-						</el-icon>
-						历史记录</el-button>
-				</template>
+                    <el-button type="primary" @click="handleViewHistory(scope.row.name)"><el-icon>
+                            <Download />
+                        </el-icon>
+                        历史记录</el-button>
+                </template>
             </el-table-column>
-                <el-drawer v-model="innerDrawer" title="我的历史记录" :append-to-body="true" :before-close="handleClose" width="50%">
+            <el-drawer v-model="innerDrawer" title="我的历史记录" :append-to-body="true" :before-close="handleClose"
+                size="50%">
                 <el-table :data="historyData" border>
                     <el-table-column prop="name" label="文件名称"></el-table-column>
                     <el-table-column prop="status" label="审核状态"></el-table-column>
                     <el-table-column prop="date" label="审核时间"></el-table-column>
                 </el-table>
-                </el-drawer>
-           
+            </el-drawer>
+
         </el-table>
         <!-- <el-dialog :visible="previewModalVisible" title="preview" width="50%"> -->
-                  <!-- 在这里显示预览数据 -->
-            <!-- <div v-html="previewData"></div> -->
-            <!-- 或者根据实际情况使用其他方式显示预览数据 -->
-            <!-- 例如：使用 <iframe> 标签加载预览数据 -->
-            <!-- <iframe :src="pdfUrl" width="100%" height="600px"></iframe>
+        <!-- 在这里显示预览数据 -->
+        <!-- <div v-html="previewData"></div> -->
+        <!-- 或者根据实际情况使用其他方式显示预览数据 -->
+        <!-- 例如：使用 <iframe> 标签加载预览数据 -->
+        <!-- <iframe :src="pdfUrl" width="100%" height="600px"></iframe>
             <span slot="footer" class="dialog-footer">
                 <el-button type="primary" @click="previewModalVisible = false">Close</el-button>
             </span>
@@ -113,29 +114,29 @@ export default {
     data() {
         return {
             tableData: [
-//             {
-//     id: 1,
-//     name: 'Document 1',
-//     produced: 'John Doe',
-//     size: 256,
-//     status: 'Pending',
-//     class_check: 'Director A',
-//     college_check: 'Dean X'
-//   },
-//   {
-//     id: 2,
-//     name: 'Document 2',
-//     produced: 'Jane Smith',
-//     size: 512,
-//     status: 'Approved',
-//     class_check: 'Director B',
-//     college_check: 'Dean Y'
-//   }
+                //             {
+                //     id: 1,
+                //     name: 'Document 1',
+                //     produced: 'John Doe',
+                //     size: 256,
+                //     status: 'Pending',
+                //     class_check: 'Director A',
+                //     college_check: 'Dean X'
+                //   },
+                //   {
+                //     id: 2,
+                //     name: 'Document 2',
+                //     produced: 'Jane Smith',
+                //     size: 512,
+                //     status: 'Approved',
+                //     class_check: 'Director B',
+                //     college_check: 'Dean Y'
+                //   }
             ],
-            historyData:[
-    //             {name: 'Document 2',
-    // status: 'Jane Smith',
-    // date: 512}
+            historyData: [
+                //             {name: 'Document 2',
+                // status: 'Jane Smith',
+                // date: 512}
             ],
             name: '',
             direction: 'rtl',
@@ -313,34 +314,34 @@ export default {
             return formattedTime;
         },
         loadData() {
-			axios.get('https://localhost:8443/api/files/pageByProduced', {
-				params: {
-					pageNum: this.pageNum,
-					pageSize: this.pageSize,
-					produced: this.username,
-					name: this.name
-				}
-			}).then(response => {
-				console.log(response.data)
-				const {
-					content,
-					totalPages,
-					totalElements,
-					number
-				} = response.data.body;
-				console.log(content)
-				this.tableData = content;
+            axios.get('https://localhost:8443/api/files/pageByProduced', {
+                params: {
+                    pageNum: this.pageNum,
+                    pageSize: this.pageSize,
+                    produced: this.username,
+                    name: this.name
+                }
+            }).then(response => {
+                console.log(response.data)
+                const {
+                    content,
+                    totalPages,
+                    totalElements,
+                    number
+                } = response.data.body;
+                console.log(content)
+                this.tableData = content;
                 this.tableData.forEach((item) => {
-					item.status = item.check.checkStatus;
-                    item.class_check= item.check.classCheck;
-                    item.college_check= item.check.collegeCheck;
-				});
-				this.total = totalElements;
-				this.pageNum = number + 1;
-			}).catch(error => {
-				console.error('Error loading data:', error);
-			});
-		},
+                    item.status = item.check.checkStatus;
+                    item.class_check = item.check.classCheck;
+                    item.college_check = item.check.collegeCheck;
+                });
+                this.total = totalElements;
+                this.pageNum = number + 1;
+            }).catch(error => {
+                console.error('Error loading data:', error);
+            });
+        },
         handlePageChange(pageNum) {
             this.pageNum = pageNum;
             this.loadData();
@@ -395,41 +396,41 @@ export default {
                 });
         },
         handleViewHistory(rowData) {
-      // 获取原行的文件名和出卷人信息
-           const fileName = rowData;
-           console.log(fileName)
-      // 调用函数向后端发起请求
-           this.fetchHistoryData(fileName);
-      // 打开抽屉
-           this.innerDrawer = true;
-    },fetchHistoryData(fileName) {
-        const data={
-            pageNum: this.pageNum,
-			pageSize: this.pageSize,
-			produced: this.username,
-            name: fileName, // 使用传入的 fileName 参数
-        }
-        axios.post('https://localhost:8443/api/history/findHistoryfile',data, {
-            headers: {
+            // 获取原行的文件名和出卷人信息
+            const fileName = rowData;
+            console.log(fileName)
+            // 调用函数向后端发起请求
+            this.fetchHistoryData(fileName);
+            // 打开抽屉
+            this.innerDrawer = true;
+        }, fetchHistoryData(fileName) {
+            const data = {
+                pageNum: this.pageNum,
+                pageSize: this.pageSize,
+                produced: this.username,
+                name: fileName, // 使用传入的 fileName 参数
+            }
+            axios.post('https://localhost:8443/api/history/findHistoryfile', data, {
+                headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
-			}).then(response => {
-				console.log(response.data)
-				const {
-					content,
-					totalPages,
-					totalElements,
-					number
-				} = response.data;
-				console.log(content)
-				this.historyData = content;
-                
-				this.total = totalElements;
-				this.pageNum = number + 1;
-			}).catch(error => {
-				console.error('Error loading data:', error);
-			});
-    },
+            }).then(response => {
+                console.log(response.data)
+                const {
+                    content,
+                    totalPages,
+                    totalElements,
+                    number
+                } = response.data;
+                console.log(content)
+                this.historyData = content;
+
+                this.total = totalElements;
+                this.pageNum = number + 1;
+            }).catch(error => {
+                console.error('Error loading data:', error);
+            });
+        },
     }
 }
 </script>
