@@ -33,7 +33,7 @@
                         </el-icon>
                         <span>Navigator Three</span>
                     </el-menu-item> -->
-                    <el-menu-item index="4">
+                    <el-menu-item index="4" @click="gotoItemThree">
                         <el-icon>
                             <setting />
                         </el-icon>
@@ -59,6 +59,9 @@ export default {
         },
         gotoItemTwo() {
             this.$router.push('/audit');
+        },
+        gotoItemThree(){
+            this.$router.push('/teacher');
         },
         handleOpen(key, keyPath) {
             console.log(key, keyPath);
