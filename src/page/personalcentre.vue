@@ -55,11 +55,11 @@
                 </el-form-item>
                 <el-form-item label="确认密码" v-if="editOptions === '修改密码'" prop="conpassword">
                     <el-input v-model="form.conpassword" autocomplete="off" show-password></el-input>
-                    <el-form>
+                    <!-- <el-form>
                         <el-icon v-if="isPasswordMatch" class="check-icon" name="check" style="color: green;">
                             <Check />
                         </el-icon>
-                    </el-form>
+                    </el-form> -->
 
                 </el-form-item>
                 <el-icon></el-icon>
@@ -77,6 +77,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     data() {
         // 校验密码
@@ -100,7 +102,7 @@ export default {
             }
         };
         return {
-            username: 'John Doe',
+            username: JSON.parse(localStorage.getItem('user')).username,
             password: '12345',
             phone: '1234567890',
             squareUrl: "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
@@ -133,6 +135,22 @@ export default {
             console.log(this.form.prepassword);
             console.log(this.form.newpassword);
             console.log(this.conpassword);
+            //如果选择的是修改密码
+            if (this.editOptions === '修改密码') {
+                const data = {
+                    username: this.username,
+                    oldPassword: this.form.prepassword,
+                    newPassword: this.form.newpassword
+                }
+                axios.post('https://localhost:8443/api/users/updatePassword', data).then(response => {
+                    console.log('修改密码成功:', response.data);
+                    this.$message.success('修改密码成功');
+                    this.innerDrawer1 = false;
+                }).catch(error => {
+                    console.error('修改密码失败:', error);
+                    this.$message.error('修改密码失败');
+                });
+            }
         },
         Upload() {
             // 构建 FormData 对象，用于发送文件

@@ -2,7 +2,7 @@
     <div class="sidebar">
         <el-row class="tac">
             <el-col :span="50" :border="false">
-                <img src="../page/login/th.jpg" alt="Image" style="width: 200px; height: auto;" />
+                <img src="../page/login/th.jpg" alt="Image" style="width: 200px; height: auto;margin-top: 0;" />
                 <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
                     <el-sub-menu index="1">
                         <template #title>
