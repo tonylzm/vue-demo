@@ -1,10 +1,12 @@
 <template>
     <div style="margin-left: 10px;">
         <div style="margin: 10px 0">
-            <el-input style="width: 200px" placeholder="请输入用户名" suffix-icon="el-icon-search" v-model="name"></el-input>
+            <el-input style="width: 200px" placeholder="请输入用户名" suffix-icon="el-icon-search" v-model="name">
+            </el-input>
             <el-button class="ml-5" type="primary" @click="loadData">搜索<el-icon>
                     <Search />
-                </el-icon></el-button>
+                </el-icon>
+            </el-button>
             <el-button type="warning" @click="reset">重置<el-icon>
                     <Refresh />
                 </el-icon></el-button>
@@ -114,6 +116,7 @@ export default {
             pageSize: 10,
             total: 0,
             tableData: [],
+            name: '',
             form: {
                 college: JSON.parse(localStorage.getItem('user')).college,
                 real_name: '',
@@ -254,7 +257,8 @@ export default {
                 pageNum: this.pageNum,
                 pageSize: this.pageSize,
                 college: JSON.parse(localStorage.getItem('user')).college,
-                role: 'check'
+                role: 'check',
+                name: this.name
             }
             axios.post('https://localhost:8443/api/users/userrole', data, {
                 headers: {
