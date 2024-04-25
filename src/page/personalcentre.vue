@@ -55,11 +55,11 @@
                 </el-form-item>
                 <el-form-item label="确认密码" v-if="editOptions === '修改密码'" prop="conpassword">
                     <el-input v-model="form.conpassword" autocomplete="off" show-password></el-input>
-                    <!-- <el-form>
+                    <el-form>
                         <el-icon v-if="isPasswordMatch" class="check-icon" name="check" style="color: green;">
                             <Check />
                         </el-icon>
-                    </el-form> -->
+                    </el-form>
 
                 </el-form-item>
                 <el-icon></el-icon>
@@ -75,7 +75,7 @@
         </el-drawer>
     </div>
 </template>
-  
+
 <script>
 export default {
     data() {
