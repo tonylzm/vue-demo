@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div style="margin-left: 10px;">
         <div style="margin: 10px 0">
             <el-input style="width: 200px" placeholder="请输入用户名" suffix-icon="el-icon-search" v-model="name"></el-input>
             <el-button class="ml-5" type="primary" @click="loadData">搜索<el-icon>
@@ -45,22 +45,30 @@
                     </el-form-item>
                 </el-form>
             </el-drawer>
-
         </div>
+
         <el-table :data="tableData" border stripe :header-cell-class-name="'headerBg'"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
-            <el-table-column prop="real_name" label="真实姓名"></el-table-column>
+            <el-table-column prop="realName" label="真实姓名"></el-table-column>
             <el-table-column prop="username" label="用户名"></el-table-column>
             <el-table-column prop="password" label="密码"></el-table-column>
-            <el-table-column prop="colleage" label="学院"></el-table-column>
+            <el-table-column prop="college" label="学院"></el-table-column>
 
 
             <el-table-column label="操作" width="200" align="center">
-                <el-button type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+                <template v-slot="scope">
+                    <el-button type="danger" @click="handleDelete(scope.row.username)">删除</el-button>
+                </template>
             </el-table-column>
         </el-table>
+        <div style="padding: 10px 0">
+            <el-pagination @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="pageNum"
+                :page-sizes="[2, 5, 10, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
+                :total="total">
+            </el-pagination>
+        </div>
     </div>
 </template>
 <style></style>
@@ -73,15 +81,10 @@ export default {
             loading: true,
             flowSrc: '',
             drawer: false,
-
-            tableData: [{
-                id: '1',
-                real_name: '张天赐',
-                username: 'ztc',
-                password: '123',
-                college: '电子与信息工程',
-
-            },],
+            pageNum: 1,
+            pageSize: 10,
+            total: 0,
+            tableData: [],
             form: {
                 college: JSON.parse(localStorage.getItem('user')).college,
                 real_name: '',
@@ -91,6 +94,9 @@ export default {
 
             },
         };
+    },
+    created() {
+        this.loadData();
     },
 
     methods: {
@@ -104,24 +110,20 @@ export default {
             this.$confirm('确认关闭？')
                 .then(_ => {
                     this.drawer = false;
-                    if (this.form.delivery === false) {
-                        this.form = {
-                            faculty: '',
-                            name: '',
-                            username: '',
-                            password: '',
-                            checkpassword: '',
-                            delivery: false,
-                            desc: ''
-                        };
-                    }
-                    this.encryptedFile = null;
-                    this.countdown = 120;
-                    clearInterval(this.timer);;
+                    this.form = {
+                        faculty: '',
+                        name: '',
+                        username: '',
+                        password: '',
+                        checkpassword: '',
+                        delivery: false,
+                        desc: ''
+                    };
                     done();
                 })
                 .catch(_ => { });
         },
+        //提交注册方法
         onSubmit() {
             const loading = ElLoading.service({
                 lock: true,
@@ -142,6 +144,7 @@ export default {
                 console.log(response.data)
                 loading.close();
                 this.$message.success('注册成功');
+                this.loadData();
             }).catch(error => {
                 console.error('Error loading data:', error);
                 loading.close();
@@ -149,6 +152,65 @@ export default {
             });
             console.log('submit!');
         },
+        //后端返回用户列表
+        loadData() {
+            const data = {
+                pageNum: this.pageNum,
+                pageSize: this.pageSize,
+                college: JSON.parse(localStorage.getItem('user')).college,
+                role: 'check'
+            }
+            axios.post('https://localhost:8443/api/users/userrole', data, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            }).then(response => {
+                const {
+                    content,
+                    totalPages,
+                    totalElements,
+                    number
+                } = response.data.body;
+                this.tableData = content;
+                this.total = totalElements;
+                this.pageNum = number + 1;
+            }).catch(error => {
+                console.error('Error loading data:', error);
+                this.$message.error('加载用户列表失败');
+            });
+        },
+        handlePageChange(pageNum) {
+            this.pageNum = pageNum;
+            this.loadData();
+        },
+        handleSizeChange(pageSize) {
+            this.pageSize = pageSize;
+            this.loadData();
+        },
+        //删除
+
+        handleDelete(username) {
+            console.log(username);
+            const data = {
+                username: username
+            }
+            //弹出确认框
+            this.$confirm('确认删除该用户？')
+                .then(() => {
+                    axios.post('https://localhost:8443/api/users/delete', data, {
+
+                    }).then(response => {
+                        this.$message.success('删除成功');
+                        this.loadData();
+                    }).catch(error => {
+                        console.error('Error loading data:', error);
+                        this.$message.error('删除失败');
+                    });
+                })
+                .catch(() => {
+                    this.$message.info('取消删除');
+                });
+        },
     }
-}
+};
 </script>
