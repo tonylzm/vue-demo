@@ -37,9 +37,9 @@
                 <el-form-item label="用户名">
                     <el-input v-model="username" :disabled="true">{{ username }}</el-input>
                 </el-form-item>
-                <!-- <el-form-item label="密码">
-                    <el-input v-model="password" :disabled="true" show-password>{{ password }}</el-input>
-                </el-form-item> -->
+                <el-form-item label="电子邮件">
+                    <el-input v-model="email" :disabled="true">{{ email }}</el-input>
+                </el-form-item>
                 <el-form-item label="手机号">
                     <el-input v-model="phone" :disabled="true">{{ phone }}</el-input>
                 </el-form-item>
@@ -103,8 +103,8 @@ export default {
         };
         return {
             username: JSON.parse(localStorage.getItem('user')).username,
-            password: '12345',
-            phone: '1234567890',
+            phone: JSON.parse(localStorage.getItem('user')).tel,
+            email: JSON.parse(localStorage.getItem('user')).email,
             squareUrl: "https://cube.elemecdn.com/9/c2/f0ee8a3c7c9638a54940382568c9dpng.png",
             sizeList: ["150px"],
             innerDrawer1: false,

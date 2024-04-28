@@ -28,9 +28,9 @@
             <el-table-column label="操作" width="200" align="center">
                 <template v-slot="scope">
                     <el-button type="primary" @click="handleViewHistory(scope.row.name)"><el-icon>
-                            <Download />
+                            <View />
                         </el-icon>
-                        历史记录</el-button>
+                        查看历史记录</el-button>
                 </template>
             </el-table-column>
             <el-drawer v-model="innerDrawer" title="我的历史记录" :append-to-body="true" :before-close="handleClose"
@@ -43,63 +43,12 @@
             </el-drawer>
 
         </el-table>
-        <!-- <el-dialog :visible="previewModalVisible" title="preview" width="50%"> -->
-        <!-- 在这里显示预览数据 -->
-        <!-- <div v-html="previewData"></div> -->
-        <!-- 或者根据实际情况使用其他方式显示预览数据 -->
-        <!-- 例如：使用 <iframe> 标签加载预览数据 -->
-        <!-- <iframe :src="pdfUrl" width="100%" height="600px"></iframe>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="previewModalVisible = false">Close</el-button>
-            </span>
-        </el-dialog> -->
-        <!-- <div style="padding: 10px 0">
+        <div style="padding: 10px 0">
             <el-pagination @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="pageNum"
                 :page-sizes="[2, 5, 10, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
                 :total="total">
             </el-pagination>
-        </div> -->
-        <!-- <el-drawer v-model="visible" :show-close="false" size="50%">
-            <template #header="{ close, titleId, titleClass }">
-                <h4 :id="titleId" :class="titleClass">试卷预览</h4>
-                <el-button type="danger" @click="close">
-                    <el-icon class="el-icon--left">
-                        <CircleCloseFilled />
-                    </el-icon>
-                    关闭
-                </el-button>
-                <div>
-                    <el-button @click="innerDrawer = true" :disabled="!this.canclick">审批</el-button>
-                    <el-drawer v-model="innerDrawer" title="试卷审批" :append-to-body="true" :before-close="handleClose">
-                        <div>
-                            <el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
-                                :percentage="uploadProgress"></el-progress>
-                        </div>
-                        <el-form ref="form" :model="form" label-width="120px">
-                            <el-form-item label="考试名称">
-                                <el-input v-model="checkfilename"></el-input>
-                            </el-form-item>
-                            <el-form-item label="命题人">
-                                <el-input v-model="checkfileproduced"></el-input>
-                            </el-form-item>
-                            <el-form-item label="审批意见">
-                                <input type="radio" value="院长审核通过" v-model="approvalStatus"> 审批通过
-                                <input type="radio" value="院长审核不通过" v-model="approvalStatus"> 审批不通过
-                            </el-form-item>
-                            <el-form-item>
-                                <textarea v-if="approvalStatus === '院长审核不通过'" v-model="reason" placeholder="请输入不通过的原因"
-                                    style="width: 100%; height: 200px;"></textarea>
-                            </el-form-item>
-                            <el-form-item>
-                                <el-button type="primary" @click="onSubmit">确认</el-button>
-                                <el-button>取消</el-button>
-                            </el-form-item>
-                        </el-form>
-                    </el-drawer>
-                </div>
-            </template>
-            <iframe ref="pdfViewer" style="width: 100%; height: 600px;" frameborder="0"></iframe>
-        </el-drawer> -->
+        </div>
     </div>
 </template>
 
@@ -114,29 +63,10 @@ export default {
     data() {
         return {
             tableData: [
-                //             {
-                //     id: 1,
-                //     name: 'Document 1',
-                //     produced: 'John Doe',
-                //     size: 256,
-                //     status: 'Pending',
-                //     class_check: 'Director A',
-                //     college_check: 'Dean X'
-                //   },
-                //   {
-                //     id: 2,
-                //     name: 'Document 2',
-                //     produced: 'Jane Smith',
-                //     size: 512,
-                //     status: 'Approved',
-                //     class_check: 'Director B',
-                //     college_check: 'Dean Y'
-                //   }
+
             ],
             historyData: [
-                //             {name: 'Document 2',
-                // status: 'Jane Smith',
-                // date: 512}
+
             ],
             name: '',
             direction: 'rtl',

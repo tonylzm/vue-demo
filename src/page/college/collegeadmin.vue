@@ -12,7 +12,7 @@
                 </el-icon></el-button>
         </div>
         <div style="margin: 10px 0">
-            <el-button type="primary" @click="drawer = true">注册出卷人<el-icon>
+            <el-button type="primary" @click="drawer = true">注册院长<el-icon>
                     <Promotion />
                 </el-icon></el-button>
 
@@ -69,9 +69,9 @@
 
             <el-table-column label="操作" width="300" align="center">
                 <template v-slot="scope">
-                    <el-button type="primary" @click="handleUpdata(scope.row.username)"><el-icon>
-                            <Discount />
-                        </el-icon>晋升审批员</el-button>
+                    <el-button type="warning" @click="handleUpdata(scope.row.username)"><el-icon>
+                            <Bell />
+                        </el-icon>降级审核员</el-button>
                     <el-button type="danger" @click="handleDelete(scope.row.username)"><el-icon>
                             <CloseBold />
                         </el-icon>删除</el-button>
@@ -232,22 +232,22 @@ export default {
                 role: 'check'
             }
             //弹出确认框
-            this.$confirm('确认晋升该用户为审核员？')
+            this.$confirm('确认降级该用户？')
                 .then(() => {
                     axios.post('https://localhost:8443/api/users/role', data, {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
                     }).then(response => {
-                        this.$message.success('晋升成功');
+                        this.$message.success('降级成功');
                         this.loadData();
                     }).catch(error => {
                         console.error('Error loading data:', error);
-                        this.$message.error('晋升失败');
+                        this.$message.error('降级失败');
                     });
                 })
                 .catch(() => {
-                    this.$message.info('取消晋升');
+                    this.$message.info('取消降级');
                 });
         },
         //提交注册方法
@@ -265,7 +265,7 @@ export default {
                 tel: this.form.tel,
                 email: this.form.email,
             }
-            axios.post('https://localhost:8443/api/users/register', data, {
+            axios.post('https://localhost:8443/api/users/college_register', data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -287,7 +287,7 @@ export default {
                 pageNum: this.pageNum,
                 pageSize: this.pageSize,
                 college: JSON.parse(localStorage.getItem('user')).college,
-                role: 'user',
+                role: 'college',
                 name: this.name
             }
             axios.post('https://localhost:8443/api/users/userrole', data, {

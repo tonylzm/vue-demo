@@ -20,6 +20,9 @@
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
             <el-table-column prop="name" label="文件名称"></el-table-column>
             <el-table-column prop="produced" label="出卷人"></el-table-column>
+            <el-table-column prop="classes" label="考试班级"></el-table-column>
+            <el-table-column prop="testtype" label="考试类型"></el-table-column>
+            <el-table-column prop="testtime" label="考试时间"></el-table-column>
             <el-table-column prop="size" label="文件大小(kb)"></el-table-column>
             <el-table-column label="下载">
                 <template v-slot="scope">
@@ -37,14 +40,7 @@
                         </el-icon></el-button>
                 </template>
             </el-table-column>
-            <el-table-column label="启用">
-                <template v-slot="scope">
-                    <el-switch v-model="scope.row.enable"
-                        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-                        @change="changeEnable(scope.row)"></el-switch>
-                </template>
-            </el-table-column>
-            <el-table-column label="操作" width="200" align="center">
+            <el-table-column label="操作" align="center">
                 <template v-slot="scope">
                     <el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
                         icon-color="red" title="开启后密码解开" @confirm="decrpyt(scope.row.name)">

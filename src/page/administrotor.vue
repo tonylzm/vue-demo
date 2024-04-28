@@ -12,7 +12,7 @@
                 </el-icon></el-button>
         </div>
         <div style="margin: 10px 0">
-            <el-button type="primary" @click="drawer = true">注册<el-icon>
+            <el-button type="primary" @click="drawer = true">注册审核员<el-icon>
                     <Promotion />
                 </el-icon></el-button>
 
@@ -61,15 +61,23 @@
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
             <el-table-column prop="realName" label="真实姓名"></el-table-column>
             <el-table-column prop="username" label="用户名"></el-table-column>
-            <el-table-column prop="password" label="密码"></el-table-column>
+            <!-- <el-table-column prop="password" label="密码"></el-table-column> -->
             <el-table-column prop="college" label="学院"></el-table-column>
             <el-table-column prop="tel" label="手机号"></el-table-column>
             <el-table-column prop="email" label="邮箱"></el-table-column>
 
 
-            <el-table-column label="操作" width="200" align="center">
+            <el-table-column label="操作" width="300" align="center">
                 <template v-slot="scope">
-                    <el-button type="danger" @click="handleDelete(scope.row.username)">删除</el-button>
+                    <el-button type="primary" @click="handleUpdata(scope.row.username, 'college')"><el-icon>
+                            <Discount />
+                        </el-icon>晋升院长</el-button>
+                    <el-button type="warning" @click="handleUpdata(scope.row.username, 'user')"><el-icon>
+                            <Bell />
+                        </el-icon>降级</el-button>
+                    <el-button type="danger" @click="handleDelete(scope.row.username)"><el-icon>
+                            <CloseBold />
+                        </el-icon>删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -221,6 +229,31 @@ export default {
                 .catch(_ => { });
         },
         //提交注册方法
+        handleUpdata(username, role) {
+            console.log(username);
+            const data = {
+                username: username,
+                role: role
+            }
+            //弹出确认框
+            this.$confirm('确认调整该用户权限？')
+                .then(() => {
+                    axios.post('https://localhost:8443/api/users/role', data, {
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    }).then(response => {
+                        this.$message.success('调整成功');
+                        this.loadData();
+                    }).catch(error => {
+                        console.error('Error loading data:', error);
+                        this.$message.error('调整失败');
+                    });
+                })
+                .catch(() => {
+                    this.$message.info('取消');
+                });
+        },
         onSubmit() {
             const loading = ElLoading.service({
                 lock: true,

@@ -98,7 +98,7 @@
 					</el-form-item>
 					<el-form-item>
 						<el-button type="primary" @click="onSubmit">信息上传<el-icon>
-								<Upload />
+								<UploadFilled />
 							</el-icon></el-button>
 						<el-button @click="handleClose">取消<el-icon>
 								<Close />
@@ -106,13 +106,6 @@
 					</el-form-item>
 				</el-form>
 			</el-drawer>
-			<!-- <el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="No, Thanks" :icon="InfoFilled"
-				icon-color="#626AEF" title="Are you sure to delete this?" @confirm="delBatch">
-				<template #reference>
-					<el-button type="danger" slot="reference">上传文件 <i class="el-icon-remove-outline"></i></el-button>
-				</template>
-			</el-popconfirm> -->
-
 		</div>
 		<div>
 			<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26" :percentage="uploadProgress"
@@ -125,85 +118,28 @@
 			<el-table-column prop="name" label="文件名称"></el-table-column>
 			<el-table-column prop="testname" label="考试名称"></el-table-column>
 			<el-table-column prop="produced" label="出卷人"></el-table-column>
+			<el-table-column prop="classes" label="考试班级"></el-table-column>
 			<el-table-column prop="testtype" label="考试类型"></el-table-column>
 			<el-table-column prop="testtime" label="考试时间"></el-table-column>
-			<el-table-column prop="size" label="文件大小(kb)"></el-table-column>
 			<el-table-column prop="checkStatus" label="审核状态"></el-table-column>
 			<el-table-column label="重新上传">
 				<template v-slot="scope">
 					<el-button type="primary" :disabled="!scope.row.checkStatus.includes('不通过')"
 						@click="toreload(scope.row.testname, scope.row.name)">
 						<el-icon>
-							<Download />
+							<Refresh />
 						</el-icon>
 						重新上传
 					</el-button>
 				</template>
 			</el-table-column>
-			<!-- <el-table-column label="加载预览">
-				<template v-slot="scope">
-					<el-button type="primary" @click="preview(scope.row.name, scope.row.decrypt)">加载预览<el-icon>
-							<Monitor />
-						</el-icon></el-button>
-				</template>
-			</el-table-column> -->
-			<!-- <el-table-column label="启用">
-				<template v-slot="scope">
-					<el-switch v-model="scope.row.enable"
-						style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-						@change="changeEnable(scope.row)"></el-switch>
-				</template>
-			</el-table-column> -->
-			<!-- <el-table-column label="操作" width="200" align="center">
-				<template v-slot="scope">
-					<el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
-						icon-color="red" title="开启后密码解开" @confirm="decrpyt(scope.row.name)">
-						<template #reference>
-							<el-button type="danger" slot="reference" :disabled="scope.row.decrypt">解密该试卷<el-icon>
-									<Checked />
-								</el-icon>
-							</el-button>
-						</template>
-					</el-popconfirm>
-				</template>
-			</el-table-column> -->
 		</el-table>
-		<el-dialog :visible="previewModalVisible" title="preview" width="50%">
-			<!-- 在这里显示预览数据 -->
-			<div v-html="previewData"></div>
-			<!-- 或者根据实际情况使用其他方式显示预览数据 -->
-			<!-- 例如：使用 <iframe> 标签加载预览数据 -->
-			<iframe :src="pdfUrl" width="100%" height="600px"></iframe>
-			<span slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="previewModalVisible = false">Close</el-button>
-			</span>
-		</el-dialog>
 		<div style="padding: 10px 0">
 			<el-pagination @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="pageNum"
 				:page-sizes="[2, 5, 10, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
 				:total="total">
 			</el-pagination>
 		</div>
-		<el-drawer v-model="visible" :show-close="false" size="50%">
-			<template #header="{ close, titleId, titleClass }">
-				<h4 :id="titleId" :class="titleClass">试卷预览</h4>
-				<el-button type="danger" @click="close">
-					<el-icon class="el-icon--left">
-						<CircleCloseFilled />
-					</el-icon>
-					关闭
-				</el-button>
-				<div>
-					<el-button @click="innerDrawer = true" :disabled="!this.canclick">Click me!</el-button>
-					<el-drawer v-model="innerDrawer" title="I'm inner Drawer" :append-to-body="true"
-						:before-close="handleClose">
-						<p>_(:зゝ∠)_</p>
-					</el-drawer>
-				</div>
-			</template>
-			<iframe ref="pdfViewer" style="width: 100%; height: 600px;" frameborder="0"></iframe>
-		</el-drawer>
-
 	</div>
 </template>
 
@@ -575,49 +511,6 @@ export default {
 			this.form.name = name;
 			this.reloadname = filename;
 		},
-		decrpyt(name) {
-			axios.post('https://localhost:8443/api/files/decrypt', null, {
-				params: {
-					fileName: name
-				}
-			})
-				.then(response => {
-					if (response.status === 200) {
-						this.$message.success('验证成功');
-						//将该行的解密该试卷按钮变成不可点击
-						this.tableData.forEach((item) => {
-							if (item.name === name) {
-								item.decrypt = true;
-							}
-						});
-					}
-				})
-				.catch(error => {
-					// Handle errors here
-					this.$message.error('验证失败');
-				});
-		},
-		preview(fileName, decrypt) {
-			axios.get(`https://localhost:8443/api/files/preview?fileName=${fileName}`, { responseType: 'blob' })
-				.then(response => {
-					// 成功获取预览数据后，加载到 <iframe> 中预览	
-					const pdfData = new Blob([response.data], { type: 'application/pdf' });
-					const viewer = this.$refs.pdfViewer;
-					this.visible = true;
-					this.$nextTick(() => {
-						const viewer = this.$refs.pdfViewer;
-						console.log(1);
-						setTimeout(() => {
-							console.log(2);
-							viewer.src = URL.createObjectURL(pdfData);
-						}, 100); // 等待1秒后设置src
-					});
-					this.canclick = decrypt;
-				})
-				.catch(error => {
-					this.$message.error('文件已经删除');
-				});
-		}
 	}
 }
 </script>

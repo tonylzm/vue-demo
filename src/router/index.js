@@ -15,40 +15,40 @@ const routes = [{
 	path: '/',
 	name: 'files',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/File.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 
 }
 	, {
 	path: '/ok',
 	name: 'test1',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 },
 {
 	path: '/3',
 	name: 'test',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test2.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 },
 {
 	path: '/hello',
 	name: 'new',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/new.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 
 },
 {
 	path: '/administrotor',
 	name: 'administrotor',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/administrotor.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['college'] }
 
 },
 {
 	path: '/home',
 	name: 'home',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/home.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 
 },
 {
@@ -64,43 +64,50 @@ const routes = [{
 	path: '/college',
 	name: 'college',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/college.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['college'] }
 },
 {
 	path: '/teacher',
 	name: 'teacher',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/teachers/teacher.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 },
 {
 	path: '/audit',
 	name: 'audit',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/teachers/audit.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 },
 {
 	path: '/personalcentre',
 	name: 'personalcentre',
 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/personalcentre.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 }, {
 	path: '/unauthorized',
 	name: '404',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/error/404.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 },
 {
 	path: '/class',
 	name: 'class',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/class/class.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['check'] }
 }
 ,
 {
 	path: '/classadmin',
 	name: 'classadmin',
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/class/classadmin.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check'] }
+	meta: { requiresAuth: true, requiredRoles: ['check'] }
+}
+,
+{
+	path: '/collegeadmin',
+	name: 'collegeadmin',
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/college/collegeadmin.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['college'] }
 }
 
 ]
