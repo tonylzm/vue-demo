@@ -2,34 +2,44 @@ import {
 	createRouter,
 	createWebHashHistory
 } from "vue-router"
-const routes = [{
-	path: '/1',
-	name: 'login1',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/login.vue'),
+const routes = [
+// {
+// 	path: '/1',
+// 	name: 'login1',
+// 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/login.vue'),
+// 	meta: {
+// 		hideSidebar: true, // 标记不显示侧边栏
+// 		hideHeader: true // 标记不显示头部
+// 	}
+// },
+{
+	path: '/',
+	name: 'login',
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/logintest.vue'),
 	meta: {
-		hideSidebar: true, // 标记不显示侧边栏
+		hideSidebar: true, // 标记不显示侧边栏，
 		hideHeader: true // 标记不显示头部
 	}
-}
-	, {
-	path: '/',
-	name: 'files',
-	component: () => import( /*webpackChunkName:'Home'*/ '@/page/File.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
-
-}
-	, {
-	path: '/ok',
-	name: 'test1',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 },
 {
-	path: '/3',
-	name: 'test',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test2.vue'),
+	path: '/files',
+	name: 'files',
+	component: () => import( /*webpackChunkName:'Home'*/ '@/page/public/File.vue'),
 	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
+
 },
+// 	, {
+// 	path: '/ok',
+// 	name: 'test1',
+// 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test.vue'),
+// 	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
+// },
+// {
+// 	path: '/3',
+// 	name: 'test',
+// 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test2.vue'),
+// 	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
+// },
 {
 	path: '/hello',
 	name: 'new',
@@ -40,7 +50,7 @@ const routes = [{
 {
 	path: '/administrotor',
 	name: 'administrotor',
-	component: () => import( /*webpackChunkName:'Home'*/ '@/page/administrotor.vue'),
+	component: () => import( /*webpackChunkName:'Home'*/ '@/page/college/administrotor.vue'),
 	meta: { requiresAuth: true, requiredRoles: ['college'] }
 
 },
@@ -51,19 +61,11 @@ const routes = [{
 	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 
 },
-{
-	path: '/4',
-	name: 'login',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/login/logintest.vue'),
-	meta: {
-		hideSidebar: true, // 标记不显示侧边栏，
-		hideHeader: true // 标记不显示头部
-	}
-},
+
 {
 	path: '/college',
 	name: 'college',
-	component: () => import( /*webpackChunkName:'Login'*/ '@/page/college.vue'),
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/college/college.vue'),
 	meta: { requiresAuth: true, requiredRoles: ['college'] }
 },
 {
@@ -81,7 +83,7 @@ const routes = [{
 {
 	path: '/personalcentre',
 	name: 'personalcentre',
-	component: () => import( /*webpackChunkName:'Home'*/ '@/page/personalcentre.vue'),
+	component: () => import( /*webpackChunkName:'Home'*/ '@/page/public/personalcentre.vue'),
 	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 }, {
 	path: '/unauthorized',
@@ -123,7 +125,7 @@ router.beforeEach((to, from, next) => {
 	const user = JSON.parse(localStorage.getItem('user'));
 	const userRole = user ? user.role : null; // Get user role
 	if (to.meta.requiresAuth && !isLoggedIn) {
-		next('/4'); // Redirect to login page if authentication is required but user is not logged in
+		next('/'); // Redirect to login page if authentication is required but user is not logged in
 	} else if (to.meta.requiredRoles && !to.meta.requiredRoles.includes(userRole)) {
 		next('/unauthorized'); // Redirect to unauthorized page if user's role doesn't match required roles
 	} else {

@@ -83,7 +83,7 @@ export default {
     },
     methods: {
         gotoItemOne() {
-            this.$router.push('/');
+            this.$router.push('/files');
         },
         gotoItemTwo() {
             this.$router.push('/audit');
