@@ -350,27 +350,6 @@ export default {
             this.pageSize = pageSize;
             this.loadData();
         },
-        download(name) {
-            axios.get('https://localhost:8443/api/download/download', {
-                params: {
-                    filename: name
-                },
-                responseType: 'blob'
-            }).then(response => {
-                const a = document.createElement('a');
-                const url = window.URL.createObjectURL(response.data);
-                a.href = url;
-                a.download = name;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                window.URL.revokeObjectURL(url);
-                this.$message.success('下载成功');
-            }).catch(error => {
-                console.error('Error downloading file:', error);
-                this.$message.error('下载失败');
-            });
-        },
         decrpyt(name) {
             axios.post('https://localhost:8443/api/files/decrypt', null, {
                 params: {
