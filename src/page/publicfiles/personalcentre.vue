@@ -1,7 +1,7 @@
 <template>
-    <h1>个人信息</h1>
-    <el-row>
-        <el-col :span="3">
+    <h1 style="width: 15%;">个人信息</h1>
+    <el-row class="left">
+        <el-col>
             <div class="demo-basic--circle">
                 <div class="block" v-for="size in  sizeList " :key="size">
                     <el-avatar shape="square" :size="size" :style="{ width: size, height: size }"
@@ -9,11 +9,10 @@
                 </div>
             </div>
         </el-col>
-        <el-col :span="12">
+        <el-col style="margin-top: 50px;">
             <el-form :model="form" label-width="auto" style="max-width: 400px">
                 <el-form-item label="用户名">
                     <el-input v-model="username" :disabled="true">{{ username }}</el-input>
-
                 </el-form-item>
                 <!-- <el-form-item label="密码">
                     <el-input v-model="password" :disabled="true" show-password>{{ password }}</el-input>
@@ -21,14 +20,17 @@
                 <el-form-item label="手机号">
                     <el-input v-model="phone" :disabled="true">{{ phone }}</el-input>
                 </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="innerDrawer1 = true" round>编辑</el-button>
-                </el-form-item>
+
             </el-form>
+            <div class="action-buttons">
+                <el-button type="primary" @click="innerDrawer1 = true" round>编辑</el-button>
+            </div>
+
         </el-col>
     </el-row>
+
     <div>
-        <el-drawer v-model="innerDrawer1" title="编辑" :append-to-body="true" :before-close="handleClose" size="50%">
+        <el-drawer v-model="innerDrawer1" title="编辑" :append-to-body="true" :before-close="handleClose" size="40%">
             <div>
                 <el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
                     :percentage="uploadProgress"></el-progress>
@@ -73,12 +75,19 @@
             </el-form>
 
         </el-drawer>
+
+        <div class="right">
+
+            <el-calendar v-model="value" />
+        </div>
+
     </div>
 </template>
 
 <script>
 import axios from 'axios';
-
+import { ref } from 'vue';
+const value = ref(new Date())
 export default {
     data() {
         // 校验密码
@@ -191,3 +200,29 @@ export default {
     }
 }
 </script>
+<style>
+.left {
+    width: 15%;
+    height: 100%;
+    float: left;
+    background-color: #fff;
+}
+
+.right {
+    width: 85%;
+    height: 100%;
+    float: right;
+}
+
+.demo-basic--circle {
+    display: flex;
+    margin: 10px, auto, 0px, 50px;
+    align-items: center;
+    text-align: center;
+}
+
+.action-buttons {
+    margin-top: 20px;
+    text-align: center;
+}
+</style>

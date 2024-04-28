@@ -49,12 +49,11 @@ export default {
 
 <style scoped>
 .header {
-    height: 10%;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid #ddd;
-    margin-top: 10px;
     /* 添加底部边框，模拟分割线效果 */
 }
 

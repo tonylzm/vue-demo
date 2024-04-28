@@ -1,17 +1,19 @@
 <template>
   <div class="teacher-profile">
-    <div class="profile-photo">
-      <img src="../../page/login/xm.jpg" alt="Teacher Photo" />
-    </div>
-    <div class="profile-info">
-      <h2 :class="{ 'gray-background': index % 2 !== 0 }">姓名: {{ teacher.realName }}</h2>
-      <p :class="{ 'gray-background': (index + 1) % 2 !== 0 }">权限: {{ teacher.position }}</p>
-      <p :class="{ 'gray-background': (index + 2) % 2 !== 0 }">所属院系: {{ teacher.department }}</p>
-      <p :class="{ 'gray-background': (index + 3) % 2 !== 0 }">邮箱: {{ teacher.email }}</p>
-      <p :class="{ 'gray-background': (index + 4) % 2 !== 0 }">联系电话: {{ teacher.phone }}</p>
-      <div class="action-buttons">
-        <el-button type="primary" @click="changepassword">修改密码</el-button>
-        <el-button type="danger" @click="contactAdmin">联系管理员</el-button>
+    <div class="left">
+      <div class="profile-photo">
+        <img src="../../page/login/xm.jpg" alt="Teacher Photo" />
+      </div>
+      <div class="profile-info">
+        <h2 :class="{ 'gray-background': index % 2 !== 0 }">姓名: {{ teacher.realName }}</h2>
+        <p :class="{ 'gray-background': (index + 1) % 2 !== 0 }">权限: {{ teacher.position }}</p>
+        <p :class="{ 'gray-background': (index + 2) % 2 !== 0 }">所属院系: {{ teacher.department }}</p>
+        <p :class="{ 'gray-background': (index + 3) % 2 !== 0 }">邮箱: {{ teacher.email }}</p>
+        <p :class="{ 'gray-background': (index + 4) % 2 !== 0 }">联系电话: {{ teacher.phone }}</p>
+        <div class="action-buttons">
+          <el-button type="primary" @click="changepassword">修改密码</el-button>
+          <el-button type="danger" @click="contactAdmin">联系管理员</el-button>
+        </div>
       </div>
       <el-drawer v-model="innerDrawer" title="修改密码界面" :append-to-body="true" :before-close="handleClose" size="40%">
         <el-form ref="passwordForm" :model="passwordForm" label-width="100px">
@@ -90,6 +92,10 @@
       </el-drawer>
 
     </div>
+
+  </div>
+  <div class="right">
+    <el-calendar v-model="value" />
   </div>
 </template>
 
@@ -205,12 +211,27 @@ export default {
 .teacher-profile {
   display: flex;
   align-items: flex-start;
-  margin: 20px;
+  float: left;
+  width: 20%;
+  height: 100%;
+}
+
+.left {
+  width: 100%;
+  height: 100%;
+  float: left;
+}
+
+.right {
+  width: 80%;
+  height: 100%;
+  float: right;
 }
 
 .profile-photo {
   width: 200px;
   margin-right: 30px;
+  float: left;
 }
 
 .profile-photo img {
@@ -220,11 +241,13 @@ export default {
 
 .profile-info {
   margin-top: 20px;
+  width: 100%;
+  float: left;
 }
 
 .action-buttons {
   margin-top: 20px;
-  text-align: center;
+  /* text-align: center; */
 }
 
 .password-message {

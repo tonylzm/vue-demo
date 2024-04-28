@@ -2,7 +2,7 @@
     <div class="sidebar">
         <el-row class="tac">
             <el-col :span="50" :border="false">
-                <img src="../page/login/th.jpg" alt="Image" style="width: 200px; height: auto;margin-top: 0;" />
+                <!-- <img src="../page/login/th.jpg" alt="Image" style="width: 200px; height: auto;margin-top: 0;" /> -->
                 <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
                     <el-sub-menu index="1">
                         <template #title>
@@ -116,7 +116,7 @@ export default {
             console.log(key, keyPath);
         },
         show(role) {
-            return this.user.role === role
+            return this.user && this.user.role === role;
         }
 
     }
@@ -128,7 +128,7 @@ export default {
     position: fixed;
     top: 0;
     left: 0;
-    padding-top: 10px;
+    padding-top: 80px;
     width: auto;
 }
 </style>

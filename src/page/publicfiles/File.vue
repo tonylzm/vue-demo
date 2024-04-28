@@ -144,7 +144,7 @@
 </template>
 
 <script>
-import router from '../router'; // 导入Vue Router实例
+import router from '../../router'; // 导入Vue Router实例
 import axios from 'axios';
 import md5 from 'js-md5';
 import JSEncrypt from 'jsencrypt';

@@ -83,7 +83,7 @@ const routes = [
 {
 	path: '/personalcentre',
 	name: 'personalcentre',
-	component: () => import( /*webpackChunkName:'Home'*/ '@/page/public/personalcentre.vue'),
+	component: () => import( /*webpackChunkName:'Home'*/ '@/page/publicfiles/personalcentre.vue'),
 	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 }, {
 	path: '/unauthorized',
