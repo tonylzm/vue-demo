@@ -24,7 +24,7 @@ const routes = [
 {
 	path: '/files',
 	name: 'files',
-	component: () => import( /*webpackChunkName:'Home'*/ '@/page/public/File.vue'),
+	component: () => import( /*webpackChunkName:'Home'*/ '@/page/publicfiles/File.vue'),
 	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 
 },
@@ -40,13 +40,13 @@ const routes = [
 // 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/test2.vue'),
 // 	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 // },
-{
-	path: '/hello',
-	name: 'new',
-	component: () => import( /*webpackChunkName:'Home'*/ '@/page/new.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
+// {
+// 	path: '/hello',
+// 	name: 'new',
+// 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/new.vue'),
+// 	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 
-},
+// },
 {
 	path: '/administrotor',
 	name: 'administrotor',
@@ -54,13 +54,13 @@ const routes = [
 	meta: { requiresAuth: true, requiredRoles: ['college'] }
 
 },
-{
-	path: '/home',
-	name: 'home',
-	component: () => import( /*webpackChunkName:'Home'*/ '@/page/home.vue'),
-	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
+// {
+// 	path: '/home',
+// 	name: 'home',
+// 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/home.vue'),
+// 	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
 
-},
+// },
 
 {
 	path: '/college',
