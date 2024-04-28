@@ -98,11 +98,11 @@
                                 <el-input v-model="checkfileproduced"></el-input>
                             </el-form-item>
                             <el-form-item label="审批意见">
-                                <input type="radio" value="院长审核通过" v-model="approvalStatus"> 审批通过
-                                <input type="radio" value="院长审核不通过" v-model="approvalStatus"> 审批不通过
+                                <input type="radio" value="系主任通过" v-model="approvalStatus"> 审批通过
+                                <input type="radio" value="系主任不通过" v-model="approvalStatus"> 审批不通过
                             </el-form-item>
                             <el-form-item>
-                                <textarea v-if="approvalStatus === '院长审核不通过'" v-model="reason" placeholder="请输入不通过的原因"
+                                <textarea v-if="approvalStatus === '系主任不通过'" v-model="reason" placeholder="请输入不通过的原因"
                                     style="width: 100%; height: 200px;"></textarea>
                             </el-form-item>
                             <el-form-item>
@@ -150,7 +150,7 @@ export default {
             fullscreenLoading: false,
             canclick: false,
             ipAddress: '',
-            approvalStatus: '院长审核通过',
+            approvalStatus: '系主任通过',
             reason: '',
             checkfilename: '',
             checkfileproduced: '',
@@ -195,12 +195,12 @@ export default {
         onSubmit() {
             const data = {
                 fileName: this.checkfilename,
-                collegeCheck: this.username,
+                classCheck: this.username,
                 status: this.approvalStatus,
                 opinion: this.reason
             }
             console.log(data);
-            axios.post('https://localhost:8443/api/checked/collegeChecked', data, {
+            axios.post('https://localhost:8443/api/checked/classChecked', data, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
@@ -309,7 +309,7 @@ export default {
                 pageNum: this.pageNum,
                 pageSize: this.pageSize,
                 college: this.college,
-                status: "系主任通过",
+                status: "未审核",
                 name: this.name,
                 produced: this.username
             });

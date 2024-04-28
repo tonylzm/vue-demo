@@ -11,9 +11,9 @@
                             </el-icon>
                             <span>试卷管理</span>
                         </template>
-                        <el-menu-item-group title="Group One">
+                        <el-menu-item-group title="试卷管理">
                             <el-menu-item index="1-1" @click="gotoItemOne">试卷上传</el-menu-item>
-                            <el-menu-item index="1-2" @click="gotoItemTwo">试卷审核</el-menu-item>
+                            <el-menu-item index="1-2" @click="gotoItemTwo">试卷查验</el-menu-item>
                         </el-menu-item-group>
                         <!-- <el-menu-item-group title="Group Two">
                             <el-menu-item index="1-3">item three</el-menu-item>
@@ -23,10 +23,30 @@
                             <el-menu-item index="1-4-1">item one</el-menu-item>
                         </el-sub-menu> -->
                     </el-sub-menu>
-                    <!-- <el-menu-item index="2">
-                        <el-icon><icon-menu /></el-icon>
-                        <span>Navigator Two</span>
-                    </el-menu-item> -->
+                    <el-sub-menu index="2">
+                        <template #title>
+                            <el-icon>
+                                <Menu />
+                            </el-icon>
+                            <span>试卷审核(主任)</span>
+                        </template>
+                        <el-menu-item-group title="试卷审核(主任)">
+                            <el-menu-item index="2-1" @click="gotoItemThree">试卷审核</el-menu-item>
+                            <el-menu-item index="2-2" @click="gotoItemFour">用户管理</el-menu-item>
+                        </el-menu-item-group>
+                    </el-sub-menu>
+                    <el-sub-menu index="3">
+                        <template #title>
+                            <el-icon>
+                                <Menu />
+                            </el-icon>
+                            <span>试卷审核(院长)</span>
+                        </template>
+                        <el-menu-item-group title="试卷审核(院长)">
+                            <el-menu-item index="3-1" @click="gotoItemFive">试卷审核</el-menu-item>
+                            <el-menu-item index="3-2" @click="gotoItemSix">用户管理</el-menu-item>
+                        </el-menu-item-group>
+                    </el-sub-menu>
                     <!-- <el-menu-item index="3" disabled>
                         <el-icon>
                             <document />
@@ -59,6 +79,18 @@ export default {
         },
         gotoItemTwo() {
             this.$router.push('/audit');
+        },
+        gotoItemThree() {
+            this.$router.push('/class');
+        },
+        gotoItemFour() {
+            this.$router.push('/classadmin');
+        },
+        gotoItemFive() {
+            this.$router.push('/college');
+        },
+        gotoItemSix() {
+            this.$router.push('/administrotor');
         },
         handleOpen(key, keyPath) {
             console.log(key, keyPath);

@@ -68,15 +68,20 @@
 						</el-select>
 					</el-form-item>
 					<el-form-item label="考试开始时间">
-						<el-col :span="11">
-							<el-date-picker type="date" placeholder="选择日期" v-model="form.date1"
-								style="width: 100%;"></el-date-picker>
-						</el-col>
-						<el-col class="line" :span="2">-</el-col>
-						<el-col :span="11">
-							<el-time-picker placeholder="选择时间" v-model="form.date2"
-								style="width: 100%;"></el-time-picker>
-						</el-col>
+						<el-row>
+							<el-col :span="10">
+								<el-date-picker v-model="form.date" type="date" placeholder="选择日期"
+									style="width: 100%;"></el-date-picker>
+							</el-col>
+							<el-col :span="6">
+								<el-time-picker v-model="form.startTime" format="HH:mm" placeholder="选择开始时间"
+									style="width: 100%;"></el-time-picker>
+							</el-col>
+							<el-col :span="6">
+								<el-time-picker v-model="form.endTime" format="HH:mm" placeholder="选择结束时间"
+									style="width: 100%;"></el-time-picker>
+							</el-col>
+						</el-row>
 					</el-form-item>
 					<el-form-item label="信息保存">
 						<el-switch v-model="form.delivery"
@@ -118,24 +123,30 @@
 			<el-table-column type="selection" width="55"></el-table-column>
 			<el-table-column prop="id" label="ID" width="80"></el-table-column>
 			<el-table-column prop="name" label="文件名称"></el-table-column>
+			<el-table-column prop="testname" label="考试名称"></el-table-column>
 			<el-table-column prop="produced" label="出卷人"></el-table-column>
+			<el-table-column prop="testtype" label="考试类型"></el-table-column>
+			<el-table-column prop="testtime" label="考试时间"></el-table-column>
 			<el-table-column prop="size" label="文件大小(kb)"></el-table-column>
 			<el-table-column prop="checkStatus" label="审核状态"></el-table-column>
-			<el-table-column label="下载">
+			<el-table-column label="重新上传">
 				<template v-slot="scope">
-					<el-button type="primary" @click="download(scope.row.name)"><el-icon>
+					<el-button type="primary" :disabled="!scope.row.checkStatus.includes('不通过')"
+						@click="toreload(scope.row.testname, scope.row.name)">
+						<el-icon>
 							<Download />
 						</el-icon>
-						下载</el-button>
+						重新上传
+					</el-button>
 				</template>
 			</el-table-column>
-			<el-table-column label="加载预览">
+			<!-- <el-table-column label="加载预览">
 				<template v-slot="scope">
 					<el-button type="primary" @click="preview(scope.row.name, scope.row.decrypt)">加载预览<el-icon>
 							<Monitor />
 						</el-icon></el-button>
 				</template>
-			</el-table-column>
+			</el-table-column> -->
 			<!-- <el-table-column label="启用">
 				<template v-slot="scope">
 					<el-switch v-model="scope.row.enable"
@@ -143,7 +154,7 @@
 						@change="changeEnable(scope.row)"></el-switch>
 				</template>
 			</el-table-column> -->
-			<el-table-column label="操作" width="200" align="center">
+			<!-- <el-table-column label="操作" width="200" align="center">
 				<template v-slot="scope">
 					<el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
 						icon-color="red" title="开启后密码解开" @confirm="decrpyt(scope.row.name)">
@@ -155,7 +166,7 @@
 						</template>
 					</el-popconfirm>
 				</template>
-			</el-table-column>
+			</el-table-column> -->
 		</el-table>
 		<el-dialog :visible="previewModalVisible" title="preview" width="50%">
 			<!-- 在这里显示预览数据 -->
@@ -223,17 +234,18 @@ export default {
 			showProgress: false, // 是否显示进度条 
 			innerDrawer: false,
 			drawer: false,
-
+			reload: false,
 			uploadParams: null,
 			form: {
 				name: '',
 				class: '',
 				region: '',
 				college: '',
-				date1: '',
-				date2: '',
 				delivery: false,
-				desc: ''
+				desc: '',
+				date: '', // 选择的日期  
+				startTime: '', // 开始时间  
+				endTime: '' // 结束时间 
 			},
 			md5Value: '',
 			encryptedFile: null,
@@ -245,8 +257,8 @@ export default {
 			fullscreenLoading: false,
 			canclick: false,
 			ipAddress: '',
-			selectedOption: '' // 对账号选择的值
-
+			selectedOption: '',// 对账号选择的值
+			reloadname: '',//重新上传的文件名,用于检验是否符合规范
 		}
 	},
 
@@ -270,12 +282,14 @@ export default {
 							class: '',
 							region: '',
 							college: '',
-							date1: '',
-							date2: '',
+							date: '', // 选择的日期  
+							startTime: '', // 开始时间  
+							endTime: '', // 结束时间 
 							delivery: false,
 							desc: ''
 						};
 					}
+					this.reloadname = '';
 					this.encryptedFile = null;
 					this.countdown = 120;
 					clearInterval(this.timer);;
@@ -301,6 +315,10 @@ export default {
 			fileInput.addEventListener('change', async () => {
 				const file = fileInput.files[0];
 				this.fileName = this.username + file.name;
+				if (this.reloadname !== '' && this.reloadname !== this.fileName) {
+					this.$message.error('文件与原文件不符，请重新上传');
+					return;
+				}
 				//console.log('fileName', this.fileName);
 				return new Promise(async (resolve, reject) => {
 					const reader = new FileReader();
@@ -390,6 +408,7 @@ export default {
 					that.encryptedFile = null;
 					clearInterval(that.timer); // 上传成功后暂停计时
 					that.countdown = 120; // 重置倒计时
+
 				} else {
 					that.progressColor = 'OrangeRed';
 					that.$message.error('上传失败！' + xhr.responseText);
@@ -471,9 +490,10 @@ export default {
 				// 发送 POST 请求给后端
 				const response = await axios.post('https://localhost:8443/api/users/test', data);
 
-				console.log(response.data);
+				// 清除定时器
 				clearTimeout(timerId);
 				loading.close();
+				this.countdown = 120;
 				this.$message.success('验证成功');
 				return response.data;
 
@@ -550,26 +570,10 @@ export default {
 			this.pageSize = pageSize;
 			this.loadData();
 		},
-		download(name) {
-			axios.get('https://localhost:8443/api/download/download', {
-				params: {
-					filename: name
-				},
-				responseType: 'blob'
-			}).then(response => {
-				const a = document.createElement('a');
-				const url = window.URL.createObjectURL(response.data);
-				a.href = url;
-				a.download = name;
-				document.body.appendChild(a);
-				a.click();
-				document.body.removeChild(a);
-				window.URL.revokeObjectURL(url);
-				this.$message.success('下载成功');
-			}).catch(error => {
-				console.error('Error downloading file:', error);
-				this.$message.error('下载失败');
-			});
+		toreload(name, filename) {
+			this.drawer = true;
+			this.form.name = name;
+			this.reloadname = filename;
 		},
 		decrpyt(name) {
 			axios.post('https://localhost:8443/api/files/decrypt', null, {
