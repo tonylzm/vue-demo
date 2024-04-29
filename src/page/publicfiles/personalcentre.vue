@@ -136,6 +136,9 @@ export default {
 
         };
     },
+    mounted() {
+        this.refreshResources();
+    },
 
     methods: {
         //上传
@@ -160,6 +163,10 @@ export default {
                     this.$message.error('修改密码失败');
                 });
             }
+        },
+        refreshResources() {
+            //刷新页面资源
+
         },
         Upload() {
             // 构建 FormData 对象，用于发送文件

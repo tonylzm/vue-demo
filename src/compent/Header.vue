@@ -5,12 +5,20 @@
         </div>
         <div class="user-info">
             <span class="username">
-                <el-icon>
-                    <UserFilled />
-                </el-icon> 欢迎你: {{ username }}
+                <el-tag type="primary">
+                    <el-icon>
+                        <UserFilled />
+                    </el-icon> 欢迎你: {{ username }}</el-tag>
+
+                <el-tag type="success" style="margin-left: 10px;">
+                    <el-button type="success" @click="refresh"><el-icon>
+                            <Refresh />
+                        </el-icon>刷新页面</el-button>
+                </el-tag>
                 <el-select v-model="selectedOption" placeholder="操作" @change="handleOptionChange" class="custom-select">
                     <el-option label="退出登录" value="logout"></el-option>
                     <el-option label="切换登录" value="switchUser"></el-option>
+                    <el-option label="刷新页面" value="refresh"></el-option>
                 </el-select>
             </span>
         </div>
@@ -18,7 +26,9 @@
 </template>
 
 <script>
+import { ref } from 'vue';
 import router from '../router'; // 导入Vue Router实例
+import { ElLoading } from 'element-plus';
 export default {
     name: 'Header',
     data() {
@@ -32,16 +42,45 @@ export default {
                 this.logout();
             } else if (this.selectedOption === 'switchUser') {
                 this.switchUser();
+            } else if (this.selectedOption === 'refresh') {
+                this.refresh();
             }
             this.selectedOption = ''; // 重置选择器的值
         },
         logout() {
-            localStorage.clear();
-            router.push('/4');
+            const loading = ElLoading.service({
+                lock: true,
+                text: '正在注销登录，请稍等...',
+                background: 'rgba(0, 0, 0,1)',
+            });
+            setTimeout(() => {
+                router.push('/');
+            }, 200);
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+            setTimeout(() => {
+                loading.close();
+            }, 1000);
         },
         switchUser() {
-            localStorage.clear();
-            router.push('/4');
+            const loading = ElLoading.service({
+                lock: true,
+                text: '正在返回登录界面，请稍等...',
+                background: 'rgba(0, 0, 0,1)',
+            });
+            setTimeout(() => {
+                router.push('/');
+            }, 200);
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+            setTimeout(() => {
+                loading.close();
+            }, 1000);
+        },
+        refresh() {
+            location.reload();
         }
     }
 }

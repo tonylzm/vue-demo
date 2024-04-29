@@ -1,6 +1,6 @@
 <template>
   <div class="teacher-profile">
-    <div class="left">
+    <el-col>
       <div class="profile-photo">
         <img src="../../page/login/xm.jpg" alt="Teacher Photo" />
       </div>
@@ -15,83 +15,84 @@
           <el-button type="danger" @click="contactAdmin">联系管理员</el-button>
         </div>
       </div>
-      <el-drawer v-model="innerDrawer" title="修改密码界面" :append-to-body="true" :before-close="handleClose" size="40%">
-        <el-form ref="passwordForm" :model="passwordForm" label-width="100px">
-          <el-form-item label="当前账号:">
-            <el-input style="width: 70%" v-model="username" disabled>
-              <template #prepend>
-                <el-icon>
-                  <User />
-                </el-icon>
-              </template></el-input>
-          </el-form-item>
-          <el-form-item label="输入旧密码:">
-            <el-input style="width: 70%" placeholder="请输入密码" v-model="passwordForm.password" show-password required>
-              <template #prepend>
-                <el-icon>
-                  <Lock />
-                </el-icon>
-              </template></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="submitPassword">确认</el-button>
-            <el-button @click="resetPassword">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </el-drawer>
+    </el-col>
+    <el-drawer v-model="innerDrawer" title="修改密码界面" :append-to-body="true" :before-close="handleClose" size="40%">
+      <el-form ref="passwordForm" :model="passwordForm" label-width="100px">
+        <el-form-item label="当前账号:">
+          <el-input style="width: 70%" v-model="username" disabled>
+            <template #prepend>
+              <el-icon>
+                <User />
+              </el-icon>
+            </template></el-input>
+        </el-form-item>
+        <el-form-item label="输入旧密码:">
+          <el-input style="width: 70%" placeholder="请输入密码" v-model="passwordForm.password" show-password required>
+            <template #prepend>
+              <el-icon>
+                <Lock />
+              </el-icon>
+            </template></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="submitPassword">确认</el-button>
+          <el-button @click="resetPassword">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </el-drawer>
 
-      <el-drawer v-model="innerDrawer2" title="新密码修改界面" :append-to-body="true" :before-close="handleClose" size="40%">
-        <el-form ref="passwordForm" :model="passwordForm" label-width="100px">
-          <el-form-item label="当前账号:">
-            <el-input style="width: 310px" v-model="username" disabled>
-              <template #prepend>
-                <el-icon>
-                  <User />
-                </el-icon>
-              </template>
-            </el-input>
+    <el-drawer v-model="innerDrawer2" title="新密码修改界面" :append-to-body="true" :before-close="handleClose" size="40%">
+      <el-form ref="passwordForm" :model="passwordForm" label-width="100px">
+        <el-form-item label="当前账号:">
+          <el-input style="width: 310px" v-model="username" disabled>
+            <template #prepend>
+              <el-icon>
+                <User />
+              </el-icon>
+            </template>
+          </el-input>
 
-          </el-form-item>
-          <el-form-item label="输入新密码:" class="password-input">
-            <el-input style="width: 310px" placeholder="输入新密码" v-model="passwordForm.password" show-password required
-              @input="validatePassword">
-              <template #prepend>
-                <el-icon>
-                  <Lock />
-                </el-icon>
-              </template>
-            </el-input>
-            <div class="password-description" :style="{ color: passwordValid ? 'green' : 'red' }">
-              {{ passwordDescription }}
-            </div>
-          </el-form-item>
+        </el-form-item>
+        <el-form-item label="输入新密码:" class="password-input">
+          <el-input style="width: 310px" placeholder="输入新密码" v-model="passwordForm.password" show-password required
+            @input="validatePassword">
+            <template #prepend>
+              <el-icon>
+                <Lock />
+              </el-icon>
+            </template>
+          </el-input>
+          <div class="password-description" :style="{ color: passwordValid ? 'green' : 'red' }">
+            {{ passwordDescription }}
+          </div>
+        </el-form-item>
 
-          <el-form-item label="确认新密码:" class="password-input">
-            <el-input style="width: 310px" placeholder="确认新密码" v-model="passwordForm.password2" show-password required
-              @input="checkPasswordMatch">
-              <template #prepend>
-                <el-icon>
-                  <Lock />
-                </el-icon>
-              </template>
-              <template #suffix>
-                <el-icon :name="passwordMatch ? 'el-icon-circle-check' : 'el-icon-circle-close'"
-                  :color="passwordMatch ? 'green' : 'red'"></el-icon>
-              </template>
-            </el-input>
-            <div class="password-message" :class="{ 'text-success': passwordMatch, 'text-danger': !passwordMatch }">
-              {{ passwordMessage }}
-            </div>
-          </el-form-item>
+        <el-form-item label="确认新密码:" class="password-input">
+          <el-input style="width: 310px" placeholder="确认新密码" v-model="passwordForm.password2" show-password required
+            @input="checkPasswordMatch">
+            <template #prepend>
+              <el-icon>
+                <Lock />
+              </el-icon>
+            </template>
+            <template #suffix>
+              <el-icon :name="passwordMatch ? 'el-icon-circle-check' : 'el-icon-circle-close'"
+                :color="passwordMatch ? 'green' : 'red'"></el-icon>
+            </template>
+          </el-input>
+          <div class="password-message" :class="{ 'text-success': passwordMatch, 'text-danger': !passwordMatch }">
+            {{ passwordMessage }}
+          </div>
+        </el-form-item>
 
-          <el-form-item>
-            <el-button type="primary" @click="submitPassword2">确认</el-button>
-            <el-button @click="resetPassword">重置</el-button>
-          </el-form-item>
-        </el-form>
-      </el-drawer>
+        <el-form-item>
+          <el-button type="primary" @click="submitPassword2">确认</el-button>
+          <el-button @click="resetPassword">重置</el-button>
+        </el-form-item>
+      </el-form>
+    </el-drawer>
 
-    </div>
+
 
   </div>
   <div class="right">

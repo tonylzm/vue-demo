@@ -90,6 +90,18 @@
 <script>
 import axios from 'axios';
 import { ElLoading } from 'element-plus';
+import CryptoJS from 'crypto-js';
+// 密码加密函数
+function hashPassword(password) {
+    const salt = '8nuWjDlIY5Aw+i7q5v04tQ=='; // 这里使用固定的 salt 值
+    const keySize = 256 / 32; // 输出密钥的大小（单位：字节）
+    const iterations = 1000; // 迭代次数
+    const hashedPassword = CryptoJS.PBKDF2(password, salt, {
+        keySize: keySize,
+        iterations: iterations
+    });
+    return hashedPassword.toString(CryptoJS.enc.Hex);
+}
 export default {
     data: function () {
 
@@ -211,15 +223,13 @@ export default {
                 .then(_ => {
                     this.drawer = false;
                     this.form = {
-                        faculty: '',
-                        name: '',
+                        college: JSON.parse(localStorage.getItem('user')).college,
+                        real_name: '',
                         username: '',
                         password: '',
                         checkpassword: '',
                         tel: '',
                         email: '',
-                        delivery: false,
-                        desc: ''
                     };
                     done();
                 })
@@ -257,9 +267,10 @@ export default {
                 text: '正在注册用户，请稍等...',
                 background: 'rgba(0, 0, 0, 0.7)',
             });
+            const hashedPassword = hashPassword(this.form.password);
             const data = {
                 username: this.form.username,
-                password: this.form.password,
+                password: hashedPassword,
                 realName: this.form.real_name,
                 college: this.form.college,
                 tel: this.form.tel,
@@ -277,7 +288,7 @@ export default {
             }).catch(error => {
                 console.error('Error loading data:', error);
                 loading.close();
-                this.$message.error('注册失败');
+                this.$message.error('注册失败,用户名重复或者服务器繁忙');
             });
             console.log('submit!');
         },
