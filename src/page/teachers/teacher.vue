@@ -2,7 +2,7 @@
   <div class="teacher-profile">
     <el-col>
       <div class="profile-photo">
-        <img src="../../page/login/xm.jpg" alt="Teacher Photo" />
+        <img src="../../page/login/B8D76BE9E703B9C9903B96EDB95_F58EF816_3E65F.jpg" alt="Teacher Photo" />
       </div>
       <div class="profile-info">
         <h2 :class="{ 'gray-background': index % 2 !== 0 }">姓名: {{ teacher.realName }}</h2>
@@ -102,6 +102,18 @@
 
 <script>
 import axios from 'axios';
+import CryptoJS from 'crypto-js';
+// 密码加密函数
+function hashPassword(password) {
+  const salt = '8nuWjDlIY5Aw+i7q5v04tQ=='; // 这里使用固定的 salt 值
+  const keySize = 256 / 32; // 输出密钥的大小（单位：字节）
+  const iterations = 1000; // 迭代次数
+  const hashedPassword = CryptoJS.PBKDF2(password, salt, {
+    keySize: keySize,
+    iterations: iterations
+  });
+  return hashedPassword.toString(CryptoJS.enc.Hex);
+}
 export default {
   data() {
     return {
@@ -130,7 +142,7 @@ export default {
       this.innerDrawer = true;
     },
     submitPassword() {
-      const hashedPassword = this.passwordForm.password;
+      const hashedPassword = hashPassword(this.passwordForm.password);
       axios.post('https://localhost:8443/api/users/login', {
         username: this.username,
         password: hashedPassword

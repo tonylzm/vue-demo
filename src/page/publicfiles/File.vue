@@ -235,12 +235,12 @@ export default {
 		},
 		onSubmit() {
 			this.Upload();
-			console.log('submit!');
+			//console.log('submit!');
 		},
 		async handleUpload() {
 			// 用户选择文件
 			const data = await this.sendVerifyInfo();
-			console.log(data);
+			//console.log(data);
 			//如果非法登录，文件删除
 			if (data == '非法登录') {
 				this.$message.error('请检查你的IP地址');

@@ -236,7 +236,7 @@ export default {
                 .catch(_ => { });
         },
         handleUpdata(username) {
-            console.log(username);
+            //console.log(username);
             const data = {
                 username: username,
                 role: 'check'
@@ -254,6 +254,7 @@ export default {
                     }).catch(error => {
                         console.error('Error loading data:', error);
                         this.$message.error('晋升失败');
+                        this.loadData();
                     });
                 })
                 .catch(() => {
@@ -281,7 +282,7 @@ export default {
                     'Content-Type': 'application/json'
                 }
             }).then(response => {
-                console.log(response.data)
+                //console.log(response.data)
                 loading.close();
                 this.$message.success('注册成功');
                 this.loadData();
@@ -290,7 +291,7 @@ export default {
                 loading.close();
                 this.$message.error('注册失败,用户名重复或者服务器繁忙');
             });
-            console.log('submit!');
+            //console.log('submit!');
         },
         //后端返回用户列表
         loadData() {
@@ -331,7 +332,7 @@ export default {
         //删除
 
         handleDelete(username) {
-            console.log(username);
+            //console.log(username);
             const data = {
                 username: username
             }
@@ -346,6 +347,7 @@ export default {
                     }).catch(error => {
                         console.error('Error loading data:', error);
                         this.$message.error('删除失败');
+                        this.loadData();
                     });
                 })
                 .catch(() => {

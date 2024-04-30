@@ -195,17 +195,19 @@ export default {
                 status: this.approvalStatus,
                 opinion: this.reason
             }
-            console.log(data);
+            //console.log(data);
             axios.post('https://localhost:8443/api/checked/classChecked', data, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }).then(response => {
-                console.log(response.data)
+                //console.log(response.data)
                 this.$message.success('审批成功');
+                this.loadData();
             }).catch(error => {
-                console.error('Error loading data:', error);
+                //console.error('Error loading data:', error);
                 this.$message.error('审批失败');
+                this.loadData();
             });
         },
         changeEnable(row) {
@@ -257,7 +259,7 @@ export default {
                 const username = this.username;
                 const time = this.getCurrentTime();
                 const ipAddress = await this.getIPAddress(); // 这里假设你有一个获取 IP 地址的方法
-                console.log(hashedPassword)
+                //console.log(hashedPassword)
                 // 构建发送给后端的数据
                 const data = {
                     hashedPassword,
@@ -270,7 +272,7 @@ export default {
                 // 发送 POST 请求给后端
                 const response = await axios.post('https://localhost:8443/api/users/test', data);
 
-                console.log(response.data);
+                //console.log(response.data);
                 clearTimeout(timerId);
                 loading.close();
                 this.$message.success('验证成功');
@@ -315,14 +317,14 @@ export default {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }).then(response => {
-                console.log(response.data)
+                //console.log(response.data)
                 const {
                     content,
                     totalPages,
                     totalElements,
                     number
                 } = response.data.body;
-                console.log(content)
+                //console.log(content)
                 this.tableData = content;
                 this.total = totalElements;
                 this.pageNum = number + 1;
@@ -390,9 +392,9 @@ export default {
                     this.visible = true;
                     this.$nextTick(() => {
                         const viewer = this.$refs.pdfViewer;
-                        console.log(1);
+                        //console.log(1);
                         setTimeout(() => {
-                            console.log(2);
+                            //console.log(2);
                             viewer.src = URL.createObjectURL(pdfData);
                         }, 100); // 等待1秒后设置src
                     });
