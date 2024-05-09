@@ -3,7 +3,7 @@
         <div class="Box">
             <div class="left">
                 <div class="centerBox">
-                    <img src="../login/OIP-C (7).jpg" alt="">
+                    <img src="../login/OIP.jpg" alt="">
                     <h4>苏州科技大学试卷管理系统</h4>
                     <p>USTS Paper Manage</p>
                 </div>
@@ -48,6 +48,7 @@
 import router from '../../router'; // 导入Vue Router实例
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import { ElLoading } from 'element-plus';
 // 密码加密函数
 function hashPassword(password) {
     const salt = '8nuWjDlIY5Aw+i7q5v04tQ=='; // 这里使用固定的 salt 值
@@ -65,6 +66,17 @@ export default {
             username: '',
             password: '',
         };
+    },
+    created() {
+        // //加载页面时刷新
+        // const loading = ElLoading.service({
+        //     lock: true,
+        //     text: '正在加载，请稍等...',
+        //     background: 'rgba(0, 0, 0,1)',
+        // });
+        // setTimeout(() => {
+        //     loading.close();
+        // }, 1000);
     },
     methods: {
         handleSubmit() {

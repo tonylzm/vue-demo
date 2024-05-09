@@ -1,7 +1,11 @@
 <template>
   <div id="app">
-    <Header v-if="!hideHeader" />
-    <Sidebar v-if="!hideSidebar" />
+    <transition name="fade">
+      <Header v-show="!hideHeader" />
+    </transition>
+    <transition name="fade">
+      <Sidebar v-show="!hideSidebar" />
+    </transition>
     <div class="content" :class="{ 'full-width': hideSidebar }">
       <router-view></router-view>
     </div>
@@ -30,6 +34,7 @@ export default defineComponent({
       return this.$route.meta.hideHeader || false
     }
   },
+
   setup() {
     const debounce = (callback, delay) => {
       let tid;
@@ -79,7 +84,20 @@ export default defineComponent({
   width: 100%;
   z-index: 1000;
 
+
   /* 确保 Header 在其他内容之上 */
   /* 其他样式，如背景色、高度、内边距等 */
+}
+
+/* 添加过渡效果的CSS类 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s;
+  /*设置蒙版*/
+}
+
+.fade-enter,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
