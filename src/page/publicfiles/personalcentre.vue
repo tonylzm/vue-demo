@@ -88,6 +88,16 @@
 import axios from 'axios';
 import { ref } from 'vue';
 const value = ref(new Date())
+function hashPassword(password) {
+    const salt = '8nuWjDlIY5Aw+i7q5v04tQ=='; // 这里使用固定的 salt 值
+    const keySize = 256 / 32; // 输出密钥的大小（单位：字节）
+    const iterations = 1000; // 迭代次数
+    const hashedPassword = CryptoJS.PBKDF2(password, salt, {
+        keySize: keySize,
+        iterations: iterations
+    });
+    return hashedPassword.toString(CryptoJS.enc.Hex);
+}
 export default {
     data() {
         // 校验密码
@@ -148,11 +158,13 @@ export default {
             console.log(this.form.newpassword);
             console.log(this.conpassword);
             //如果选择的是修改密码
+            const hashedPassword = hashPassword(this.form.prepassword);
+            const hashedPassword1 = hashPassword(this.form.newpassword);
             if (this.editOptions === '修改密码') {
                 const data = {
                     username: this.username,
-                    oldPassword: this.form.prepassword,
-                    newPassword: this.form.newpassword
+                    oldPassword: hashedPassword,
+                    newPassword: hashedPassword1
                 }
                 axios.post('https://localhost:8443/api/users/updatePassword', data).then(response => {
                     console.log('修改密码成功:', response.data);

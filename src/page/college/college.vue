@@ -144,6 +144,7 @@ export default {
             visible: false,
             username: JSON.parse(localStorage.getItem('user')).username,
             college: JSON.parse(localStorage.getItem('user')).college,
+            realName: JSON.parse(localStorage.getItem('user')).realName,
             uploadProgress: 0,
             showProgress: false, // 是否显示进度条 
             innerDrawer: false,
@@ -198,7 +199,7 @@ export default {
         onSubmit() {
             const data = {
                 fileName: this.checkfilename,
-                collegeCheck: this.username,
+                collegeCheck: this.realName,
                 status: this.approvalStatus,
                 opinion: this.reason
             }
@@ -313,13 +314,14 @@ export default {
             const data = qs.stringify({
                 pageNum: this.pageNum,
                 pageSize: this.pageSize,
-                college: this.college,
+                college_check: this.realName,
                 status: "系主任通过",
+                college: this.college,
                 name: this.name,
                 produced: this.username
             });
 
-            axios.post('https://localhost:8443/api/checked/findCheckedfile', data, {
+            axios.post('https://localhost:8443/api/checked/findCollegeCheckFile', data, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }

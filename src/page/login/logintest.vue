@@ -93,9 +93,7 @@ export default {
                 // 处理登录失败逻辑
             });
         },
-        handleRegister() {
-            // 处理注册逻辑，可以跳转至注册页面或显示注册表单  
-        },
+
     },
 };  
 </script>

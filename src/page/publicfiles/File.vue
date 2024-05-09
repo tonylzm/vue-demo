@@ -67,6 +67,18 @@
 							<el-option label="天平学院" value="天平学院"></el-option>
 						</el-select>
 					</el-form-item>
+					<el-form-item label="选择审核系主任">
+						<el-select v-model="form.classCheck" placeholder="选择审核系主任">
+							<el-option v-for="(option, index) in classOptions" :key="index" :label="option"
+								:value="option"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="选择审核院长">
+						<el-select v-model="form.collegeCheck" placeholder="选择审核院长">
+							<el-option v-for="(option, index) in collegeOptions" :key="index" :label="option"
+								:value="option"></el-option>
+						</el-select>
+					</el-form-item>
 					<el-form-item label="考试开始时间">
 						<el-row>
 							<el-col :span="10">
@@ -181,7 +193,9 @@ export default {
 				desc: '',
 				date: '', // 选择的日期  
 				startTime: '', // 开始时间  
-				endTime: '' // 结束时间 
+				endTime: '',// 结束时间 
+				classCheck: '',
+				collegeCheck: ''
 			},
 			md5Value: '',
 			encryptedFile: null,
@@ -195,11 +209,17 @@ export default {
 			ipAddress: '',
 			selectedOption: '',// 对账号选择的值
 			reloadname: '',//重新上传的文件名,用于检验是否符合规范
+			classOptions: [],
+			collegeOptions: []
 		}
 	},
 
+
 	created() {
 		this.loadData();
+
+		this.getcheckuser();
+
 	},
 	methods: {
 		changeEnable(row) {
@@ -511,8 +531,28 @@ export default {
 			this.form.name = name;
 			this.reloadname = filename;
 		},
+		getcheckuser() {
+			axios.post('https://localhost:8443/api/users/findCheckUser', {
+				college: this.college
+			}, {
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
+				}
+			}).then(response => {
+				console.log(response.data.body)
+				sessionStorage.setItem('checkuser', JSON.stringify(response.data.body));
+				const storedData = sessionStorage.getItem('checkuser');
+				if (storedData) {
+					const parsedData = JSON.parse(storedData);
+					const myName = JSON.parse(localStorage.getItem('user')).realName; // 替换为你的名字
+					this.classOptions = parsedData.class_check.filter(name => name !== myName);
+					this.collegeOptions = parsedData.college_check.filter(name => name !== myName);
+				}
+			}).catch(error => {
+				console.error('Error loading data:', error);
+			});
+		}
 	}
 }
 </script>
-
 <style></style>
