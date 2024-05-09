@@ -1,7 +1,7 @@
 <template>
     <div class="sidebar">
         <el-row class="tac">
-            <el-col :span="50" :border="false">
+            <el-col :span="50" :border="false" style="width: 190px;">
                 <!-- <img src="../page/login/th.jpg" alt="Image" style="width: 200px; height: auto;margin-top: 0;" /> -->
                 <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
                     <el-sub-menu index="1">
@@ -129,6 +129,6 @@ export default {
     top: 0;
     left: 0;
     padding-top: 80px;
-    width: auto;
+    width: 190px;
 }
 </style>

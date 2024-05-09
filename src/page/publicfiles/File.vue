@@ -31,8 +31,8 @@
 						</el-icon>
 					</el-tooltip>
 				</div>
-				<el-form ref="form" :model="form" label-width="120px">
-					<el-form-item label="考试名称">
+				<el-form ref="form" :model="form" :rules="rules" label-width="120px">
+					<el-form-item label="考试名称" prop="name">
 						<el-input v-model="form.name"></el-input>
 					</el-form-item>
 					<el-form-item label="试卷上传">
@@ -50,16 +50,16 @@
 							</el-icon>
 						</template>
 					</el-form-item>
-					<el-form-item label="考试班级">
+					<el-form-item label="考试班级" prop="class">
 						<el-input v-model="form.class"></el-input>
 					</el-form-item>
-					<el-form-item label="考试方式">
+					<el-form-item label="考试方式" prop="region">
 						<el-select v-model="form.region" placeholder="请选择考试方式">
 							<el-option label="开卷考试" value="开卷考试"></el-option>
 							<el-option label="闭卷考试" value="闭卷考试"></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="所属院系">
+					<el-form-item label="所属院系" prop="college">
 						<el-select v-model="form.college" placeholder="请选择院系">
 							<el-option label="电子与信息工程学院" value="电子与信息工程学院"></el-option>
 							<el-option label="马克思主义学院" value="马克思主义学院"></el-option>
@@ -67,19 +67,19 @@
 							<el-option label="天平学院" value="天平学院"></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="选择审核系主任">
+					<el-form-item label="选择审核主任" prop="classCheck">
 						<el-select v-model="form.classCheck" placeholder="选择审核系主任">
 							<el-option v-for="(option, index) in classOptions" :key="index" :label="option"
 								:value="option"></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="选择审核院长">
+					<el-form-item label="选择审核院长" prop="collegeCheck">
 						<el-select v-model="form.collegeCheck" placeholder="选择审核院长">
 							<el-option v-for="(option, index) in collegeOptions" :key="index" :label="option"
 								:value="option"></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="考试开始时间">
+					<el-form-item label="考试开始时间" prop="date">
 						<el-row>
 							<el-col :span="10">
 								<el-date-picker v-model="form.date" type="date" placeholder="选择日期"
@@ -109,7 +109,7 @@
 						<el-input type="textarea" v-model="form.desc"></el-input>
 					</el-form-item>
 					<el-form-item>
-						<el-button type="primary" @click="onSubmit">信息上传<el-icon>
+						<el-button type="primary" @click="onSubmit('form')">信息上传<el-icon>
 								<UploadFilled />
 							</el-icon></el-button>
 						<el-button @click="handleClose">取消<el-icon>
@@ -176,8 +176,9 @@ export default {
 			previewModalVisible: false, // 控制模态框的显示/隐藏
 			previewData: '', // 存储预览数据
 			visible: false,
-			username: JSON.parse(localStorage.getItem('user')).username,
+			username: JSON.parse(localStorage.getItem('user')).realName,
 			college: JSON.parse(localStorage.getItem('user')).college,
+			realName: JSON.parse(localStorage.getItem('user')).realName,
 			uploadProgress: 0,
 			showProgress: false, // 是否显示进度条 
 			innerDrawer: false,
@@ -196,6 +197,35 @@ export default {
 				endTime: '',// 结束时间 
 				classCheck: '',
 				collegeCheck: ''
+			},
+			rules: {
+				name: [
+					{ required: true, message: '请输入考试名称', trigger: 'blur' }
+				],
+				class: [
+					{ required: true, message: '请输入考试班级', trigger: 'blur' }
+				],
+				region: [
+					{ required: true, message: '请选择考试方式', trigger: 'change' }
+				],
+				college: [
+					{ required: true, message: '请选择所属院系', trigger: 'change' }
+				],
+				classCheck: [
+					{ required: true, message: '请选择审核系主任', trigger: 'change' }
+				],
+				collegeCheck: [
+					{ required: true, message: '请选择审核院长', trigger: 'change' }
+				],
+				date: [
+					{ required: true, message: '请选择考试日期', trigger: 'change' }
+				],
+				startTime: [
+					{ required: true, message: '请选择开始时间', trigger: 'change' }
+				],
+				endTime: [
+					{ required: true, message: '请选择结束时间', trigger: 'change' }
+				]
 			},
 			md5Value: '',
 			encryptedFile: null,
@@ -253,8 +283,16 @@ export default {
 				})
 				.catch(_ => { });
 		},
-		onSubmit() {
-			this.Upload();
+		onSubmit(formName) {
+			this.$refs[formName].validate((valid) => {
+				if (valid) {
+					alert('确定提交吗？');
+					this.Upload();
+				} else {
+					alert('尚有未填写字段');
+					return false;
+				}
+			});
 			//console.log('submit!');
 		},
 		async handleUpload() {
@@ -270,7 +308,7 @@ export default {
 			fileInput.type = 'file';
 			fileInput.addEventListener('change', async () => {
 				const file = fileInput.files[0];
-				this.fileName = this.username + file.name;
+				this.fileName = this.username + '_' + file.name;
 				if (this.reloadname !== '' && this.reloadname !== this.fileName) {
 					this.$message.error('文件与原文件不符，请重新上传');
 					return;
@@ -364,7 +402,7 @@ export default {
 					that.encryptedFile = null;
 					clearInterval(that.timer); // 上传成功后暂停计时
 					that.countdown = 120; // 重置倒计时
-
+					that.drawer = false;
 				} else {
 					that.progressColor = 'OrangeRed';
 					that.$message.error('上传失败！' + xhr.responseText);

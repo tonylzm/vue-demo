@@ -26,19 +26,20 @@
                         <el-input placeholder="请输入内容" v-model="form.college" :disabled="true"></el-input>
                     </el-form-item>
                     <el-form-item label="真实姓名" prop="real_name">
-                        <el-input v-model="form.real_name"></el-input>
+                        <el-input v-model="form.real_name" maxlength="6"></el-input>
                     </el-form-item>
                     <el-form-item label="用户名" prop="username">
-                        <el-input v-model="form.username"></el-input>
+                        <el-input v-model="form.username" maxlength="20"></el-input>
                     </el-form-item>
                     <el-form-item label="密码" prop="password">
-                        <el-input v-model="form.password" autocomplete="off" show-password></el-input>
+                        <el-input v-model="form.password" autocomplete="off" show-password maxlength="16"></el-input>
                     </el-form-item>
                     <el-form-item label="确认密码" prop="checkpassword">
-                        <el-input v-model="form.checkpassword" autocomplete="off" show-password></el-input>
+                        <el-input v-model="form.checkpassword" autocomplete="off" show-password
+                            maxlength="16"></el-input>
                     </el-form-item>
                     <el-form-item label="手机号" prop="tel">
-                        <el-input v-model="form.tel"></el-input>
+                        <el-input v-model="form.tel" maxlength="11"></el-input>
                     </el-form-item>
                     <el-form-item label="邮箱" prop="email">
                         <el-input v-model="form.email"></el-input>

@@ -58,6 +58,8 @@ export default defineComponent({
   margin-top: 90px;
   margin-left: 210px;
   /* 这里是侧边栏的宽度 */
+
+
 }
 
 /* 可以根据需要添加样式 */
@@ -76,7 +78,7 @@ export default defineComponent({
   left: 0;
   width: 100%;
   z-index: 1000;
-  background-color: #fff;
+
   /* 确保 Header 在其他内容之上 */
   /* 其他样式，如背景色、高度、内边距等 */
 }

@@ -53,10 +53,10 @@
                     <el-input v-model="form.prepassword" show-password></el-input>
                 </el-form-item>
                 <el-form-item label="输入新密码" v-if="editOptions === '修改密码'" prop="newpassword">
-                    <el-input v-model="form.newpassword" autocomplete="off" show-password></el-input>
+                    <el-input v-model="form.newpassword" autocomplete="off" show-password maxlength="16"></el-input>
                 </el-form-item>
                 <el-form-item label="确认密码" v-if="editOptions === '修改密码'" prop="conpassword">
-                    <el-input v-model="form.conpassword" autocomplete="off" show-password></el-input>
+                    <el-input v-model="form.conpassword" autocomplete="off" show-password maxlength="16"></el-input>
                     <!-- <el-form>
                         <el-icon v-if="isPasswordMatch" class="check-icon" name="check" style="color: green;">
                             <Check />
@@ -66,7 +66,7 @@
                 </el-form-item>
                 <el-icon></el-icon>
                 <el-form-item label="输入新手机号" v-if="editOptions === '修改手机号'">
-                    <el-input v-model="form.phone"></el-input>
+                    <el-input v-model="form.phone" maxlength="11"></el-input>
                 </el-form-item>
                 <el-form-item>
                     <el-button type="primary" @click="onSubmit">确认</el-button>
