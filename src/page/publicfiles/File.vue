@@ -176,7 +176,7 @@ export default {
 			previewModalVisible: false, // 控制模态框的显示/隐藏
 			previewData: '', // 存储预览数据
 			visible: false,
-			username: JSON.parse(localStorage.getItem('user')).realName,
+			username: JSON.parse(localStorage.getItem('user')).username,
 			college: JSON.parse(localStorage.getItem('user')).college,
 			realName: JSON.parse(localStorage.getItem('user')).realName,
 			uploadProgress: 0,
@@ -308,7 +308,7 @@ export default {
 			fileInput.type = 'file';
 			fileInput.addEventListener('change', async () => {
 				const file = fileInput.files[0];
-				this.fileName = this.username + '_' + file.name;
+				this.fileName = this.realName + '_' + file.name;
 				if (this.reloadname !== '' && this.reloadname !== this.fileName) {
 					this.$message.error('文件与原文件不符，请重新上传');
 					return;
