@@ -212,6 +212,8 @@ export default {
                 //console.log(response.data)
                 this.$message.success('审批成功');
                 this.loadData();
+                this.innerDrawer = false;
+                this.visible = false;
             }).catch(error => {
                 //console.error('Error loading data:', error);
                 this.$message.error('审批失败');

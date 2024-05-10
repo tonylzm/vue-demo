@@ -54,8 +54,8 @@
 
         </el-form-item>
         <el-form-item label="输入新密码:" class="password-input">
-          <el-input style="width: 310px" placeholder="输入新密码" v-model="passwordForm.password" show-password required
-            @input="validatePassword">
+          <el-input style="width: 310px" placeholder="输入新密码" maxlength="16" v-model="passwordForm.password"
+            show-password required @input="validatePassword">
             <template #prepend>
               <el-icon>
                 <Lock />
@@ -68,8 +68,8 @@
         </el-form-item>
 
         <el-form-item label="确认新密码:" class="password-input">
-          <el-input style="width: 310px" placeholder="确认新密码" v-model="passwordForm.password2" show-password required
-            @input="checkPasswordMatch">
+          <el-input style="width: 310px" placeholder="确认新密码" maxlength="16" v-model="passwordForm.password2"
+            show-password required @input="checkPasswordMatch">
             <template #prepend>
               <el-icon>
                 <Lock />

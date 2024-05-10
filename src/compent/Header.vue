@@ -1,8 +1,13 @@
 <template>
     <div class="header">
-        <div class="logo">
-            <img src="../page/login/th.jpg" alt="Image" style="width: 200px; height: auto;" />
-        </div>
+        <span class="username">
+            <div class="logo">
+                <img src="../page/login/logo.jpg" alt="Image" style="width: 200px; height: auto;" />
+            </div>
+            <div class="font">
+                <p class="p">苏州科技大学试卷管理系统</p>
+            </div>
+        </span>
         <div class="user-info">
             <span class="username">
                 <el-tag type="primary">
@@ -33,7 +38,7 @@ export default {
     name: 'Header',
     data() {
         return {
-            username: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).username : null,
+            username: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).realName : null,
         };
     },
     methods: {
@@ -59,6 +64,8 @@ export default {
             setTimeout(() => {
                 window.location.reload();
             }, 500);
+            //清空所有本地存储
+            localStorage.clear();
             setTimeout(() => {
                 loading.close();
             }, 1000);
@@ -94,6 +101,7 @@ export default {
     justify-content: space-between;
     border-bottom: 1px solid #ddd;
     /* 添加底部边框，模拟分割线效果 */
+    background-color: #0168B7;
 }
 
 .menu {
@@ -116,6 +124,8 @@ export default {
     /* 靠右对齐 */
 }
 
+
+
 .username {
     display: flex;
     align-items: center;
@@ -124,5 +134,22 @@ export default {
 .username el-icon {
     margin-right: 5px;
     /* 调整图标与文字之间的间距 */
+}
+
+.logo {
+    margin-left: 20px;
+    /* 添加左侧边距，与 Logo 分隔开
+    width: 15%; */
+
+}
+
+.p {
+    color: #fff;
+    font-size: 20px;
+    /*与logo紧靠*/
+    float: left;
+    /*字体种类为微软雅黑*/
+    font-family: "楷体";
+
 }
 </style>
