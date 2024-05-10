@@ -1,16 +1,29 @@
 <template>
     <div class="header">
-        <div class="logo">
-            <img src="../page/login/th.jpg" alt="Image" style="width: 200px; height: auto;" />
-        </div>
+        <span class="username">
+            <div class="logo">
+                <img src="../page/login/logo.jpg" alt="Image" style="width: 200px; height: auto;" />
+            </div>
+            <div class="font">
+                <p class="p">苏州科技大学试卷管理系统</p>
+            </div>
+        </span>
         <div class="user-info">
             <span class="username">
-                <el-icon>
-                    <UserFilled />
-                </el-icon> 欢迎你: {{ username }}
+                <el-tag type="primary">
+                    <el-icon>
+                        <UserFilled />
+                    </el-icon> 欢迎你: {{ username }}</el-tag>
+
+                <el-tag type="success" style="margin-left: 10px;">
+                    <el-button type="success" @click="refresh"><el-icon>
+                            <Refresh />
+                        </el-icon>刷新页面</el-button>
+                </el-tag>
                 <el-select v-model="selectedOption" placeholder="操作" @change="handleOptionChange" class="custom-select">
                     <el-option label="退出登录" value="logout"></el-option>
                     <el-option label="切换登录" value="switchUser"></el-option>
+                    <el-option label="刷新页面" value="refresh"></el-option>
                 </el-select>
             </span>
         </div>
@@ -18,12 +31,14 @@
 </template>
 
 <script>
+import { ref } from 'vue';
 import router from '../router'; // 导入Vue Router实例
+import { ElLoading } from 'element-plus';
 export default {
     name: 'Header',
     data() {
         return {
-            username: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).username : null,
+            username: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).realName : null,
         };
     },
     methods: {
@@ -32,16 +47,45 @@ export default {
                 this.logout();
             } else if (this.selectedOption === 'switchUser') {
                 this.switchUser();
+            } else if (this.selectedOption === 'refresh') {
+                this.refresh();
             }
             this.selectedOption = ''; // 重置选择器的值
         },
         logout() {
-            localStorage.clear();
-            router.push('/4');
+            const loading = ElLoading.service({
+                lock: true,
+                text: '正在注销登录，请稍等...',
+                background: 'rgba(0, 0, 0,1)',
+            });
+            setTimeout(() => {
+                router.push('/');
+            }, 200);
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+            setTimeout(() => {
+                loading.close();
+            }, 1000);
         },
         switchUser() {
-            localStorage.clear();
-            router.push('/4');
+            const loading = ElLoading.service({
+                lock: true,
+                text: '正在返回登录界面，请稍等...',
+                background: 'rgba(0, 0, 0,1)',
+            });
+            setTimeout(() => {
+                router.push('/');
+            }, 200);
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+            setTimeout(() => {
+                loading.close();
+            }, 1000);
+        },
+        refresh() {
+            location.reload();
         }
     }
 }
@@ -49,13 +93,13 @@ export default {
 
 <style scoped>
 .header {
-    height: 10%;
+    height: 80px;
     display: flex;
     align-items: center;
     justify-content: space-between;
     border-bottom: 1px solid #ddd;
-    margin-top: 10px;
     /* 添加底部边框，模拟分割线效果 */
+    background-color: #0168B7;
 }
 
 .menu {
@@ -78,6 +122,8 @@ export default {
     /* 靠右对齐 */
 }
 
+
+
 .username {
     display: flex;
     align-items: center;
@@ -86,5 +132,22 @@ export default {
 .username el-icon {
     margin-right: 5px;
     /* 调整图标与文字之间的间距 */
+}
+
+.logo {
+    margin-left: 20px;
+    /* 添加左侧边距，与 Logo 分隔开
+    width: 15%; */
+
+}
+
+.p {
+    color: #fff;
+    font-size: 20px;
+    /*与logo紧靠*/
+    float: left;
+    /*字体种类为微软雅黑*/
+    font-family: "楷体";
+
 }
 </style>

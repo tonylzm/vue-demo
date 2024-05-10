@@ -31,8 +31,8 @@
 						</el-icon>
 					</el-tooltip>
 				</div>
-				<el-form ref="form" :model="form" label-width="120px">
-					<el-form-item label="考试名称">
+				<el-form ref="form" :model="form" :rules="rules" label-width="120px">
+					<el-form-item label="考试名称" prop="name">
 						<el-input v-model="form.name"></el-input>
 					</el-form-item>
 					<el-form-item label="试卷上传">
@@ -50,16 +50,16 @@
 							</el-icon>
 						</template>
 					</el-form-item>
-					<el-form-item label="考试班级">
+					<el-form-item label="考试班级" prop="class">
 						<el-input v-model="form.class"></el-input>
 					</el-form-item>
-					<el-form-item label="考试方式">
+					<el-form-item label="考试方式" prop="region">
 						<el-select v-model="form.region" placeholder="请选择考试方式">
 							<el-option label="开卷考试" value="开卷考试"></el-option>
 							<el-option label="闭卷考试" value="闭卷考试"></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="所属院系">
+					<el-form-item label="所属院系" prop="college">
 						<el-select v-model="form.college" placeholder="请选择院系">
 							<el-option label="电子与信息工程学院" value="电子与信息工程学院"></el-option>
 							<el-option label="马克思主义学院" value="马克思主义学院"></el-option>
@@ -67,16 +67,33 @@
 							<el-option label="天平学院" value="天平学院"></el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="考试开始时间">
-						<el-col :span="11">
-							<el-date-picker type="date" placeholder="选择日期" v-model="form.date1"
-								style="width: 100%;"></el-date-picker>
-						</el-col>
-						<el-col class="line" :span="2">-</el-col>
-						<el-col :span="11">
-							<el-time-picker placeholder="选择时间" v-model="form.date2"
-								style="width: 100%;"></el-time-picker>
-						</el-col>
+					<el-form-item label="选择审核主任" prop="classCheck">
+						<el-select v-model="form.classCheck" placeholder="选择审核系主任">
+							<el-option v-for="(option, index) in classOptions" :key="index" :label="option"
+								:value="option"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="选择审核院长" prop="collegeCheck">
+						<el-select v-model="form.collegeCheck" placeholder="选择审核院长">
+							<el-option v-for="(option, index) in collegeOptions" :key="index" :label="option"
+								:value="option"></el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item label="考试开始时间" prop="date">
+						<el-row>
+							<el-col :span="10">
+								<el-date-picker v-model="form.date" type="date" placeholder="选择日期"
+									style="width: 100%;"></el-date-picker>
+							</el-col>
+							<el-col :span="6">
+								<el-time-picker v-model="form.startTime" format="HH:mm" placeholder="选择开始时间"
+									style="width: 100%;"></el-time-picker>
+							</el-col>
+							<el-col :span="6">
+								<el-time-picker v-model="form.endTime" format="HH:mm" placeholder="选择结束时间"
+									style="width: 100%;"></el-time-picker>
+							</el-col>
+						</el-row>
 					</el-form-item>
 					<el-form-item label="信息保存">
 						<el-switch v-model="form.delivery"
@@ -92,8 +109,8 @@
 						<el-input type="textarea" v-model="form.desc"></el-input>
 					</el-form-item>
 					<el-form-item>
-						<el-button type="primary" @click="onSubmit">信息上传<el-icon>
-								<Upload />
+						<el-button type="primary" @click="onSubmit('form')">信息上传<el-icon>
+								<UploadFilled />
 							</el-icon></el-button>
 						<el-button @click="handleClose">取消<el-icon>
 								<Close />
@@ -101,13 +118,6 @@
 					</el-form-item>
 				</el-form>
 			</el-drawer>
-			<!-- <el-popconfirm width="220" confirm-button-text="OK" cancel-button-text="No, Thanks" :icon="InfoFilled"
-				icon-color="#626AEF" title="Are you sure to delete this?" @confirm="delBatch">
-				<template #reference>
-					<el-button type="danger" slot="reference">上传文件 <i class="el-icon-remove-outline"></i></el-button>
-				</template>
-			</el-popconfirm> -->
-
 		</div>
 		<div>
 			<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26" :percentage="uploadProgress"
@@ -118,86 +128,35 @@
 			<el-table-column type="selection" width="55"></el-table-column>
 			<el-table-column prop="id" label="ID" width="80"></el-table-column>
 			<el-table-column prop="name" label="文件名称"></el-table-column>
+			<el-table-column prop="testname" label="考试名称"></el-table-column>
 			<el-table-column prop="produced" label="出卷人"></el-table-column>
-			<el-table-column prop="size" label="文件大小(kb)"></el-table-column>
+			<el-table-column prop="classes" label="考试班级"></el-table-column>
+			<el-table-column prop="testtype" label="考试类型"></el-table-column>
+			<el-table-column prop="testtime" label="考试时间"></el-table-column>
 			<el-table-column prop="checkStatus" label="审核状态"></el-table-column>
-			<el-table-column label="下载">
+			<el-table-column label="重新上传">
 				<template v-slot="scope">
-					<el-button type="primary" @click="download(scope.row.name)"><el-icon>
-							<Download />
+					<el-button type="primary" :disabled="!scope.row.checkStatus.includes('不通过')"
+						@click="toreload(scope.row.testname, scope.row.name)">
+						<el-icon>
+							<Refresh />
 						</el-icon>
-						下载</el-button>
-				</template>
-			</el-table-column>
-			<el-table-column label="加载预览">
-				<template v-slot="scope">
-					<el-button type="primary" @click="preview(scope.row.name, scope.row.decrypt)">加载预览<el-icon>
-							<Monitor />
-						</el-icon></el-button>
-				</template>
-			</el-table-column>
-			<!-- <el-table-column label="启用">
-				<template v-slot="scope">
-					<el-switch v-model="scope.row.enable"
-						style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-						@change="changeEnable(scope.row)"></el-switch>
-				</template>
-			</el-table-column> -->
-			<el-table-column label="操作" width="200" align="center">
-				<template v-slot="scope">
-					<el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
-						icon-color="red" title="开启后密码解开" @confirm="decrpyt(scope.row.name)">
-						<template #reference>
-							<el-button type="danger" slot="reference" :disabled="scope.row.decrypt">解密该试卷<el-icon>
-									<Checked />
-								</el-icon>
-							</el-button>
-						</template>
-					</el-popconfirm>
+						重新上传
+					</el-button>
 				</template>
 			</el-table-column>
 		</el-table>
-		<el-dialog :visible="previewModalVisible" title="preview" width="50%">
-			<!-- 在这里显示预览数据 -->
-			<div v-html="previewData"></div>
-			<!-- 或者根据实际情况使用其他方式显示预览数据 -->
-			<!-- 例如：使用 <iframe> 标签加载预览数据 -->
-			<iframe :src="pdfUrl" width="100%" height="600px"></iframe>
-			<span slot="footer" class="dialog-footer">
-				<el-button type="primary" @click="previewModalVisible = false">Close</el-button>
-			</span>
-		</el-dialog>
 		<div style="padding: 10px 0">
 			<el-pagination @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="pageNum"
 				:page-sizes="[2, 5, 10, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
 				:total="total">
 			</el-pagination>
 		</div>
-		<el-drawer v-model="visible" :show-close="false" size="50%">
-			<template #header="{ close, titleId, titleClass }">
-				<h4 :id="titleId" :class="titleClass">试卷预览</h4>
-				<el-button type="danger" @click="close">
-					<el-icon class="el-icon--left">
-						<CircleCloseFilled />
-					</el-icon>
-					关闭
-				</el-button>
-				<div>
-					<el-button @click="innerDrawer = true" :disabled="!this.canclick">Click me!</el-button>
-					<el-drawer v-model="innerDrawer" title="I'm inner Drawer" :append-to-body="true"
-						:before-close="handleClose">
-						<p>_(:зゝ∠)_</p>
-					</el-drawer>
-				</div>
-			</template>
-			<iframe ref="pdfViewer" style="width: 100%; height: 600px;" frameborder="0"></iframe>
-		</el-drawer>
-
 	</div>
 </template>
 
 <script>
-import router from '../router'; // 导入Vue Router实例
+import router from '../../router'; // 导入Vue Router实例
 import axios from 'axios';
 import md5 from 'js-md5';
 import JSEncrypt from 'jsencrypt';
@@ -217,23 +176,56 @@ export default {
 			previewModalVisible: false, // 控制模态框的显示/隐藏
 			previewData: '', // 存储预览数据
 			visible: false,
-			username: JSON.parse(localStorage.getItem('user')).username,
+			username: JSON.parse(localStorage.getItem('user')).realName,
 			college: JSON.parse(localStorage.getItem('user')).college,
+			realName: JSON.parse(localStorage.getItem('user')).realName,
 			uploadProgress: 0,
 			showProgress: false, // 是否显示进度条 
 			innerDrawer: false,
 			drawer: false,
-
+			reload: false,
 			uploadParams: null,
 			form: {
 				name: '',
 				class: '',
 				region: '',
 				college: '',
-				date1: '',
-				date2: '',
 				delivery: false,
-				desc: ''
+				desc: '',
+				date: '', // 选择的日期  
+				startTime: '', // 开始时间  
+				endTime: '',// 结束时间 
+				classCheck: '',
+				collegeCheck: ''
+			},
+			rules: {
+				name: [
+					{ required: true, message: '请输入考试名称', trigger: 'blur' }
+				],
+				class: [
+					{ required: true, message: '请输入考试班级', trigger: 'blur' }
+				],
+				region: [
+					{ required: true, message: '请选择考试方式', trigger: 'change' }
+				],
+				college: [
+					{ required: true, message: '请选择所属院系', trigger: 'change' }
+				],
+				classCheck: [
+					{ required: true, message: '请选择审核系主任', trigger: 'change' }
+				],
+				collegeCheck: [
+					{ required: true, message: '请选择审核院长', trigger: 'change' }
+				],
+				date: [
+					{ required: true, message: '请选择考试日期', trigger: 'change' }
+				],
+				startTime: [
+					{ required: true, message: '请选择开始时间', trigger: 'change' }
+				],
+				endTime: [
+					{ required: true, message: '请选择结束时间', trigger: 'change' }
+				]
 			},
 			md5Value: '',
 			encryptedFile: null,
@@ -245,13 +237,19 @@ export default {
 			fullscreenLoading: false,
 			canclick: false,
 			ipAddress: '',
-			selectedOption: '' // 对账号选择的值
-
+			selectedOption: '',// 对账号选择的值
+			reloadname: '',//重新上传的文件名,用于检验是否符合规范
+			classOptions: [],
+			collegeOptions: []
 		}
 	},
 
+
 	created() {
 		this.loadData();
+
+		this.getcheckuser();
+
 	},
 	methods: {
 		changeEnable(row) {
@@ -270,12 +268,14 @@ export default {
 							class: '',
 							region: '',
 							college: '',
-							date1: '',
-							date2: '',
+							date: '', // 选择的日期  
+							startTime: '', // 开始时间  
+							endTime: '', // 结束时间 
 							delivery: false,
 							desc: ''
 						};
 					}
+					this.reloadname = '';
 					this.encryptedFile = null;
 					this.countdown = 120;
 					clearInterval(this.timer);;
@@ -283,14 +283,22 @@ export default {
 				})
 				.catch(_ => { });
 		},
-		onSubmit() {
-			this.Upload();
-			console.log('submit!');
+		onSubmit(formName) {
+			this.$refs[formName].validate((valid) => {
+				if (valid) {
+					alert('确定提交吗？');
+					this.Upload();
+				} else {
+					alert('尚有未填写字段');
+					return false;
+				}
+			});
+			//console.log('submit!');
 		},
 		async handleUpload() {
 			// 用户选择文件
 			const data = await this.sendVerifyInfo();
-			console.log(data);
+			//console.log(data);
 			//如果非法登录，文件删除
 			if (data == '非法登录') {
 				this.$message.error('请检查你的IP地址');
@@ -300,7 +308,11 @@ export default {
 			fileInput.type = 'file';
 			fileInput.addEventListener('change', async () => {
 				const file = fileInput.files[0];
-				this.fileName = this.username + file.name;
+				this.fileName = this.username + '_' + file.name;
+				if (this.reloadname !== '' && this.reloadname !== this.fileName) {
+					this.$message.error('文件与原文件不符，请重新上传');
+					return;
+				}
 				//console.log('fileName', this.fileName);
 				return new Promise(async (resolve, reject) => {
 					const reader = new FileReader();
@@ -390,6 +402,7 @@ export default {
 					that.encryptedFile = null;
 					clearInterval(that.timer); // 上传成功后暂停计时
 					that.countdown = 120; // 重置倒计时
+					that.drawer = false;
 				} else {
 					that.progressColor = 'OrangeRed';
 					that.$message.error('上传失败！' + xhr.responseText);
@@ -471,9 +484,10 @@ export default {
 				// 发送 POST 请求给后端
 				const response = await axios.post('https://localhost:8443/api/users/test', data);
 
-				console.log(response.data);
+				// 清除定时器
 				clearTimeout(timerId);
 				loading.close();
+				this.countdown = 120;
 				this.$message.success('验证成功');
 				return response.data;
 
@@ -550,72 +564,33 @@ export default {
 			this.pageSize = pageSize;
 			this.loadData();
 		},
-		download(name) {
-			axios.get('https://localhost:8443/api/download/download', {
-				params: {
-					filename: name
-				},
-				responseType: 'blob'
-			}).then(response => {
-				const a = document.createElement('a');
-				const url = window.URL.createObjectURL(response.data);
-				a.href = url;
-				a.download = name;
-				document.body.appendChild(a);
-				a.click();
-				document.body.removeChild(a);
-				window.URL.revokeObjectURL(url);
-				this.$message.success('下载成功');
-			}).catch(error => {
-				console.error('Error downloading file:', error);
-				this.$message.error('下载失败');
-			});
+		toreload(name, filename) {
+			this.drawer = true;
+			this.form.name = name;
+			this.reloadname = filename;
 		},
-		decrpyt(name) {
-			axios.post('https://localhost:8443/api/files/decrypt', null, {
-				params: {
-					fileName: name
+		getcheckuser() {
+			axios.post('https://localhost:8443/api/users/findCheckUser', {
+				college: this.college
+			}, {
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded'
 				}
-			})
-				.then(response => {
-					if (response.status === 200) {
-						this.$message.success('验证成功');
-						//将该行的解密该试卷按钮变成不可点击
-						this.tableData.forEach((item) => {
-							if (item.name === name) {
-								item.decrypt = true;
-							}
-						});
-					}
-				})
-				.catch(error => {
-					// Handle errors here
-					this.$message.error('验证失败');
-				});
-		},
-		preview(fileName, decrypt) {
-			axios.get(`https://localhost:8443/api/files/preview?fileName=${fileName}`, { responseType: 'blob' })
-				.then(response => {
-					// 成功获取预览数据后，加载到 <iframe> 中预览	
-					const pdfData = new Blob([response.data], { type: 'application/pdf' });
-					const viewer = this.$refs.pdfViewer;
-					this.visible = true;
-					this.$nextTick(() => {
-						const viewer = this.$refs.pdfViewer;
-						console.log(1);
-						setTimeout(() => {
-							console.log(2);
-							viewer.src = URL.createObjectURL(pdfData);
-						}, 100); // 等待1秒后设置src
-					});
-					this.canclick = decrypt;
-				})
-				.catch(error => {
-					this.$message.error('文件已经删除');
-				});
+			}).then(response => {
+				console.log(response.data.body)
+				sessionStorage.setItem('checkuser', JSON.stringify(response.data.body));
+				const storedData = sessionStorage.getItem('checkuser');
+				if (storedData) {
+					const parsedData = JSON.parse(storedData);
+					const myName = JSON.parse(localStorage.getItem('user')).realName; // 替换为你的名字
+					this.classOptions = parsedData.class_check.filter(name => name !== myName);
+					this.collegeOptions = parsedData.college_check.filter(name => name !== myName);
+				}
+			}).catch(error => {
+				console.error('Error loading data:', error);
+			});
 		}
 	}
 }
 </script>
-
 <style></style>

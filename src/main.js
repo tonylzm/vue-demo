@@ -29,7 +29,6 @@ window.onerror = function(message, source, lineno, colno, error) {
 	// 返回true表示阻止浏览器默认行为
 	return true
   }
-
   //如果sessionStorage中没有user信息，那么跳转到登录页面
   if (sessionStorage.getItem('user')===null) {
 	logout();

@@ -3,7 +3,7 @@
         <div class="Box">
             <div class="left">
                 <div class="centerBox">
-                    <img src="../login/OIP-C(7).jpg" alt="">
+                    <img src="../login/OIP.jpg" alt="">
                     <h4>苏州科技大学试卷管理系统</h4>
                     <p>USTS Paper Manage</p>
                 </div>
@@ -48,6 +48,7 @@
 import router from '../../router'; // 导入Vue Router实例
 import axios from 'axios';
 import CryptoJS from 'crypto-js';
+import { ElLoading } from 'element-plus';
 // 密码加密函数
 function hashPassword(password) {
     const salt = '8nuWjDlIY5Aw+i7q5v04tQ=='; // 这里使用固定的 salt 值
@@ -66,10 +67,21 @@ export default {
             password: '',
         };
     },
+    created() {
+        // //加载页面时刷新
+        // const loading = ElLoading.service({
+        //     lock: true,
+        //     text: '正在加载，请稍等...',
+        //     background: 'rgba(0, 0, 0,1)',
+        // });
+        // setTimeout(() => {
+        //     loading.close();
+        // }, 1000);
+    },
     methods: {
         handleSubmit() {
-            //const hashedPassword = hashPassword(this.password);
-            const hashedPassword = this.password;
+            const hashedPassword = hashPassword(this.password);
+            // const hashedPassword = this.password;
             axios.post('https://localhost:8443/api/users/login', {
                 username: this.username,
                 password: hashedPassword
@@ -83,7 +95,7 @@ export default {
                     //将用户信息保存到sessionStorage
                     sessionStorage.clear();
                     sessionStorage.setItem('user', JSON.stringify(response.data.body));
-                    router.push('/'); // 替换 '/new-page' 为你想要跳转的页面路径
+                    router.push('/files'); // 替换 '/new-page' 为你想要跳转的页面路径
                 } else {
                     this.$message.error('登录失败');
                     // 处理登录失败逻辑
@@ -93,9 +105,7 @@ export default {
                 // 处理登录失败逻辑
             });
         },
-        handleRegister() {
-            // 处理注册逻辑，可以跳转至注册页面或显示注册表单  
-        },
+
     },
 };  
 </script>

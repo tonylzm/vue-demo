@@ -20,6 +20,9 @@
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
             <el-table-column prop="name" label="文件名称"></el-table-column>
             <el-table-column prop="produced" label="出卷人"></el-table-column>
+            <el-table-column prop="classes" label="考试班级"></el-table-column>
+            <el-table-column prop="testtype" label="考试类型"></el-table-column>
+            <el-table-column prop="testtime" label="考试时间"></el-table-column>
             <el-table-column prop="size" label="文件大小(kb)"></el-table-column>
             <el-table-column label="下载">
                 <template v-slot="scope">
@@ -37,14 +40,7 @@
                         </el-icon></el-button>
                 </template>
             </el-table-column>
-            <el-table-column label="启用">
-                <template v-slot="scope">
-                    <el-switch v-model="scope.row.enable"
-                        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-                        @change="changeEnable(scope.row)"></el-switch>
-                </template>
-            </el-table-column>
-            <el-table-column label="操作" width="200" align="center">
+            <el-table-column label="操作" align="center">
                 <template v-slot="scope">
                     <el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
                         icon-color="red" title="开启后密码解开" @confirm="decrpyt(scope.row.name)">
@@ -98,11 +94,11 @@
                                 <el-input v-model="checkfileproduced"></el-input>
                             </el-form-item>
                             <el-form-item label="审批意见">
-                                <input type="radio" value="院长审核通过" v-model="approvalStatus"> 审批通过
-                                <input type="radio" value="院长审核不通过" v-model="approvalStatus"> 审批不通过
+                                <input type="radio" value="系主任通过" v-model="approvalStatus"> 审批通过
+                                <input type="radio" value="系主任不通过" v-model="approvalStatus"> 审批不通过
                             </el-form-item>
                             <el-form-item>
-                                <textarea v-if="approvalStatus === '院长审核不通过'" v-model="reason" placeholder="请输入不通过的原因"
+                                <textarea v-if="approvalStatus === '系主任不通过'" v-model="reason" placeholder="请输入不通过的原因"
                                     style="width: 100%; height: 200px;"></textarea>
                             </el-form-item>
                             <el-form-item>
@@ -141,6 +137,7 @@ export default {
             visible: false,
             username: JSON.parse(localStorage.getItem('user')).username,
             college: JSON.parse(localStorage.getItem('user')).college,
+            realName: JSON.parse(localStorage.getItem('user')).realName,
             uploadProgress: 0,
             showProgress: false, // 是否显示进度条 
             innerDrawer: false,
@@ -150,7 +147,7 @@ export default {
             fullscreenLoading: false,
             canclick: false,
             ipAddress: '',
-            approvalStatus: '院长审核通过',
+            approvalStatus: '系主任通过',
             reason: '',
             checkfilename: '',
             checkfileproduced: '',
@@ -195,21 +192,25 @@ export default {
         onSubmit() {
             const data = {
                 fileName: this.checkfilename,
-                collegeCheck: this.username,
+                classCheck: this.realName,
                 status: this.approvalStatus,
                 opinion: this.reason
             }
-            console.log(data);
-            axios.post('https://localhost:8443/api/checked/collegeChecked', data, {
+            //console.log(data);
+            axios.post('https://localhost:8443/api/checked/classChecked', data, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }).then(response => {
-                console.log(response.data)
+                //console.log(response.data)
                 this.$message.success('审批成功');
+                this.loadData();
+                this.innerDrawer = false;
+                this.visible = false;
             }).catch(error => {
-                console.error('Error loading data:', error);
+                //console.error('Error loading data:', error);
                 this.$message.error('审批失败');
+                this.loadData();
             });
         },
         changeEnable(row) {
@@ -261,7 +262,7 @@ export default {
                 const username = this.username;
                 const time = this.getCurrentTime();
                 const ipAddress = await this.getIPAddress(); // 这里假设你有一个获取 IP 地址的方法
-                console.log(hashedPassword)
+                //console.log(hashedPassword)
                 // 构建发送给后端的数据
                 const data = {
                     hashedPassword,
@@ -274,7 +275,7 @@ export default {
                 // 发送 POST 请求给后端
                 const response = await axios.post('https://localhost:8443/api/users/test', data);
 
-                console.log(response.data);
+                //console.log(response.data);
                 clearTimeout(timerId);
                 loading.close();
                 this.$message.success('验证成功');
@@ -308,24 +309,26 @@ export default {
             const data = qs.stringify({
                 pageNum: this.pageNum,
                 pageSize: this.pageSize,
+                class_check: this.realName,
+                status: "未审核",
                 college: this.college,
-                status: "系主任通过",
-                name: this.name
+                name: this.name,
+                produced: this.username
             });
 
-            axios.post('https://localhost:8443/api/checked/findCheckedfile', data, {
+            axios.post('https://localhost:8443/api/checked/findClassCheckFile', data, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }).then(response => {
-                console.log(response.data)
+                //console.log(response.data)
                 const {
                     content,
                     totalPages,
                     totalElements,
                     number
                 } = response.data.body;
-                console.log(content)
+                //console.log(content)
                 this.tableData = content;
                 this.total = totalElements;
                 this.pageNum = number + 1;
@@ -393,9 +396,9 @@ export default {
                     this.visible = true;
                     this.$nextTick(() => {
                         const viewer = this.$refs.pdfViewer;
-                        console.log(1);
+                        //console.log(1);
                         setTimeout(() => {
-                            console.log(2);
+                            //console.log(2);
                             viewer.src = URL.createObjectURL(pdfData);
                         }, 100); // 等待1秒后设置src
                     });

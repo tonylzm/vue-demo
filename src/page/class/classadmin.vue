@@ -12,7 +12,7 @@
                 </el-icon></el-button>
         </div>
         <div style="margin: 10px 0">
-            <el-button type="primary" @click="drawer = true">注册<el-icon>
+            <el-button type="primary" @click="drawer = true">注册出卷人<el-icon>
                     <Promotion />
                 </el-icon></el-button>
 
@@ -26,19 +26,20 @@
                         <el-input placeholder="请输入内容" v-model="form.college" :disabled="true"></el-input>
                     </el-form-item>
                     <el-form-item label="真实姓名" prop="real_name">
-                        <el-input v-model="form.real_name"></el-input>
+                        <el-input v-model="form.real_name" maxlength="6"></el-input>
                     </el-form-item>
                     <el-form-item label="用户名" prop="username">
-                        <el-input v-model="form.username"></el-input>
+                        <el-input v-model="form.username" maxlength="20"></el-input>
                     </el-form-item>
                     <el-form-item label="密码" prop="password">
-                        <el-input v-model="form.password" autocomplete="off" show-password></el-input>
+                        <el-input v-model="form.password" autocomplete="off" show-password maxlength="16"></el-input>
                     </el-form-item>
                     <el-form-item label="确认密码" prop="checkpassword">
-                        <el-input v-model="form.checkpassword" autocomplete="off" show-password></el-input>
+                        <el-input v-model="form.checkpassword" autocomplete="off" show-password
+                            maxlength="16"></el-input>
                     </el-form-item>
                     <el-form-item label="手机号" prop="tel">
-                        <el-input v-model="form.tel"></el-input>
+                        <el-input v-model="form.tel" maxlength="11"></el-input>
                     </el-form-item>
                     <el-form-item label="邮箱" prop="email">
                         <el-input v-model="form.email"></el-input>
@@ -61,15 +62,20 @@
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
             <el-table-column prop="realName" label="真实姓名"></el-table-column>
             <el-table-column prop="username" label="用户名"></el-table-column>
-            <el-table-column prop="password" label="密码"></el-table-column>
+            <!-- <el-table-column prop="password" label="密码"></el-table-column> -->
             <el-table-column prop="college" label="学院"></el-table-column>
             <el-table-column prop="tel" label="手机号"></el-table-column>
             <el-table-column prop="email" label="邮箱"></el-table-column>
 
 
-            <el-table-column label="操作" width="200" align="center">
+            <el-table-column label="操作" width="300" align="center">
                 <template v-slot="scope">
-                    <el-button type="danger" @click="handleDelete(scope.row.username)">删除</el-button>
+                    <el-button type="primary" @click="handleUpdata(scope.row.username)"><el-icon>
+                            <Discount />
+                        </el-icon>晋升审批员</el-button>
+                    <el-button type="danger" @click="handleDelete(scope.row.username)"><el-icon>
+                            <CloseBold />
+                        </el-icon>删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -85,6 +91,18 @@
 <script>
 import axios from 'axios';
 import { ElLoading } from 'element-plus';
+import CryptoJS from 'crypto-js';
+// 密码加密函数
+function hashPassword(password) {
+    const salt = '8nuWjDlIY5Aw+i7q5v04tQ=='; // 这里使用固定的 salt 值
+    const keySize = 256 / 32; // 输出密钥的大小（单位：字节）
+    const iterations = 1000; // 迭代次数
+    const hashedPassword = CryptoJS.PBKDF2(password, salt, {
+        keySize: keySize,
+        iterations: iterations
+    });
+    return hashedPassword.toString(CryptoJS.enc.Hex);
+}
 export default {
     data: function () {
 
@@ -206,19 +224,43 @@ export default {
                 .then(_ => {
                     this.drawer = false;
                     this.form = {
-                        faculty: '',
-                        name: '',
+                        college: JSON.parse(localStorage.getItem('user')).college,
+                        real_name: '',
                         username: '',
                         password: '',
                         checkpassword: '',
                         tel: '',
                         email: '',
-                        delivery: false,
-                        desc: ''
                     };
                     done();
                 })
                 .catch(_ => { });
+        },
+        handleUpdata(username) {
+            //console.log(username);
+            const data = {
+                username: username,
+                role: 'check'
+            }
+            //弹出确认框
+            this.$confirm('确认晋升该用户为审核员？')
+                .then(() => {
+                    axios.post('https://localhost:8443/api/users/role', data, {
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    }).then(response => {
+                        this.$message.success('晋升成功');
+                        this.loadData();
+                    }).catch(error => {
+                        console.error('Error loading data:', error);
+                        this.$message.error('晋升失败');
+                        this.loadData();
+                    });
+                })
+                .catch(() => {
+                    this.$message.info('取消晋升');
+                });
         },
         //提交注册方法
         onSubmit() {
@@ -227,29 +269,30 @@ export default {
                 text: '正在注册用户，请稍等...',
                 background: 'rgba(0, 0, 0, 0.7)',
             });
+            const hashedPassword = hashPassword(this.form.password);
             const data = {
                 username: this.form.username,
-                password: this.form.password,
+                password: hashedPassword,
                 realName: this.form.real_name,
                 college: this.form.college,
                 tel: this.form.tel,
                 email: this.form.email,
             }
-            axios.post('https://localhost:8443/api/users/check_register', data, {
+            axios.post('https://localhost:8443/api/users/register', data, {
                 headers: {
                     'Content-Type': 'application/json'
                 }
             }).then(response => {
-                console.log(response.data)
+                //console.log(response.data)
                 loading.close();
                 this.$message.success('注册成功');
                 this.loadData();
             }).catch(error => {
                 console.error('Error loading data:', error);
                 loading.close();
-                this.$message.error('注册失败');
+                this.$message.error('注册失败,用户名重复或者服务器繁忙');
             });
-            console.log('submit!');
+            //console.log('submit!');
         },
         //后端返回用户列表
         loadData() {
@@ -257,7 +300,7 @@ export default {
                 pageNum: this.pageNum,
                 pageSize: this.pageSize,
                 college: JSON.parse(localStorage.getItem('user')).college,
-                role: 'check',
+                role: 'user',
                 name: this.name
             }
             axios.post('https://localhost:8443/api/users/userrole', data, {
@@ -290,7 +333,7 @@ export default {
         //删除
 
         handleDelete(username) {
-            console.log(username);
+            //console.log(username);
             const data = {
                 username: username
             }
@@ -305,6 +348,7 @@ export default {
                     }).catch(error => {
                         console.error('Error loading data:', error);
                         this.$message.error('删除失败');
+                        this.loadData();
                     });
                 })
                 .catch(() => {
