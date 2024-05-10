@@ -3,7 +3,7 @@
         <div class="Box">
             <div class="left">
                 <div class="centerBox">
-                    <img src="../login/OIP-C (7).jpg" alt="">
+                    <img src="../login/OIP-C(7).jpg" alt="">
                     <h4>苏州科技大学试卷管理系统</h4>
                     <p>USTS Paper Manage</p>
                 </div>
