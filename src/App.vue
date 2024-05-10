@@ -1,11 +1,7 @@
 <template>
   <div id="app">
-    <transition name="fade">
-      <Header v-show="!hideHeader" />
-    </transition>
-    <transition name="fade">
-      <Sidebar v-show="!hideSidebar" />
-    </transition>
+    <Header v-if="!hideHeader" />
+    <Sidebar v-if="!hideSidebar" />
     <div class="content" :class="{ 'full-width': hideSidebar }">
       <router-view></router-view>
     </div>
@@ -77,27 +73,27 @@ export default defineComponent({
 }
 
 /* 为 Header 组件添加固定样式 */
-.header {
+/* .header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000;
+  z-index: 1000; */
 
 
   /* 确保 Header 在其他内容之上 */
   /* 其他样式，如背景色、高度、内边距等 */
-}
+/* } */
 
 /* 添加过渡效果的CSS类 */
-.fade-enter-active,
+/* .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.2s;
-  /*设置蒙版*/
-}
+  
+} */
 
-.fade-enter,
+/* .fade-enter,
 .fade-leave-to {
   opacity: 0;
-}
+} */
 </style>

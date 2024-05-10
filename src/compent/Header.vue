@@ -38,7 +38,7 @@ export default {
     name: 'Header',
     data() {
         return {
-            username: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).realName : null,
+            username: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')).username : null,
         };
     },
     methods: {

@@ -25,6 +25,24 @@
             <el-table-column prop="class_check" label="审核的主任"></el-table-column>
             <el-table-column prop="college_check" label="审核的院长"></el-table-column>
 
+            <el-table-column  label="审批意见" align="center">
+                <template v-slot="scope">
+                    <el-button type="danger" plain @click="open2(scope.row.opinion)">
+                        <el-icon>
+                            <View />
+                        </el-icon>查看意见
+                    </el-button>
+                    <!-- <el-popover
+                        placement="bottom"
+                        title="标题"
+                        width="200"
+                        trigger="click"
+                        content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
+                        <el-button slot="reference">click 激活</el-button>
+                    </el-popover> -->
+                </template>
+            </el-table-column>
+
             <el-table-column label="操作" width="200" align="center">
                 <template v-slot="scope">
                     <el-button type="primary" @click="handleViewHistory(scope.row.name)"><el-icon>
@@ -54,10 +72,6 @@
 
 <script>
 import axios from 'axios';
-import qs from 'qs';
-import md5 from 'js-md5';
-import JSEncrypt from 'jsencrypt';
-import CryptoJS from 'crypto-js';
 import { ElLoading } from 'element-plus';
 export default {
     data() {
@@ -88,21 +102,12 @@ export default {
             fullscreenLoading: false,
             canclick: false,
             ipAddress: '',
-            approvalStatus: '院长审核通过',
             reason: '',
             checkfilename: '',
             checkfileproduced: '',
-            form: {
-                name: '',
-                class: '',
-                region: '',
-                college: '',
-                date1: '',
-                date2: '',
-                delivery: false,
-                desc: ''
-            },
+        
             innerDrawer: false,
+           
         }
     },
 
@@ -131,26 +136,7 @@ export default {
                 .catch(_ => { });
         },
 
-        onSubmit() {
-            const data = {
-                fileName: this.checkfilename,
-                collegeCheck: this.username,
-                status: this.approvalStatus,
-                opinion: this.reason
-            }
-            console.log(data);
-            axios.post('https://localhost:8443/api/checked/collegeChecked', data, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            }).then(response => {
-                console.log(response.data)
-                this.$message.success('审批成功');
-            }).catch(error => {
-                console.error('Error loading data:', error);
-                this.$message.error('审批失败');
-            });
-        },
+       
         changeEnable(row) {
             console.log(row);
         },
@@ -181,68 +167,6 @@ export default {
                 .catch(_ => { });
         },
 
-        async sendVerifyInfo() {
-            // 生成随机字符串和其他信息
-            const loading = ElLoading.service({
-                lock: true,
-                text: '正在对你进行身份认证，请稍等...',
-                background: 'rgba(0, 0, 0, 0.7)',
-            });
-            let timerId;
-            // 定时器 ID
-            try {
-                // 处理后端的响应
-                timerId = setTimeout(() => {
-                    // 如果请求没有完成，更改加载文本  
-                    loading.setText('网络开小差了，正在拼命加载...');
-                }, 3000); // 2秒后触发
-                const hashedPassword = this.encryptedAESKey;
-                const username = this.username;
-                const time = this.getCurrentTime();
-                const ipAddress = await this.getIPAddress(); // 这里假设你有一个获取 IP 地址的方法
-                console.log(hashedPassword)
-                // 构建发送给后端的数据
-                const data = {
-                    hashedPassword,
-                    username,
-                    time,
-                    ipAddress
-                    // 可以根据需要添加其他信息
-                };
-
-                // 发送 POST 请求给后端
-                const response = await axios.post('https://localhost:8443/api/users/test', data);
-
-                console.log(response.data);
-                clearTimeout(timerId);
-                loading.close();
-                this.$message.success('验证成功');
-                return response.data;
-
-            } catch (error) {
-                clearTimeout(timerId);
-                loading.close();
-                this.$message.error('非法登录');
-                return '非法登录';
-            }
-        },
-
-        async getIPAddress() {
-            try {
-                const response = await axios.get('http://ip-api.com/json/');
-                //https://api.ipify.org/?format=json 也可以获取ip地址
-                return response.data.query;
-            } catch (error) {
-                console.error('获取 IP 地址失败:', error);
-                return null;
-            }
-        },
-        getCurrentTime() {
-            const currentTime = new Date();
-            // 将时间格式化为字符串，你可以根据需要进行调整
-            const formattedTime = currentTime.toISOString(); // 返回 ISO 格式的字符串，例如："2024-04-12T12:30:00.000Z"
-            return formattedTime;
-        },
         loadData() {
             axios.get('https://localhost:8443/api/files/pageByProduced', {
                 params: {
@@ -265,6 +189,7 @@ export default {
                     item.status = item.check.checkStatus;
                     item.class_check = item.check.classCheck;
                     item.college_check = item.check.collegeCheck;
+                    item.opinion=item.check.opinion;
                 });
                 this.total = totalElements;
                 this.pageNum = number + 1;
@@ -280,51 +205,7 @@ export default {
             this.pageSize = pageSize;
             this.loadData();
         },
-        decrpyt(name) {
-            axios.post('https://localhost:8443/api/files/decrypt', null, {
-                params: {
-                    fileName: name
-                }
-            })
-                .then(response => {
-                    if (response.status === 200) {
-                        this.$message.success('验证成功');
-                        //将该行的解密该试卷按钮变成不可点击
-                        this.tableData.forEach((item) => {
-                            if (item.name === name) {
-                                item.decrypt = true;
-                            }
-                        });
-                    }
-                })
-                .catch(error => {
-                    // Handle errors here
-                    this.$message.error('验证失败');
-                });
-        },
-        preview(fileName, decrypt, produced) {
-            axios.get(`https://localhost:8443/api/files/preview?fileName=${fileName}`, { responseType: 'blob' })
-                .then(response => {
-                    // 成功获取预览数据后，加载到 <iframe> 中预览	
-                    const pdfData = new Blob([response.data], { type: 'application/pdf' });
-                    const viewer = this.$refs.pdfViewer;
-                    this.visible = true;
-                    this.$nextTick(() => {
-                        const viewer = this.$refs.pdfViewer;
-                        console.log(1);
-                        setTimeout(() => {
-                            console.log(2);
-                            viewer.src = URL.createObjectURL(pdfData);
-                        }, 100); // 等待1秒后设置src
-                    });
-                    this.canclick = decrypt;
-                    this.checkfilename = fileName;
-                    this.checkfileproduced = produced;
-                })
-                .catch(error => {
-                    this.$message.error('加载预览失败');
-                });
-        },
+       
         handleViewHistory(rowData) {
             // 获取原行的文件名和出卷人信息
             const fileName = rowData;
@@ -361,6 +242,13 @@ export default {
                 console.error('Error loading data:', error);
             });
         },
+        open2(opinion) {
+        this.$notify({
+          title: '本次审批意见',
+          message: opinion,
+          duration: 0
+        });
+      }
     }
 }
 </script>

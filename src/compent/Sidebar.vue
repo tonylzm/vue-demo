@@ -116,6 +116,7 @@ export default {
             console.log(key, keyPath);
         },
         show(role) {
+            console.log(this.user)
             return this.user && this.user.role === role;
         }
 
