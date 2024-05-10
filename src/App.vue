@@ -70,12 +70,12 @@ export default defineComponent({
 }
 
 /* 为 Header 组件添加固定样式 */
-/* .header {
+.header {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  z-index: 1000; */
+  z-index: 1000;
 
 
   /* 确保 Header 在其他内容之上 */

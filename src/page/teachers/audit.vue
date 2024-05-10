@@ -24,15 +24,15 @@
             <el-table-column prop="status" label="审核状态"></el-table-column>
             <el-table-column prop="class_check" label="审核的主任"></el-table-column>
             <el-table-column prop="college_check" label="审核的院长"></el-table-column>
-            <el-table-column label="操作" width="200" align="center">
-                <el-popover placement="bottom" title="Title" :width="200" trigger="click"
-                    content="this is content, this is content, this is content">
-                    <template #reference>
-                        <el-button class="m-2">Click to activate</el-button>
-                    </template>
-                </el-popover>
 
-            </el-table-column>
+            <!-- <el-table-column label="审批意见" width="200" align="center">
+                <el-popover placement="bottom" title="Title" :width="200" trigger="click"
+                    :content= "popoverContent">
+                    <template #reference>
+                        <el-button class="m-2" @click="togglePopover">查看意见</el-button>
+                    </template>
+                </el-popover> -->
+            <!-- </el-table-column> -->
 
             <el-table-column  label="审批意见" align="center">
                 <template v-slot="scope">
@@ -41,14 +41,6 @@
                             <View />
                         </el-icon>查看意见
                     </el-button>
-                    <!-- <el-popover
-                        placement="bottom"
-                        title="标题"
-                        width="200"
-                        trigger="click"
-                        content="这是一段内容,这是一段内容,这是一段内容,这是一段内容。">
-                        <el-button slot="reference">click 激活</el-button>
-                    </el-popover> -->
                 </template>
             </el-table-column>
 
@@ -116,6 +108,7 @@ export default {
             checkfileproduced: '',
         
             innerDrawer: false,
+            // popoverContent: '',
            
         }
     },
@@ -199,7 +192,9 @@ export default {
                     item.class_check = item.check.classCheck;
                     item.college_check = item.check.collegeCheck;
                     item.opinion=item.check.opinion;
+                   
                 });
+                // this.popoverContent = this.buildPopoverContent();
                 this.total = totalElements;
                 this.pageNum = number + 1;
             }).catch(error => {
@@ -253,11 +248,20 @@ export default {
         },
         open2(opinion) {
         this.$notify({
-          title: '本次审批意见',
+          title: '审批意见',
           message: opinion,
           duration: 0
         });
-      }
+      },
+    //   buildPopoverContent() {
+    //   let content = '';
+    //   // 遍历 tableData，构建审批意见内容字符串
+    //   this.tableData.forEach((item) => {
+    //     content += `审批意见: ${item.opinion}\n`;
+    //     // 如果有其他字段需要添加到内容中，可以继续在这里拼接
+    //   });
+    //   return content;
+    // },
     }
 }
 </script>
