@@ -24,6 +24,15 @@
             <el-table-column prop="status" label="审核状态"></el-table-column>
             <el-table-column prop="class_check" label="审核的主任"></el-table-column>
             <el-table-column prop="college_check" label="审核的院长"></el-table-column>
+            <el-table-column label="操作" width="200" align="center">
+                <el-popover placement="bottom" title="Title" :width="200" trigger="click"
+                    content="this is content, this is content, this is content">
+                    <template #reference>
+                        <el-button class="m-2">Click to activate</el-button>
+                    </template>
+                </el-popover>
+
+            </el-table-column>
 
             <el-table-column label="操作" width="200" align="center">
                 <template v-slot="scope">
