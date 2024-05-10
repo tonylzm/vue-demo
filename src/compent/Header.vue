@@ -61,12 +61,21 @@ export default {
             setTimeout(() => {
                 router.push('/');
             }, 200);
+
+            // setTimeout(() => {
+            //     window.location.reload();
+            // }, 500);
+            //清除本地存储
+            localStorage.clear();
+            //清除会话存储
+            sessionStorage.clear();
             setTimeout(() => {
                 window.location.reload();
             }, 500);
             setTimeout(() => {
                 loading.close();
             }, 1000);
+
         },
         switchUser() {
             const loading = ElLoading.service({

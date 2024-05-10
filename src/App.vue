@@ -30,7 +30,6 @@ export default defineComponent({
       return this.$route.meta.hideHeader || false
     }
   },
-
   setup() {
     const debounce = (callback, delay) => {
       let tid;
@@ -57,10 +56,8 @@ export default defineComponent({
 <style>
 .content {
   margin-top: 90px;
-  margin-left: 210px;
+  margin-left: 200px;
   /* 这里是侧边栏的宽度 */
-
-
 }
 
 /* 可以根据需要添加样式 */
@@ -83,17 +80,5 @@ export default defineComponent({
 
   /* 确保 Header 在其他内容之上 */
   /* 其他样式，如背景色、高度、内边距等 */
-/* } */
-
-/* 添加过渡效果的CSS类 */
-/* .fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.2s;
-  
-} */
-
-/* .fade-enter,
-.fade-leave-to {
-  opacity: 0;
-} */
+}
 </style>
