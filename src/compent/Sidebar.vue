@@ -1,10 +1,10 @@
 <template>
-    <div class="sidebar">
+    <div v-show="pubulicshow()" class="sidebar">
         <el-row class="tac">
             <el-col :span="50" :border="false" style="width: 190px;">
                 <!-- <img src="../page/login/th.jpg" alt="Image" style="width: 200px; height: auto;margin-top: 0;" /> -->
                 <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose">
-                    <el-sub-menu index="1">
+                    <el-sub-menu v-show="pubulicshow()" index="1">
                         <template #title>
                             <el-icon>
                                 <location />
@@ -51,7 +51,7 @@
                             <el-menu-item index="4-1" @click="gotoItemEight">院长管理</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
-                    <el-sub-menu index="5">
+                    <el-sub-menu v-show="pubulicshow()" index="5">
                         <template #title>
                             <el-icon>
                                 <UserFilled />
@@ -63,7 +63,17 @@
                             <el-menu-item index="5-2" @click="gotoItemNine">个人中心2</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
-
+                    <el-sub-menu v-show="show('college')" index="6">
+                        <template #title>
+                            <el-icon>
+                                <Message />
+                            </el-icon>
+                            <span>日志中心</span>
+                        </template>
+                        <el-menu-item-group title="日志中心">
+                            <el-menu-item index="6-1" @click="gotoItemTen">日志中心</el-menu-item>
+                        </el-menu-item-group>
+                    </el-sub-menu>
                 </el-menu>
             </el-col>
         </el-row>
@@ -75,7 +85,7 @@ export default {
     name: 'Sidebar',
     data() {
         return {
-            user: JSON.parse(localStorage.getItem('user'))
+            user: localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')) : null
         }
     },
     created() {
@@ -109,6 +119,9 @@ export default {
         gotoItemNine() {
             this.$router.push('/personalcentre')
         },
+        gotoItemTen() {
+            this.$router.push('/log')
+        },
         handleOpen(key, keyPath) {
             console.log(key, keyPath);
         },
@@ -118,6 +131,13 @@ export default {
         show(role) {
             console.log(this.user)
             return this.user && this.user.role === role;
+        },
+        pubulicshow() {
+            if (this.user !== null) {
+                return true
+            } else {
+                return false
+            }
         }
 
     }
@@ -131,5 +151,9 @@ export default {
     left: 0;
     padding-top: 80px;
     width: 190px;
+    height: 100%;
+    border: 1px solid #d3d0d0;
+    /*阴影*/
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 }
 </style>

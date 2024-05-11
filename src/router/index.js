@@ -112,7 +112,14 @@ const routes = [
 	component: () => import( /*webpackChunkName:'Login'*/ '@/page/college/collegeadmin.vue'),
 	meta: { requiresAuth: true, requiredRoles: ['college'] }
 }
+,
+{
+	path: '/log',
+	name: 'log',
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/log/log.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['college'] }
 
+}
 ]
 
 const router = createRouter({
@@ -125,7 +132,6 @@ router.beforeEach((to, from, next) => {
 	const isLoggedIn = !!localStorage.getItem('user'); // Check if user is logged in
 	const user = JSON.parse(localStorage.getItem('user'));
 	const userRole = user ? user.role : null; // Get user role
-
 	if (to.meta.requiresAuth && !isLoggedIn) {
 		next('/'); // Redirect to login page if authentication is required but user is not logged in
 	} else if (to.meta.requiredRoles && !to.meta.requiredRoles.includes(userRole)) {

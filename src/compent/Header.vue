@@ -1,5 +1,5 @@
 <template>
-    <div class="header">
+    <div v-show="pubulicshow()" class="header">
         <span class="username">
             <div class="logo">
                 <img src="../page/login/logo.jpg" alt="Image" style="width: 200px; height: auto;" />
@@ -61,17 +61,14 @@ export default {
             setTimeout(() => {
                 router.push('/');
             }, 200);
-
-            // setTimeout(() => {
-            //     window.location.reload();
-            // }, 500);
-            //清除本地存储
             localStorage.clear();
-            //清除会话存储
             sessionStorage.clear();
+
             setTimeout(() => {
                 window.location.reload();
             }, 500);
+
+
             setTimeout(() => {
                 loading.close();
             }, 1000);
@@ -86,6 +83,8 @@ export default {
             setTimeout(() => {
                 router.push('/');
             }, 200);
+            localStorage.clear();
+            sessionStorage.clear();
             setTimeout(() => {
                 window.location.reload();
             }, 500);
@@ -95,6 +94,13 @@ export default {
         },
         refresh() {
             location.reload();
+        },
+        pubulicshow() {
+            if (this.username !== null) {
+                return true
+            } else {
+                return false
+            }
         }
     }
 }
@@ -109,6 +115,7 @@ export default {
     border-bottom: 1px solid #ddd;
     /* 添加底部边框，模拟分割线效果 */
     background-color: #0168B7;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .menu {

@@ -25,18 +25,9 @@
             <el-table-column prop="class_check" label="审核的主任"></el-table-column>
             <el-table-column prop="college_check" label="审核的院长"></el-table-column>
 
-            <!-- <el-table-column label="审批意见" width="200" align="center">
-                <el-popover placement="bottom" title="Title" :width="200" trigger="click"
-                    :content= "popoverContent">
-                    <template #reference>
-                        <el-button class="m-2" @click="togglePopover">查看意见</el-button>
-                    </template>
-                </el-popover> -->
-            <!-- </el-table-column> -->
-
-            <el-table-column  label="审批意见" align="center">
+            <el-table-column label="审批意见" align="center">
                 <template v-slot="scope">
-                    <el-button type="danger" plain @click="open2(scope.row.opinion)">
+                    <el-button type="success" plain @click="open2(scope.row.opinion)">
                         <el-icon>
                             <View />
                         </el-icon>查看意见
@@ -58,6 +49,15 @@
                     <el-table-column prop="name" label="文件名称"></el-table-column>
                     <el-table-column prop="status" label="审核状态"></el-table-column>
                     <el-table-column prop="date" label="审核时间"></el-table-column>
+                    <el-table-column label="审批意见" align="center">
+                        <template v-slot="scope">
+                            <el-button type="success" plain @click="open2(scope.row.opinion)">
+                                <el-icon>
+                                    <View />
+                                </el-icon>查看意见
+                            </el-button>
+                        </template>
+                    </el-table-column>
                 </el-table>
             </el-drawer>
 
@@ -84,32 +84,17 @@ export default {
 
             ],
             name: '',
-            direction: 'rtl',
-            multipleSelection: [],
             pageNum: 1,
             pageSize: 10,
             total: 0,
-            previewModalVisible: false, // 控制模态框的显示/隐藏
-            previewData: '', // 存储预览数据
             visible: false,
             username: JSON.parse(localStorage.getItem('user')).username,
             college: JSON.parse(localStorage.getItem('user')).college,
             uploadProgress: 0,
-            showProgress: false, // 是否显示进度条 
-            innerDrawer: false,
             drawer1: false,
             progressColor: '',
-            timer: null,
-            fullscreenLoading: false,
-            canclick: false,
-            ipAddress: '',
-            reason: '',
-            checkfilename: '',
-            checkfileproduced: '',
-        
             innerDrawer: false,
             // popoverContent: '',
-           
         }
     },
 
@@ -117,28 +102,6 @@ export default {
         this.loadData();
     },
     methods: {
-        handleClose(done) {
-            this.$confirm('确认关闭？')
-                .then(_ => {
-                    if (this.form.delivery === false) {
-                        this.form = {
-                            name: '',
-                            class: '',
-                            region: '',
-                            college: '',
-                            date1: '',
-                            date2: '',
-                            delivery: false,
-                            desc: ''
-                        };
-                    }
-                    this.encryptedFile = null;
-                    done();
-                })
-                .catch(_ => { });
-        },
-
-       
         changeEnable(row) {
             console.log(row);
         },
@@ -149,26 +112,10 @@ export default {
             this.$confirm('确认关闭？')
                 .then(_ => {
                     this.drawer = false;
-                    if (this.form.delivery === false) {
-                        this.form = {
-                            name: '',
-                            class: '',
-                            region: '',
-                            college: '',
-                            date1: '',
-                            date2: '',
-                            delivery: false,
-                            desc: ''
-                        };
-                    }
-                    this.encryptedFile = null;
-                    this.countdown = 120;
-                    clearInterval(this.timer);;
                     done();
                 })
                 .catch(_ => { });
         },
-
         loadData() {
             axios.get('https://localhost:8443/api/files/pageByProduced', {
                 params: {
@@ -191,8 +138,7 @@ export default {
                     item.status = item.check.checkStatus;
                     item.class_check = item.check.classCheck;
                     item.college_check = item.check.collegeCheck;
-                    item.opinion=item.check.opinion;
-                   
+                    item.opinion = item.check.opinion;
                 });
                 // this.popoverContent = this.buildPopoverContent();
                 this.total = totalElements;
@@ -209,7 +155,7 @@ export default {
             this.pageSize = pageSize;
             this.loadData();
         },
-       
+
         handleViewHistory(rowData) {
             // 获取原行的文件名和出卷人信息
             const fileName = rowData;
@@ -239,7 +185,9 @@ export default {
                 } = response.data;
                 console.log(content)
                 this.historyData = content;
-
+                this.historyData.forEach((item) => {
+                    item.opinion = item.check.opinion;
+                });
                 this.total = totalElements;
                 this.pageNum = number + 1;
             }).catch(error => {
@@ -247,21 +195,21 @@ export default {
             });
         },
         open2(opinion) {
-        this.$notify({
-          title: '审批意见',
-          message: opinion,
-          duration: 0
-        });
-      },
-    //   buildPopoverContent() {
-    //   let content = '';
-    //   // 遍历 tableData，构建审批意见内容字符串
-    //   this.tableData.forEach((item) => {
-    //     content += `审批意见: ${item.opinion}\n`;
-    //     // 如果有其他字段需要添加到内容中，可以继续在这里拼接
-    //   });
-    //   return content;
-    // },
+            // setTimeout(() => {
+            //     this.$notify({
+            //         title: '审批意见',
+            //         message: opinion ? opinion : '无',
+            //         duration: 20000
+            //     });
+            // }, 0);
+            // alert(opinion ? opinion : '无');
+            this.$alert(opinion ? opinion : '无', '审核意见', {
+                confirmButtonText: '确定',
+                callback: action => {
+
+                }
+            });
+        },
     }
 }
 </script>

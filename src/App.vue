@@ -56,7 +56,7 @@ export default defineComponent({
 <style>
 .content {
   margin-top: 90px;
-  margin-left: 200px;
+  margin-left: 210px;
   /* 这里是侧边栏的宽度 */
 }
 
