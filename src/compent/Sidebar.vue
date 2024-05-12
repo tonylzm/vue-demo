@@ -72,6 +72,7 @@
                         </template>
                         <el-menu-item-group title="日志中心">
                             <el-menu-item index="6-1" @click="gotoItemTen">日志中心</el-menu-item>
+                            <el-menu-item index="6-2" @click="gotoItemEleven">日志中心demo</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
                 </el-menu>
@@ -121,6 +122,9 @@ export default {
         },
         gotoItemTen() {
             this.$router.push('/log')
+        },
+        gotoItemEleven() {
+            this.$router.push('/logt')
         },
         handleOpen(key, keyPath) {
             console.log(key, keyPath);

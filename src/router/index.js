@@ -120,6 +120,14 @@ const routes = [
 	meta: { requiresAuth: true, requiredRoles: ['college'] }
 
 }
+,
+{
+	path: '/logt',
+	name: 'logt',
+	component: () => import( /*webpackChunkName:'Login'*/ '@/page/log/test.vue'),
+	meta: { requiresAuth: true, requiredRoles: ['college'] }
+
+}
 ]
 
 const router = createRouter({
