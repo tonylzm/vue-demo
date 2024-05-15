@@ -234,7 +234,6 @@ export default {
                         checkpassword: '',
                         tel: '',
                         email: '',
-
                     };
                     done();
                 })
