@@ -101,16 +101,17 @@
                                 <el-input v-model="checkfileproduced"></el-input>
                             </el-form-item>
                             <el-form-item label="审批意见">
-                                <input type="radio" value="院长审核通过" v-model="approvalStatus"> 审批通过
-                                <input type="radio" value="院长审核不通过" v-model="approvalStatus"> 审批不通过
+                                <el-radio value="院长审核通过" v-model="approvalStatus">审批通过</el-radio>
+                                <el-radio value="院长审核不通过" v-model="approvalStatus"> 审批不通过</el-radio>
                             </el-form-item>
                             <el-form-item>
-                                <textarea v-if="approvalStatus === '院长审核不通过'" v-model="reason" placeholder="请输入不通过的原因"
-                                    style="width: 100%; height: 200px;"></textarea>
+                                <el-input type="textarea" v-if="approvalStatus === '院长审核不通过'" v-model="reason"
+                                    placeholder="请输入不通过的原因" style="width: 100%; height: 100px;"
+                                    :autosize="{ minRows: 2 }" />
                             </el-form-item>
                             <el-form-item>
                                 <el-button type="primary" @click="onSubmit">确认</el-button>
-                                <el-button>取消</el-button>
+                                <el-button @click="handleClose">取消</el-button>
                             </el-form-item>
                         </el-form>
                     </el-drawer>
@@ -230,21 +231,7 @@ export default {
             this.$confirm('确认关闭？')
                 .then(_ => {
                     this.drawer = false;
-                    if (this.form.delivery === false) {
-                        this.form = {
-                            name: '',
-                            class: '',
-                            region: '',
-                            college: '',
-                            date1: '',
-                            date2: '',
-                            delivery: false,
-                            desc: ''
-                        };
-                    }
-                    this.encryptedFile = null;
-                    this.countdown = 120;
-                    clearInterval(this.timer);;
+
                     done();
                 })
                 .catch(_ => { });
@@ -375,7 +362,8 @@ export default {
         decrpyt(name) {
             axios.post('https://localhost:8443/api/files/decrypt', null, {
                 params: {
-                    fileName: name
+                    fileName: name,
+                    Actor: this.realName
                 }
             })
                 .then(response => {
@@ -395,7 +383,7 @@ export default {
                 });
         },
         preview(fileName, decrypt, produced) {
-            axios.get(`https://localhost:8443/api/files/preview?fileName=${fileName}`, { responseType: 'blob' })
+            axios.get(`https://localhost:8443/api/files/preview?fileName=${fileName}&Actor=${this.realName}`, { responseType: 'blob' })
                 .then(response => {
                     // 成功获取预览数据后，加载到 <iframe> 中预览	
                     const pdfData = new Blob([response.data], { type: 'application/pdf' });
@@ -416,9 +404,12 @@ export default {
                 .catch(error => {
                     this.$message.error('加载预览失败');
                 });
-        }
+        },
+
     }
 }
+
+
 </script>
 
 <style>
