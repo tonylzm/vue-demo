@@ -78,66 +78,95 @@ export default {
         };
     },
     created() {
-        //window.addEventListener('blur', this.disconnectWebSocket);
         this.connectWebSocket();
         this.$message({
             message: '欢迎使用，如果离开页面请关闭连接',
             type: 'warning'
         });
     },
-    beforeDestroy() {
+    beforeRouteLeave(to, from, next) {
+        this.disconnectWebSocket();
+        // 调用 next() 方法来确认路由切换。你可以传递 false 来取消路由切换，或者传递一个路由对象来重定向到一个新的路由。
+        next();
     },
     methods: {
         connectWebSocket() {
-            if (this.stompClient && this.stompClient.connected) {
-                console.log('WebSocket connection already established');
+            try {
+                if (this.stompClient && this.stompClient.connected) {
+                    console.log('WebSocket connection already established');
+                    this.$message({
+                        message: '连接已经建立',
+                        type: 'warning'
+                    });
+                    return;
+                } else {
+                    this.$message({
+                        message: '连接中，请稍后',
+                        type: 'warning'
+                    });
+                }
+                var socket = new SockJS('https://localhost:8443/websocket');
+                this.stompClient = Stomp.over(socket);
+                this.stompClient.connect({}, frame => {
+                    this.stompClient.send('/app/hello', {}, JSON.stringify({ 'name': 'hello' }));
+                    //设置定时器，每5秒发送一次消息
+                    this.messageTimer = setInterval(() => {
+                        try {
+                            this.stompClient.send('/app/hello', {}, JSON.stringify({ 'name': 'hello' }));
+                        } catch (error) {
+                            console.error('An error occurred:', error);
+                            this.$message({
+                                message: '发送消息过程中发生错误，定时器已停止',
+                                type: 'error'
+                            });
+                            clearInterval(this.messageTimer);
+                        }
+                    }, 5000);
+                    this.stompClient.subscribe('/topic/messages', message => {
+                        var messageBody = JSON.parse(message.body);
+                        this.errorlogs = messageBody.logs.split('\n'); // 假设日志是以换行符分隔的
+                        this.warnlogs = messageBody.warn_logs.split('\n');
+                        this.i = messageBody.errorCount;
+                        this.j = messageBody.warnCount;
+                        this.k = messageBody.allCount;
+                        this.l = messageBody.databaseCount;
+                    });
+                });
+            } catch (error) {
+                console.error('An error occurred:', error);
                 this.$message({
-                    message: '连接已经建立',
-                    type: 'warning'
+                    message: '连接过程中发生错误',
+                    type: 'error'
                 });
-                return;
-            } else {
-                console.log('WebSocket connection not established');
             }
-            var socket = new SockJS('https://localhost:8443/websocket');
-            this.stompClient = Stomp.over(socket);
-            this.stompClient.connect({}, frame => {
-                this.stompClient.send('/app/hello', {}, JSON.stringify({ 'name': 'hello' }));
-                // //设置定时器，每5秒发送一次消息
-                // this.messageTimer = setInterval(() => {
-                //     this.stompClient.send('/app/hello', {}, JSON.stringify({ 'name': 'hello' }));
-                // }, 5000);
-                this.stompClient.subscribe('/topic/messages', message => {
-
-                    var messageBody = JSON.parse(message.body);
-
-                    this.errorlogs = messageBody.logs.split('\n'); // 假设日志是以换行符分隔的
-                    this.warnlogs = messageBody.warn_logs.split('\n');
-                    this.i = messageBody.errorCount;
-                    this.j = messageBody.warnCount;
-                    this.k = messageBody.allCount;
-                    this.l = messageBody.databaseCount;
-                });
-            });
         },
         disconnectWebSocket() {
-            //如果没有this.stompClient
-            if (this.stompClient && this.stompClient.connected) {
-                this.stompClient.send('/app/byb', {}, JSON.stringify({ 'name': 'byb' }));
-                this.disconnectTimer = setInterval(() => {
+            try {
+                //如果没有this.stompClient
+                if (this.stompClient && this.stompClient.connected) {
+                    clearInterval(this.messageTimer);
+                    clearInterval(this.disconnectTimer);
+                    //this.stompClient.send('/app/byb', {}, JSON.stringify({ 'name': 'byb' }));
+                    //this.disconnectTimer = setInterval(() => {
                     this.stompClient.disconnect();
-                }, 2000);
-                //所有定时器清除
-                //clearInterval(this.messageTimer);
-                clearInterval(this.disconnectTimer);
+                    //}, 2000);
+                    //所有定时器清除
+                    //clearInterval(this.messageTimer);
+                    this.$message({
+                        message: '连接已经关闭',
+                        type: 'warning'
+                    });
+                } else {
+                    this.$message({
+                        message: '连接已经关闭',
+                        type: 'warning'
+                    });
+                }
+            } catch (error) {
+                console.error('An error occurred:', error);
                 this.$message({
-                    message: '连接已经关闭',
-                    type: 'warning'
-                });
-            } else {
-                this.$message({
-                    message: '连接已经关闭',
-                    type: 'warning'
+                    message: '连接过程中发生错误',
+                    type: 'error'
                 });
             }
         },
@@ -146,21 +175,18 @@ export default {
             // 比如触发一个方法、发送一个请求等等
             console.log('Card clicked');
             this.logs = this.warnlogs;
-
         },
         handleCardClick1() {
             // 在这里执行点击卡片时的操作
             // 比如触发一个方法、发送一个请求等等
             console.log('Card clicked');
             this.logs = this.errorlogs;
-
         },
         handleCardClick2() {
             // 在这里执行点击卡片时的操作
             // 比如触发一个方法、发送一个请求等等
             console.log('Card clicked');
             this.logs = [];
-
         },
 
 

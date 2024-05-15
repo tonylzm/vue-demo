@@ -60,7 +60,7 @@
 						</el-select>
 					</el-form-item>
 					<el-form-item label="所属院系" prop="college">
-						<el-select v-model="form.college" placeholder="请选择院系">
+						<el-select v-model="form.college" placeholder="请选择院系" @change="getcheckuser">
 							<el-option label="电子与信息工程学院" value="电子与信息工程学院"></el-option>
 							<el-option label="马克思主义学院" value="马克思主义学院"></el-option>
 							<el-option label="环境工程学院" value="环境工程学院"></el-option>
@@ -247,9 +247,6 @@ export default {
 
 	created() {
 		this.loadData();
-
-		this.getcheckuser();
-
 	},
 	methods: {
 		changeEnable(row) {
@@ -569,9 +566,11 @@ export default {
 			this.form.name = name;
 			this.reloadname = filename;
 		},
-		getcheckuser() {
+		getcheckuser(value) {
+			this.form.classCheck = '';
+			this.form.collegeCheck = '';
 			axios.post('https://localhost:8443/api/users/findCheckUser', {
-				college: this.college
+				college: value
 			}, {
 				headers: {
 					'Content-Type': 'application/x-www-form-urlencoded'
