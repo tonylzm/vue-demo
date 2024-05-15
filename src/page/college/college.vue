@@ -362,7 +362,8 @@ export default {
         decrpyt(name) {
             axios.post('https://localhost:8443/api/files/decrypt', null, {
                 params: {
-                    fileName: name
+                    fileName: name,
+                    Actor: this.realName
                 }
             })
                 .then(response => {
@@ -382,7 +383,7 @@ export default {
                 });
         },
         preview(fileName, decrypt, produced) {
-            axios.get(`https://localhost:8443/api/files/preview?fileName=${fileName}`, { responseType: 'blob' })
+            axios.get(`https://localhost:8443/api/files/preview?fileName=${fileName}&Actor=${this.realName}`, { responseType: 'blob' })
                 .then(response => {
                     // 成功获取预览数据后，加载到 <iframe> 中预览	
                     const pdfData = new Blob([response.data], { type: 'application/pdf' });
