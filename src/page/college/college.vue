@@ -40,13 +40,6 @@
                         </el-icon></el-button>
                 </template>
             </el-table-column>
-            <!-- <el-table-column label="启用">
-                <template v-slot="scope">
-                    <el-switch v-model="scope.row.enable"
-                        style="--el-switch-on-color: #13ce66; --el-switch-off-color: #ff4949"
-                        @change="changeEnable(scope.row)"></el-switch>
-                </template>
-            </el-table-column> -->
             <el-table-column label="操作" align="center">
                 <template v-slot="scope">
                     <el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"

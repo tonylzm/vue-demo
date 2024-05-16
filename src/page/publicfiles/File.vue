@@ -196,7 +196,8 @@ export default {
 				startTime: '', // 开始时间  
 				endTime: '',// 结束时间 
 				classCheck: '',
-				collegeCheck: ''
+				collegeCheck: '',
+				realName: JSON.parse(localStorage.getItem('user')).realName,
 			},
 			rules: {
 				name: [

@@ -126,6 +126,13 @@ const routes = [
 		name: 'logt',
 		component: () => import( /*webpackChunkName:'Login'*/ '@/page/log/test.vue'),
 		meta: { requiresAuth: true, requiredRoles: ['college'] }
+	}
+	,
+	{
+		path: '/syslog',
+		name: 'syslog',
+		component: () => import( /*webpackChunkName:'Login'*/ '@/page/log/Syslog.vue'),
+		meta: { requiresAuth: true, requiredRoles: ['college'] }
 
 	}
 ]

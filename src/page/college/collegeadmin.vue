@@ -66,8 +66,6 @@
             <el-table-column prop="college" label="学院"></el-table-column>
             <el-table-column prop="tel" label="手机号"></el-table-column>
             <el-table-column prop="email" label="邮箱"></el-table-column>
-
-
             <el-table-column label="操作" width="300" align="center">
                 <template v-slot="scope">
                     <el-button type="warning" @click="handleUpdata(scope.row.username)"><el-icon>
@@ -135,6 +133,7 @@ export default {
             total: 0,
             tableData: [],
             name: '',
+            realName: JSON.parse(localStorage.getItem('user')).realName,
             form: {
                 college: JSON.parse(localStorage.getItem('user')).college,
                 real_name: '',
@@ -239,6 +238,7 @@ export default {
         handleUpdata(username) {
             //console.log(username);
             const data = {
+                Actor: this.realName,
                 username: username,
                 role: 'check'
             }
@@ -278,6 +278,9 @@ export default {
                 email: this.form.email,
             }
             axios.post('https://localhost:8443/api/users/college_register', data, {
+                params: {
+                    actor: this.realName
+                },
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -335,13 +338,16 @@ export default {
         handleDelete(username) {
             //console.log(username);
             const data = {
+                Actor: this.realName,
                 username: username
             }
             //弹出确认框
             this.$confirm('确认删除该用户？')
                 .then(() => {
                     axios.post('https://localhost:8443/api/users/delete', data, {
-
+                        params: {
+                            actor: this.realName
+                        },
                     }).then(response => {
                         this.$message.success('删除成功');
                         this.loadData();

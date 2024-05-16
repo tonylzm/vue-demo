@@ -71,8 +71,9 @@
                             <span>日志中心</span>
                         </template>
                         <el-menu-item-group title="日志中心">
-                            <el-menu-item index="6-1" @click="gotoItemTen">日志中心</el-menu-item>
-                            <el-menu-item index="6-2" @click="gotoItemEleven">日志中心demo</el-menu-item>
+                            <el-menu-item index="6-1" @click="gotoItemTen">服务器日志</el-menu-item>
+                            <el-menu-item index="6-2" @click="gotoItemEleven">服务器日志中心demo</el-menu-item>
+                            <el-menu-item index="6-3" @click="gotoItemTwelve">系统日志</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
                 </el-menu>
@@ -125,6 +126,9 @@ export default {
         },
         gotoItemEleven() {
             this.$router.push('/logt')
+        },
+        gotoItemTwelve() {
+            this.$router.push('/syslog')
         },
         handleOpen(key, keyPath) {
             console.log(key, keyPath);
