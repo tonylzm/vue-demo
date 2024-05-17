@@ -1,8 +1,8 @@
 <template>
 
     <div style="margin-bottom: 10px;">
-        <el-button @click="connectWebSocket()">接收服务器日志</el-button>
-        <el-button @click="disconnectWebSocket()">终止服务器日志</el-button>
+        <el-button type="success" @click="connectWebSocket()">接收服务器日志</el-button>
+        <el-button type="danger" @click="disconnectWebSocket()">终止服务器日志</el-button>
     </div>
     <div class="contain">
         <el-card class="box-card" shadow="hover" style="background-color: #409EFF;" @click="handleCardClick2()">

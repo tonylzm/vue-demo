@@ -239,6 +239,7 @@ export default {
         handleUpdata(username) {
             //console.log(username);
             const data = {
+                Actor: this.realName,
                 username: username,
                 role: 'check'
             }
@@ -279,6 +280,9 @@ export default {
                 email: this.form.email,
             }
             axios.post('https://localhost:8443/api/users/register', data, {
+                params: {
+                    actor: this.realName
+                },
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -341,7 +345,9 @@ export default {
             this.$confirm('确认删除该用户？')
                 .then(() => {
                     axios.post('https://localhost:8443/api/users/delete', data, {
-
+                        params: {
+                            actor: this.realName
+                        },
                     }).then(response => {
                         this.$message.success('删除成功');
                         this.loadData();
