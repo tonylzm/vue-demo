@@ -166,7 +166,7 @@ export default {
                     oldPassword: hashedPassword,
                     newPassword: hashedPassword1
                 }
-                axios.post('https://localhost:8443/api/users/updatePassword', data).then(response => {
+                axios.post('/api/users/updatePassword', data).then(response => {
                     console.log('修改密码成功:', response.data);
                     this.$message.success('修改密码成功');
                     this.innerDrawer1 = false;
@@ -189,7 +189,7 @@ export default {
             var that = this;
             var xhr = new XMLHttpRequest();
             this.showProgress = true;
-            xhr.open('POST', 'https://localhost:8443/api/upload/upload');
+            xhr.open('POST', '/api/upload/upload');
             // 上传完成后的回调函数
             xhr.onload = function () {
                 if (xhr.status === 200) {

@@ -137,7 +137,7 @@ export default {
         codesend() {
             if (this.isSending) return;
             this.isSending = true;
-            axios.get('https://localhost:8443/api/email/register', {
+            axios.get('/api/email/register', {
                 params: {
                     to: this.email
                 }
@@ -168,7 +168,8 @@ export default {
                 email: this.email,
                 code: this.code
             }
-            axios.post('https://localhost:8443/api/email/email_login', data, {
+
+            axios.post('/api/email/email_login', data, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 },
@@ -198,6 +199,7 @@ export default {
             });
         },
         async handleSubmit() {
+
             const data = await this.sendVerifyInfo();
             if (data == '非法登录') {
                 this.$message.error('请检查你的IP地址');
@@ -205,7 +207,7 @@ export default {
             }
             const hashedPassword = hashPassword(this.password);
             //const hashedPassword = this.password;
-            axios.post('https://localhost:8443/api/users/login', {
+            axios.post('/api/users/login', {
                 username: this.username,
                 password: hashedPassword
             }).then(response => {
@@ -266,7 +268,7 @@ export default {
                 };
 
                 // 发送 POST 请求给后端
-                const response = await axios.post('https://localhost:8443/api/users/test', data);
+                const response = await axios.post('/api/users/test', data);
 
                 // 清除定时器
                 clearTimeout(timerId);

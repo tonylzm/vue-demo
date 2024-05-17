@@ -143,7 +143,7 @@ export default {
     },
     submitPassword() {
       const hashedPassword = hashPassword(this.passwordForm.password);
-      axios.post('https://localhost:8443/api/users/login', {
+      axios.post('/api/users/login', {
         username: this.username,
         password: hashedPassword
       }).then(response => {
@@ -190,7 +190,7 @@ export default {
     },
     submitPassword2() {
       const hashedPassword = hashPassword(this.passwordForm.password2);
-      axios.post('https://localhost:8443/api/users/updatePassword2', {
+      axios.post('/api/users/updatePassword2', {
         username: this.username,
         newPassword: hashedPassword
       }).then(response => {

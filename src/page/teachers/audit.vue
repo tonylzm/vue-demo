@@ -117,7 +117,7 @@ export default {
                 .catch(_ => { });
         },
         loadData() {
-            axios.get('https://localhost:8443/api/files/pageByProduced', {
+            axios.get('/api/files/pageByProduced', {
                 params: {
                     pageNum: this.pageNum,
                     pageSize: this.pageSize,
@@ -171,7 +171,7 @@ export default {
                 produced: this.username,
                 name: fileName, // 使用传入的 fileName 参数
             }
-            axios.post('https://localhost:8443/api/history/findHistoryfile', data, {
+            axios.post('/api/history/findHistoryfile', data, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }

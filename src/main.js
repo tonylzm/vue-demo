@@ -8,10 +8,10 @@ import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import router from './router/index.js'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'
 import 'element-plus/dist/index.css'
+import axios from 'axios'
 
 
-
-
+axios.defaults.baseURL = 'https://192.168.101.6:8443';
 const app = createApp(App)
 app.use(router)
 app.use(ElementPlus, {

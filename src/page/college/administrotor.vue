@@ -250,7 +250,7 @@ export default {
             //弹出确认框
             this.$confirm('确认调整该用户权限？')
                 .then(() => {
-                    axios.post('https://localhost:8443/api/users/role', data, {
+                    axios.post('/api/users/role', data, {
                         headers: {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
@@ -281,7 +281,7 @@ export default {
                 tel: this.form.tel,
                 email: this.form.email,
             }
-            axios.post('https://localhost:8443/api/users/check_register', data, {
+            axios.post('/api/users/check_register', data, {
                 params: {
                     actor: this.realName
                 },
@@ -309,7 +309,7 @@ export default {
                 role: 'check',
                 name: this.name
             }
-            axios.post('https://localhost:8443/api/users/userrole', data, {
+            axios.post('/api/users/userrole', data, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
@@ -346,7 +346,7 @@ export default {
             //弹出确认框
             this.$confirm('确认删除该用户？')
                 .then(() => {
-                    axios.post('https://localhost:8443/api/users/delete', data, {
+                    axios.post('/api/users/delete', data, {
                         params: {
                             actor: this.realName
                         },

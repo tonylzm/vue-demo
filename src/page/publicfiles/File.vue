@@ -387,7 +387,7 @@ export default {
 			var that = this;
 			var xhr = new XMLHttpRequest();
 			this.showProgress = true;
-			xhr.open('POST', 'https://localhost:8443/api/upload/upload');
+			xhr.open('POST', '/api/upload/upload');
 			// 上传完成后的回调函数
 			xhr.onload = function () {
 				if (xhr.status === 200) {
@@ -432,7 +432,7 @@ export default {
 		// 从后端API获取公钥的新方法  
 		async getPublicKeyFromServer() {
 			try {
-				const response = await fetch('https://localhost:8443/api/upload/public');
+				const response = await fetch('/api/upload/public');
 				if (!response.ok) {
 					throw new Error(`HTTP error! status: ${response.status}`);
 				}
@@ -480,7 +480,7 @@ export default {
 				};
 
 				// 发送 POST 请求给后端
-				const response = await axios.post('https://localhost:8443/api/users/test', data);
+				const response = await axios.post('/api/users/test', data);
 
 				// 清除定时器
 				clearTimeout(timerId);
@@ -521,7 +521,7 @@ export default {
 			return encryptedAESKey;
 		},
 		loadData() {
-			axios.get('https://localhost:8443/api/files/pageByProduced', {
+			axios.get('/api/files/pageByProduced', {
 				params: {
 					pageNum: this.pageNum,
 					pageSize: this.pageSize,
@@ -570,7 +570,7 @@ export default {
 		getcheckuser(value) {
 			this.form.classCheck = '';
 			this.form.collegeCheck = '';
-			axios.post('https://localhost:8443/api/users/findCheckUser', {
+			axios.post('/api/users/findCheckUser', {
 				college: value
 			}, {
 				headers: {
