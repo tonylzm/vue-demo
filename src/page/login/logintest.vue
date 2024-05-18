@@ -287,14 +287,14 @@ export default {
 
         async getIPAddress() {
             try {
-                const response = await axios.get('http://ip-api.com/json/');
-                //https://api.ipify.org/?format=json 也可以获取ip地址
-                return response.data.query;
+                const response = await axios.get('https://api.ipify.org/?format=json');
+                return response.data.ip;
             } catch (error) {
                 console.error('获取 IP 地址失败:', error);
                 return null;
             }
         },
+
         getCurrentTime() {
             const currentTime = new Date();
             // 将时间格式化为字符串，你可以根据需要进行调整

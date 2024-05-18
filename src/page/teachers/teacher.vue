@@ -17,54 +17,54 @@
       </div>
     </el-col>
 
-    <el-dialog  v-model="emailbox" title="变更邮箱" width="30%">
-    <el-form ref="emailForm" :rules="emailRules">
-      <el-form-item label="邮箱号" prop="email">
-        <el-input placeholder="请输入邮箱" v-model="email" clearable required>
-          <template #prepend>
-            <el-icon>
-              <User />
-            </el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
-      <el-form-item label="验证码" prop="code">
-        <el-input placeholder="请输入验证码" v-model="code" clearable required>
-          <template #prepend>
-            <el-icon>
-              <Lock />
-            </el-icon>
-          </template>
-          <template #append>
-            <el-button type="primary" @click="codesend" :disabled="isSending" style="width: 60px">
-              {{ isSending ? `${countdown}S` : '发送' }}
-            </el-button>
-          </template>
-        </el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" class="loginBtn" @click="emailSubmit">确认验证</el-button>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
+    <el-dialog v-model="emailbox" title="变更邮箱" width="30%">
+      <el-form ref="emailForm" :rules="emailRules">
+        <el-form-item label="邮箱号" prop="email">
+          <el-input placeholder="请输入邮箱" v-model="email" clearable required>
+            <template #prepend>
+              <el-icon>
+                <User />
+              </el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item label="验证码" prop="code">
+          <el-input placeholder="请输入验证码" v-model="code" clearable required>
+            <template #prepend>
+              <el-icon>
+                <Lock />
+              </el-icon>
+            </template>
+            <template #append>
+              <el-button type="primary" @click="codesend" :disabled="isSending" style="width: 60px">
+                {{ isSending ? `${countdown}S` : '发送' }}
+              </el-button>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" class="loginBtn" @click="emailSubmit">确认验证</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
 
-  <el-dialog  v-model="emailbox2" title="输入新邮箱" width="30%">
-    <el-form ref="emailForm" :rules="emailRules">
-      <el-form-item label="邮箱号" prop="email">
-        <el-input placeholder="请输入邮箱" v-model="email" clearable required>
-          <template #prepend>
-            <el-icon>
-              <User />
-            </el-icon>
-          </template>
-        </el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" class="loginBtn" @click="emailSubmit2">确认变更</el-button>
-      </el-form-item>
-    </el-form>
-  </el-dialog>
-  
+    <el-dialog v-model="emailbox2" title="输入新邮箱" width="30%">
+      <el-form ref="emailForm" :rules="emailRules">
+        <el-form-item label="邮箱号" prop="email">
+          <el-input placeholder="请输入邮箱" v-model="email" clearable required>
+            <template #prepend>
+              <el-icon>
+                <User />
+              </el-icon>
+            </template>
+          </el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" class="loginBtn" @click="emailSubmit2">确认变更</el-button>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
+
     <el-drawer v-model="innerDrawer" title="修改密码界面" :append-to-body="true" :before-close="handleClose" size="40%">
       <el-form ref="passwordForm" :model="passwordForm" label-width="100px">
         <el-form-item label="当前账号:">
@@ -187,7 +187,7 @@ export default {
       email: '',
       code: '',
       ipAddress: '',
-     
+
       emailbox: false,
       emailbox2: false,
       countdown: 60,
@@ -288,184 +288,183 @@ export default {
       this.emailbox = true;
     },
     codesend() {
-            if (this.isSending) return;
-            this.isSending = true;
-            axios.get('https://localhost:8443/api/email/register', {
-                params: {
-                    to: this.email
-                }
-            }).then(response => {
-                console.log(response);
-                if (response.data.code === 200) {
-                    this.$message.success('验证码发送成功');
-                    let timer = setInterval(() => {
-                        if (this.countdown > 0) {
-                            this.countdown--;
-                        } else {
-                            this.isSending = false;
-                            this.countdown = 60;
-                            clearInterval(timer);
-                        }
-                    }, 1000);
-                } else {
-                    this.$message.error('验证码发送失败');
-                }
-            }).catch(error => {
-                this.$message.error('验证码发送失败');
-            });
-        },
-    emailSubmit() {
-            const data = {
-                email: this.email,
-                code: this.code
+      if (this.isSending) return;
+      this.isSending = true;
+      axios.get('/api/email/register', {
+        params: {
+          to: this.email
+        }
+      }).then(response => {
+        console.log(response);
+        if (response.data.code === 200) {
+          this.$message.success('验证码发送成功');
+          let timer = setInterval(() => {
+            if (this.countdown > 0) {
+              this.countdown--;
+            } else {
+              this.isSending = false;
+              this.countdown = 60;
+              clearInterval(timer);
             }
-            axios.post('https://localhost:8443/api/email/email_login', data, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-            }).then(response => {
-                if (response.data.code === 200) {
-                    this.$message.success('登录成功');
-                    // 处理登录成功逻辑
-                    //将用户信息保存到本地存储
-                    localStorage.clear();
-                    localStorage.setItem('user', JSON.stringify(response.data.body));
-                    //将用户信息保存到sessionStorage
-                    sessionStorage.clear();
-                    sessionStorage.setItem('user', JSON.stringify(response.data.body));
-                    localStorage.setItem('refresh', true);
-                    setTimeout(() => {
-                        this.$message.info('验证成功，请输入新的邮箱')
-                    }, 500);
-                    this.emailbox = false;
-                    this.emailbox2 = true; 
-                } else {
-                    this.$message.error('登录失败');
-                    // 处理登录失败逻辑
-                }
-            }).catch(error => {
-                console.error('登录失败:', error);
-                // 处理登录失败逻辑
-            });
-        },
-        async sendVerifyInfo() {
-            // 生成随机字符串和其他信息
-            const loading = ElLoading.service({
-                lock: true,
-                text: '正在对你进行身份认证，请稍等...',
-                background: 'rgba(0, 0, 0, 0.7)',
-            });
-            let timerId;
-            // 定时器 ID
-            try {
-                // 处理后端的响应
-                timerId = setTimeout(() => {
-                    // 如果请求没有完成，更改加载文本  
-                    loading.setText('网络开小差了，正在拼命加载...');
-                }, 3000); // 2秒后触发
-                const hashedPassword = "";
-                const username = this.username;
-                const time = this.getCurrentTime();
-                const ipAddress = await this.getIPAddress(); // 这里假设你有一个获取 IP 地址的方法
-                console.log(hashedPassword)
-                // 构建发送给后端的数据
-                const data = {
-                    hashedPassword,
-                    username,
-                    time,
-                    ipAddress
-                    // 可以根据需要添加其他信息
-                };
-
-                // 发送 POST 请求给后端
-                const response = await axios.post('https://localhost:8443/api/users/test', data);
-
-                // 清除定时器
-                clearTimeout(timerId);
-                loading.close();
-                this.countdown = 120;
-                this.$message.success('验证成功');
-                return response.data;
-
-            } catch (error) {
-                clearTimeout(timerId);
-                loading.close();
-                this.$message.error('非法登录');
-                return '非法登录';
-            }
-        },
-
-        async getIPAddress() {
-            try {
-                const response = await axios.get('http://ip-api.com/json/');
-                //https://api.ipify.org/?format=json 也可以获取ip地址
-                return response.data.query;
-            } catch (error) {
-                console.error('获取 IP 地址失败:', error);
-                return null;
-            }
-        },
-        getCurrentTime() {
-            const currentTime = new Date();
-            // 将时间格式化为字符串，你可以根据需要进行调整
-            const formattedTime = currentTime.toISOString(); // 返回 ISO 格式的字符串，例如："2024-04-12T12:30:00.000Z"
-            return formattedTime;
-        },
-        emailSubmit2(){
-          const data = {
-                email: this.email,
-                username: this.username,
-            }
-            axios.post('https://localhost:8443/api/email/change_email', data, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-            }).then(response => {
-                if (response.data === "修改成功") {
-                    this.$message.success('修改成功');
-                    // 处理登录成功逻辑
-                    //将用户信息保存到本地存储
-                    localStorage.clear();
-                    localStorage.setItem('user', JSON.stringify(response.data.body));
-                    //将用户信息保存到sessionStorage
-                    sessionStorage.clear();
-                    sessionStorage.setItem('user', JSON.stringify(response.data.body));
-                    localStorage.setItem('refresh', true);
-                    setTimeout(() => {
-                        this.$message.info('修改成功，请重新登录')
-                    }, 500);
-                    this.emailbox2=false;
-                    this.$router.push('/');
-                    this.switchUser(); 
-                } else {
-                    this.$message.error('修改失败');
-                    // 处理登录失败逻辑
-                }
-            }).catch(error => {
-                console.error('修改失败:', error);
-                // 处理登录失败逻辑
-            });
-        },
-        switchUser() {
-            const loading = ElLoading.service({
-                lock: true,
-                text: '正在返回登录界面，请稍等...',
-                background: 'rgba(0, 0, 0,1)',
-            });
-            setTimeout(() => {
-                router.push('/');
-            }, 200);
-            localStorage.clear();
-            sessionStorage.clear();
-            setTimeout(() => {
-                window.location.reload();
-            }, 500);
-            setTimeout(() => {
-                loading.close();
-            }, 1000);
-        },
-
+          }, 1000);
+        } else {
+          this.$message.error('验证码发送失败');
+        }
+      }).catch(error => {
+        this.$message.error('验证码发送失败');
+      });
     },
+    emailSubmit() {
+      const data = {
+        email: this.email,
+        code: this.code
+      }
+      axios.post('/api/email/email_login', data, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+      }).then(response => {
+        if (response.data.code === 200) {
+          this.$message.success('登录成功');
+          // 处理登录成功逻辑
+          //将用户信息保存到本地存储
+          localStorage.clear();
+          localStorage.setItem('user', JSON.stringify(response.data.body));
+          //将用户信息保存到sessionStorage
+          sessionStorage.clear();
+          sessionStorage.setItem('user', JSON.stringify(response.data.body));
+          localStorage.setItem('refresh', true);
+          setTimeout(() => {
+            this.$message.info('验证成功，请输入新的邮箱')
+          }, 500);
+          this.emailbox = false;
+          this.emailbox2 = true;
+        } else {
+          this.$message.error('登录失败');
+          // 处理登录失败逻辑
+        }
+      }).catch(error => {
+        console.error('登录失败:', error);
+        // 处理登录失败逻辑
+      });
+    },
+    async sendVerifyInfo() {
+      // 生成随机字符串和其他信息
+      const loading = ElLoading.service({
+        lock: true,
+        text: '正在对你进行身份认证，请稍等...',
+        background: 'rgba(0, 0, 0, 0.7)',
+      });
+      let timerId;
+      // 定时器 ID
+      try {
+        // 处理后端的响应
+        timerId = setTimeout(() => {
+          // 如果请求没有完成，更改加载文本  
+          loading.setText('网络开小差了，正在拼命加载...');
+        }, 3000); // 2秒后触发
+        const hashedPassword = "";
+        const username = this.username;
+        const time = this.getCurrentTime();
+        const ipAddress = await this.getIPAddress(); // 这里假设你有一个获取 IP 地址的方法
+        console.log(hashedPassword)
+        // 构建发送给后端的数据
+        const data = {
+          hashedPassword,
+          username,
+          time,
+          ipAddress
+          // 可以根据需要添加其他信息
+        };
+
+        // 发送 POST 请求给后端
+        const response = await axios.post('/api/users/test', data);
+
+        // 清除定时器
+        clearTimeout(timerId);
+        loading.close();
+        this.countdown = 120;
+        this.$message.success('验证成功');
+        return response.data;
+
+      } catch (error) {
+        clearTimeout(timerId);
+        loading.close();
+        this.$message.error('非法登录');
+        return '非法登录';
+      }
+    },
+
+    async getIPAddress() {
+      try {
+        const response = await axios.get('https://api.ipify.org/?format=json');
+        return response.data.ip;
+      } catch (error) {
+        console.error('获取 IP 地址失败:', error);
+        return null;
+      }
+    },
+    getCurrentTime() {
+      const currentTime = new Date();
+      // 将时间格式化为字符串，你可以根据需要进行调整
+      const formattedTime = currentTime.toISOString(); // 返回 ISO 格式的字符串，例如："2024-04-12T12:30:00.000Z"
+      return formattedTime;
+    },
+    emailSubmit2() {
+      const data = {
+        email: this.email,
+        username: this.username,
+      }
+      axios.post('/api/email/change_email', data, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+      }).then(response => {
+        if (response.data === "修改成功") {
+          this.$message.success('修改成功');
+          // 处理登录成功逻辑
+          //将用户信息保存到本地存储
+          localStorage.clear();
+          localStorage.setItem('user', JSON.stringify(response.data.body));
+          //将用户信息保存到sessionStorage
+          sessionStorage.clear();
+          sessionStorage.setItem('user', JSON.stringify(response.data.body));
+          localStorage.setItem('refresh', true);
+          setTimeout(() => {
+            this.$message.info('修改成功，请重新登录')
+          }, 500);
+          this.emailbox2 = false;
+          this.$router.push('/');
+          this.switchUser();
+        } else {
+          this.$message.error('修改失败');
+          // 处理登录失败逻辑
+        }
+      }).catch(error => {
+        console.error('修改失败:', error);
+        // 处理登录失败逻辑
+      });
+    },
+    switchUser() {
+      const loading = ElLoading.service({
+        lock: true,
+        text: '正在返回登录界面，请稍等...',
+        background: 'rgba(0, 0, 0,1)',
+      });
+      setTimeout(() => {
+        router.push('/');
+      }, 200);
+      localStorage.clear();
+      sessionStorage.clear();
+      setTimeout(() => {
+        window.location.reload();
+      }, 500);
+      setTimeout(() => {
+        loading.close();
+      }, 1000);
+    },
+
+  },
 };  
 </script>
 

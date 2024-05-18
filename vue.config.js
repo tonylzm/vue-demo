@@ -36,6 +36,9 @@ module.exports = {
 					'^/api': '/'
 				}
 			}
-		}
+		},
+		  // 此处开启 https
+		https: true
+
 	}
 };

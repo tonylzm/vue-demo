@@ -105,7 +105,7 @@ export default {
                         type: 'warning'
                     });
                 }
-                var socket = new SockJS('/websocket');
+                var socket = new SockJS('https://192.168.101.6:8443/websocket');
                 this.stompClient = Stomp.over(socket);
                 this.stompClient.connect({}, frame => {
                     this.stompClient.send('/app/hello', {}, JSON.stringify({ 'name': 'hello' }));

@@ -323,16 +323,18 @@ export default {
 						//console.log('md5Value', this.md5Value);
 						try {
 							// 生成加密密钥
+							//console.log(window.crypto);
 							const key = await window.crypto.subtle.generateKey(
 								{ name: 'AES-GCM', length: 256 },
 								true,
 								['encrypt', 'decrypt']
 							);
 							// 导出密钥为字符串格式
+							//console.log('key', key);
 							const exportedKey = await window.crypto.subtle.exportKey('raw', key);
 							const keyString = btoa(String.fromCharCode.apply(null, new Uint8Array(exportedKey)));
 							const fileBuffer = arrayBuffer;
-							//console.log('keyString', keyString);
+							// console.log('keyString', keyString);
 							const encryptedData = await window.crypto.subtle.encrypt(
 								{ name: 'AES-GCM', iv: new Uint8Array(12) },
 								key,
@@ -361,6 +363,7 @@ export default {
 								}, 1000);
 							}
 						} catch (error) {
+							console.error('Failed to encrypt file:', error);
 							this.$message.error('加密失败');
 						}
 					};
@@ -387,7 +390,7 @@ export default {
 			var that = this;
 			var xhr = new XMLHttpRequest();
 			this.showProgress = true;
-			xhr.open('POST', '/api/upload/upload');
+			xhr.open('POST', 'https://192.168.101.6:8443/api/upload/upload');
 			// 上传完成后的回调函数
 			xhr.onload = function () {
 				if (xhr.status === 200) {
@@ -432,7 +435,7 @@ export default {
 		// 从后端API获取公钥的新方法  
 		async getPublicKeyFromServer() {
 			try {
-				const response = await fetch('/api/upload/public');
+				const response = await fetch('https://192.168.101.6:8443/api/upload/public');
 				if (!response.ok) {
 					throw new Error(`HTTP error! status: ${response.status}`);
 				}
@@ -499,9 +502,8 @@ export default {
 
 		async getIPAddress() {
 			try {
-				const response = await axios.get('http://ip-api.com/json/');
-				//https://api.ipify.org/?format=json 也可以获取ip地址
-				return response.data.query;
+				const response = await axios.get('https://api.ipify.org/?format=json');
+				return response.data.ip;
 			} catch (error) {
 				console.error('获取 IP 地址失败:', error);
 				return null;
