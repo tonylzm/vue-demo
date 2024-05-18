@@ -310,7 +310,7 @@ export default {
                 pageNum: this.pageNum,
                 pageSize: this.pageSize,
                 class_check: this.realName,
-                status: "未审核",
+                status: "待审核",
                 college: this.college,
                 name: this.name,
                 produced: this.username
