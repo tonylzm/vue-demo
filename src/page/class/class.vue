@@ -20,7 +20,7 @@
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
             <el-table-column prop="name" label="文件名称"></el-table-column>
             <el-table-column prop="produced" label="出卷人"></el-table-column>
-            <el-table-column prop="classes" label="考试班级"></el-table-column>
+            <el-table-column prop="classes" label="考试课程"></el-table-column>
             <el-table-column prop="testtype" label="考试类型"></el-table-column>
             <el-table-column prop="testtime" label="考试时间"></el-table-column>
             <el-table-column prop="size" label="文件大小(kb)"></el-table-column>
