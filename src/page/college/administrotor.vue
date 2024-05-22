@@ -138,6 +138,7 @@ export default {
             total: 0,
             tableData: [],
             name: '',
+            realName: JSON.parse(localStorage.getItem('user')).realName,
             form: {
                 college: JSON.parse(localStorage.getItem('user')).college,
                 real_name: '',
@@ -283,7 +284,7 @@ export default {
             }
             axios.post('/api/users/check_register', data, {
                 params: {
-                    actor: this.realName
+                    actor: this.realName,
                 },
                 headers: {
                     'Content-Type': 'application/json'

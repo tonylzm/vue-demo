@@ -105,6 +105,7 @@ export default {
                         type: 'warning'
                     });
                 }
+                // var socket = new SockJS('https://47.121.138.212:8443/websocket');
                 var socket = new SockJS('https://192.168.101.6:8443/websocket');
                 this.stompClient = Stomp.over(socket);
                 this.stompClient.connect({}, frame => {

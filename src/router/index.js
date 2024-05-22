@@ -135,6 +135,14 @@ const routes = [
 		meta: { requiresAuth: true, requiredRoles: ['college'] }
 
 	}
+	,
+	{
+		path: '/select',
+		name: 'select',
+		component: () => import( /*webpackChunkName:'Login'*/ '@/page/publicfiles/select.vue'),
+		meta: { requiresAuth: true, requiredRoles: ['college'] }
+
+	}
 ]
 
 const router = createRouter({
