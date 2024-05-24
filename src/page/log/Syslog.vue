@@ -43,7 +43,7 @@ export default {
     },
     methods: {
         getData() {
-            axios.get('https://localhost:8443/api/log/sys_logs', {
+            axios.get('/api/log/sys_logs', {
                 params: {
                     pageNum: this.pageNum - 1,
                     pageSize: this.pageSize
@@ -72,7 +72,7 @@ export default {
             this.multipleSelection = val;
         },
         exportToExcelAll() {
-            axios.get('https://localhost:8443/api/log/all_logs', {
+            axios.get('/api/log/all_logs', {
             }).then(res => {
                 const worksheet = XLSX.utils.json_to_sheet(res.data.body);
                 const workbook = XLSX.utils.book_new();

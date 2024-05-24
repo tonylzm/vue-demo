@@ -30,12 +30,15 @@ module.exports = {
 	devServer: {
 		proxy: {
 			'/api': {
-				target: 'http://localhost:9090', // 后端服务地址
+				target: 'https://192.168.101.6:8443', // 后端服务地址
 				changeOrigin: true,
 				pathRewrite: {
-					'^/api': ''
+					'^/api': '/'
 				}
 			}
-		}
+		},
+		  // 此处开启 https
+		https: true
+
 	}
 };

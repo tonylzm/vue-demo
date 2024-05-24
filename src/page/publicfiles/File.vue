@@ -13,7 +13,7 @@
 
 		</div>
 		<div style="margin: 10px 0">
-			<el-button type="primary" @click="drawer = true">试卷信息填写<el-icon>
+			<el-button type="primary" @click="opendrawer">试卷信息填写<el-icon>
 					<Promotion />
 				</el-icon></el-button>
 			<el-drawer v-model="drawer" title="试卷信息登记表格" :append-to-body="true" :before-close="handleClose" size="40%">
@@ -50,8 +50,11 @@
 							</el-icon>
 						</template>
 					</el-form-item>
-					<el-form-item label="考试班级" prop="class">
-						<el-input v-model="form.class"></el-input>
+					<el-form-item label="考试课程" prop="class">
+						<el-select v-model="form.class" placeholder="选择考试课程">
+							<el-option v-for="option in courseOptions" :key="option.value" :label="option.label"
+								:value="option.value + '__' + option.label"></el-option>
+						</el-select>
 					</el-form-item>
 					<el-form-item label="考试方式" prop="region">
 						<el-select v-model="form.region" placeholder="请选择考试方式">
@@ -130,7 +133,7 @@
 			<el-table-column prop="name" label="文件名称"></el-table-column>
 			<el-table-column prop="testname" label="考试名称"></el-table-column>
 			<el-table-column prop="produced" label="出卷人"></el-table-column>
-			<el-table-column prop="classes" label="考试班级"></el-table-column>
+			<el-table-column prop="classes" label="考试课程"></el-table-column>
 			<el-table-column prop="testtype" label="考试类型"></el-table-column>
 			<el-table-column prop="testtime" label="考试时间"></el-table-column>
 			<el-table-column prop="checkStatus" label="审核状态"></el-table-column>
@@ -241,7 +244,8 @@ export default {
 			selectedOption: '',// 对账号选择的值
 			reloadname: '',//重新上传的文件名,用于检验是否符合规范
 			classOptions: [],
-			collegeOptions: []
+			collegeOptions: [],
+			courseOptions: []
 		}
 	},
 
@@ -250,6 +254,12 @@ export default {
 		this.loadData();
 	},
 	methods: {
+		opendrawer() {
+			this.drawer = true;
+			// this.getcheckuser(this.college);
+			this.getteachercourse(this.username);
+
+		},
 		changeEnable(row) {
 			console.log(row);
 		},
@@ -323,16 +333,18 @@ export default {
 						//console.log('md5Value', this.md5Value);
 						try {
 							// 生成加密密钥
+							//console.log(window.crypto);
 							const key = await window.crypto.subtle.generateKey(
 								{ name: 'AES-GCM', length: 256 },
 								true,
 								['encrypt', 'decrypt']
 							);
 							// 导出密钥为字符串格式
+							//console.log('key', key);
 							const exportedKey = await window.crypto.subtle.exportKey('raw', key);
 							const keyString = btoa(String.fromCharCode.apply(null, new Uint8Array(exportedKey)));
 							const fileBuffer = arrayBuffer;
-							//console.log('keyString', keyString);
+							// console.log('keyString', keyString);
 							const encryptedData = await window.crypto.subtle.encrypt(
 								{ name: 'AES-GCM', iv: new Uint8Array(12) },
 								key,
@@ -361,6 +373,7 @@ export default {
 								}, 1000);
 							}
 						} catch (error) {
+							console.error('Failed to encrypt file:', error);
 							this.$message.error('加密失败');
 						}
 					};
@@ -387,7 +400,8 @@ export default {
 			var that = this;
 			var xhr = new XMLHttpRequest();
 			this.showProgress = true;
-			xhr.open('POST', 'https://localhost:8443/api/upload/upload');
+			xhr.open('POST', 'https://192.168.101.6:8443/api/upload/upload');
+			// xhr.open('POST', 'https://47.121.138.212:8443/api/upload/upload');
 			// 上传完成后的回调函数
 			xhr.onload = function () {
 				if (xhr.status === 200) {
@@ -430,9 +444,10 @@ export default {
 			}
 		},
 		// 从后端API获取公钥的新方法  
+		//https://47.121.138.212:8443
 		async getPublicKeyFromServer() {
 			try {
-				const response = await fetch('https://localhost:8443/api/upload/public');
+				const response = await fetch('https://192.168.101.6:8443/api/upload/public');
 				if (!response.ok) {
 					throw new Error(`HTTP error! status: ${response.status}`);
 				}
@@ -480,7 +495,7 @@ export default {
 				};
 
 				// 发送 POST 请求给后端
-				const response = await axios.post('https://localhost:8443/api/users/test', data);
+				const response = await axios.post('/api/users/test', data);
 
 				// 清除定时器
 				clearTimeout(timerId);
@@ -499,9 +514,8 @@ export default {
 
 		async getIPAddress() {
 			try {
-				const response = await axios.get('http://ip-api.com/json/');
-				//https://api.ipify.org/?format=json 也可以获取ip地址
-				return response.data.query;
+				const response = await axios.get('https://api.ipify.org/?format=json');
+				return response.data.ip;
 			} catch (error) {
 				console.error('获取 IP 地址失败:', error);
 				return null;
@@ -521,7 +535,7 @@ export default {
 			return encryptedAESKey;
 		},
 		loadData() {
-			axios.get('https://localhost:8443/api/files/pageByProduced', {
+			axios.get('/api/files/pageByProduced', {
 				params: {
 					pageNum: this.pageNum,
 					pageSize: this.pageSize,
@@ -570,7 +584,7 @@ export default {
 		getcheckuser(value) {
 			this.form.classCheck = '';
 			this.form.collegeCheck = '';
-			axios.post('https://localhost:8443/api/users/findCheckUser', {
+			axios.post('/api/users/findCheckUser', {
 				college: value
 			}, {
 				headers: {
@@ -589,6 +603,23 @@ export default {
 			}).catch(error => {
 				console.error('Error loading data:', error);
 			});
+		},
+		// https://localhost:8443
+		getteachercourse(value) {
+			this.form.class = '';
+			axios.get("/api/course/find_teacher", {
+				params: {
+					teacher: value
+				}
+			}).then(response => {
+				const { courses_name, courses_id } = response.data.body;
+				this.courseOptions = courses_name.map((name, index) => ({
+					value: courses_id[index],
+					label: name
+				}));
+			}).catch(error => {
+				console.error('Error loading data:', error);
+			})
 		}
 	}
 }

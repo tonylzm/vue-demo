@@ -106,7 +106,7 @@ export default {
     login() {
       //const hashedPassword = hashPassword(this.loginPassword);
       const hashedPassword = this.form.loginPassword;
-      axios.post('https://localhost:8443/api/users/login', {
+      axios.post('/api/users/login', {
         username: this.form.loginUsername,
         password: hashedPassword
       }).then(response => {
@@ -121,7 +121,7 @@ export default {
     },
     register() {
       const hashedPassword = hashPassword(this.registerPassword);
-      axios.post('https://localhost:8443/api/users/register', {
+      axios.post('/api/users/register', {
         username: this.registerUsername,
         password: hashedPassword
       }).then(response => {

@@ -20,7 +20,7 @@
             <el-table-column prop="id" label="ID" width="80"></el-table-column>
             <el-table-column prop="name" label="文件名称"></el-table-column>
             <el-table-column prop="produced" label="出卷人"></el-table-column>
-            <el-table-column prop="classes" label="考试班级"></el-table-column>
+            <el-table-column prop="classes" label="考试课程"></el-table-column>
             <el-table-column prop="testtype" label="考试类型"></el-table-column>
             <el-table-column prop="testtime" label="考试时间"></el-table-column>
             <el-table-column prop="size" label="文件大小(kb)"></el-table-column>
@@ -197,7 +197,7 @@ export default {
                 opinion: this.reason
             }
             //console.log(data);
-            axios.post('https://localhost:8443/api/checked/classChecked', data, {
+            axios.post('/api/checked/classChecked', data, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
@@ -273,7 +273,7 @@ export default {
                 };
 
                 // 发送 POST 请求给后端
-                const response = await axios.post('https://localhost:8443/api/users/test', data);
+                const response = await axios.post('/api/users/test', data);
 
                 //console.log(response.data);
                 clearTimeout(timerId);
@@ -310,13 +310,13 @@ export default {
                 pageNum: this.pageNum,
                 pageSize: this.pageSize,
                 class_check: this.realName,
-                status: "未审核",
+                status: "待审核",
                 college: this.college,
                 name: this.name,
                 produced: this.username
             });
 
-            axios.post('https://localhost:8443/api/checked/findClassCheckFile', data, {
+            axios.post('/api/checked/findClassCheckFile', data, {
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
@@ -345,7 +345,7 @@ export default {
             this.loadData();
         },
         download(name) {
-            axios.get('https://localhost:8443/api/download/download', {
+            axios.get('/api/download/download', {
                 params: {
                     filename: name
                 },
@@ -366,7 +366,7 @@ export default {
             });
         },
         decrpyt(name) {
-            axios.post('https://localhost:8443/api/files/decrypt', null, {
+            axios.post('/api/files/decrypt', null, {
                 params: {
                     fileName: name,
                     Actor: this.realName
@@ -389,7 +389,7 @@ export default {
                 });
         },
         preview(fileName, decrypt, produced) {
-            axios.get(`https://localhost:8443/api/files/preview?fileName=${fileName}&Actor=${this.realName}`, { responseType: 'blob' })
+            axios.get(`/api/files/preview?fileName=${fileName}&Actor=${this.realName}`, { responseType: 'blob' })
                 .then(response => {
                     // 成功获取预览数据后，加载到 <iframe> 中预览	
                     const pdfData = new Blob([response.data], { type: 'application/pdf' });
