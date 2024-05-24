@@ -55,13 +55,13 @@ const routes = [
 		meta: { requiresAuth: true, requiredRoles: ['college'] }
 
 	},
-	// {
-	// 	path: '/home',
-	// 	name: 'home',
-	// 	component: () => import( /*webpackChunkName:'Home'*/ '@/page/home.vue'),
-	// 	meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
-
-	// },
+	
+	{
+		path: '/course',
+		name: 'course',
+		component: () => import(/*webpackChunkName:'Login'*/ '@/page/teachers/course.vue'),
+		// meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
+	},
 
 	{
 		path: '/college',
