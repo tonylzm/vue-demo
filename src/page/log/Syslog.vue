@@ -26,8 +26,6 @@
 import axios from 'axios';
 import { ElLoading } from 'element-plus';
 import * as XLSX from 'xlsx';
-import jsPDF from 'jspdf';
-import autoTable from 'jspdf-autotable';
 export default {
     data() {
         return {
@@ -45,6 +43,9 @@ export default {
     methods: {
         getData() {
             axios.get('/api/log/sys_logs', {
+                headers: {
+                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
+                },
                 params: {
                     pageNum: this.pageNum - 1,
                     pageSize: this.pageSize
@@ -74,6 +75,9 @@ export default {
         },
         exportToExcelAll() {
             axios.get('/api/log/all_logs', {
+                headers: {
+                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
+                },
             }).then(res => {
                 const worksheet = XLSX.utils.json_to_sheet(res.data.body);
                 const workbook = XLSX.utils.book_new();

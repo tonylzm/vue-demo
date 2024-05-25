@@ -118,6 +118,9 @@ export default {
         },
         loadData() {
             axios.get('/api/files/pageByProduced', {
+                headers: {
+                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
+                },
                 params: {
                     pageNum: this.pageNum,
                     pageSize: this.pageSize,
@@ -144,7 +147,7 @@ export default {
                 this.total = totalElements;
                 this.pageNum = number + 1;
             }).catch(error => {
-                console.error('Error loading data:', error);
+                this.$message.error('加载数据失败');
             });
         },
         handlePageChange(pageNum) {
@@ -173,10 +176,10 @@ export default {
             }
             axios.post('/api/history/findHistoryfile', data, {
                 headers: {
+                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }).then(response => {
-                console.log(response.data)
                 const {
                     content,
                     totalPages,
@@ -191,7 +194,7 @@ export default {
                 this.total = totalElements;
                 this.pageNum = number + 1;
             }).catch(error => {
-                console.error('Error loading data:', error);
+                console.log(error);
             });
         },
         open2(opinion) {

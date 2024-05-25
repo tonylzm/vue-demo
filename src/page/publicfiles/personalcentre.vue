@@ -153,10 +153,6 @@ export default {
     methods: {
         //上传
         onSubmit() {
-            // this.Upload();
-            console.log(this.form.prepassword);
-            console.log(this.form.newpassword);
-            console.log(this.conpassword);
             //如果选择的是修改密码
             const hashedPassword = hashPassword(this.form.prepassword);
             const hashedPassword1 = hashPassword(this.form.newpassword);
@@ -166,7 +162,11 @@ export default {
                     oldPassword: hashedPassword,
                     newPassword: hashedPassword1
                 }
-                axios.post('/api/users/updatePassword', data).then(response => {
+                axios.post('/api/users/updatePassword', data, {
+                    headers: {
+                        "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
+                    }
+                }).then(response => {
                     console.log('修改密码成功:', response.data);
                     this.$message.success('修改密码成功');
                     this.innerDrawer1 = false;
@@ -174,42 +174,6 @@ export default {
                     console.error('修改密码失败:', error);
                     this.$message.error('修改密码失败');
                 });
-            }
-        },
-        refreshResources() {
-            //刷新页面资源
-
-        },
-        Upload() {
-            // 构建 FormData 对象，用于发送文件
-            const formData = new FormData();
-            this.uploadProgress = 0;
-            // 将需要加密的文件或文件信息放入 FormData 对象
-            formData.append('info', JSON.stringify(this.form));
-            var that = this;
-            var xhr = new XMLHttpRequest();
-            this.showProgress = true;
-            xhr.open('POST', '/api/upload/upload');
-            // 上传完成后的回调函数
-            xhr.onload = function () {
-                if (xhr.status === 200) {
-                    //弹出上传成功
-                    that.$message.success('上传成功');
-                    setTimeout(() => {
-                        that.showProgress = false;
-                    }, 1000);
-                    that.loadData();
-                    that.encryptedFile = null;
-                    clearInterval(that.timer); // 上传成功后暂停计时
-                    that.countdown = 120; // 重置倒计时
-                } else {
-                    that.progressColor = 'OrangeRed';
-                    that.$message.error('上传失败！' + xhr.responseText);
-                    setTimeout(() => {
-                        that.showProgress = false;
-                    }, 2000);
-                    console.log('上传出错');
-                }
             }
         },
         // 重置

@@ -199,6 +199,7 @@ export default {
             //console.log(data);
             axios.post('/api/checked/classChecked', data, {
                 headers: {
+                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }).then(response => {
@@ -318,6 +319,7 @@ export default {
 
             axios.post('/api/checked/findClassCheckFile', data, {
                 headers: {
+                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }).then(response => {
@@ -346,6 +348,9 @@ export default {
         },
         download(name) {
             axios.get('/api/download/download', {
+                headers: {
+                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token
+                },
                 params: {
                     filename: name
                 },
@@ -367,6 +372,9 @@ export default {
         },
         decrpyt(name) {
             axios.post('/api/files/decrypt', null, {
+                headers: {
+                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token
+                },
                 params: {
                     fileName: name,
                     Actor: this.realName
@@ -389,7 +397,12 @@ export default {
                 });
         },
         preview(fileName, decrypt, produced) {
-            axios.get(`/api/files/preview?fileName=${fileName}&Actor=${this.realName}`, { responseType: 'blob' })
+            axios.get(`/api/files/preview?fileName=${fileName}&Actor=${this.realName}`, {
+                headers: {
+                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token
+                },
+                responseType: 'blob'
+            })
                 .then(response => {
                     // 成功获取预览数据后，加载到 <iframe> 中预览	
                     const pdfData = new Blob([response.data], { type: 'application/pdf' });

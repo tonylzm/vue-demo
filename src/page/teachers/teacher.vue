@@ -263,6 +263,9 @@ export default {
     submitPassword2() {
       const hashedPassword = hashPassword(this.passwordForm.password2);
       axios.post('/api/users/updatePassword2', {
+        header: {
+          "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
+        },
         username: this.username,
         newPassword: hashedPassword
       }).then(response => {
@@ -291,6 +294,9 @@ export default {
       if (this.isSending) return;
       this.isSending = true;
       axios.get('/api/email/register', {
+        headers: {
+          "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
+        },
         params: {
           to: this.email
         }
@@ -321,6 +327,7 @@ export default {
       }
       axios.post('/api/email/email_login', data, {
         headers: {
+          "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
           'Content-Type': 'application/x-www-form-urlencoded'
         },
       }).then(response => {
@@ -417,6 +424,7 @@ export default {
       }
       axios.post('/api/email/change_email', data, {
         headers: {
+          "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
           'Content-Type': 'application/x-www-form-urlencoded'
         },
       }).then(response => {
