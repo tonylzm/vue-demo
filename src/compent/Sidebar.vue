@@ -14,6 +14,7 @@
                         <el-menu-item-group title="试卷管理">
                             <el-menu-item index="1-1" @click="gotoItemOne">试卷上传</el-menu-item>
                             <el-menu-item index="1-2" @click="gotoItemTwo">试卷查验</el-menu-item>
+                            <el-menu-item index="1-3" @click="gotoItemZero">老师任命</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
                     <el-sub-menu v-show="show('check')" index="2">
@@ -99,6 +100,9 @@ export default {
         },
         gotoItemTwo() {
             this.$router.push('/audit');
+        },
+        gotoItemZero(){
+            this.$router.push('/course');
         },
         gotoItemThree() {
             this.$router.push('/class');
