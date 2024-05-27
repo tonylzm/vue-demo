@@ -248,6 +248,7 @@ export default {
                 .then(() => {
                     axios.post('/api/users/role', data, {
                         headers: {
+                            "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
                     }).then(response => {
@@ -284,6 +285,7 @@ export default {
                     actor: this.realName
                 },
                 headers: {
+                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
                     'Content-Type': 'application/json'
                 }
             }).then(response => {
@@ -309,6 +311,7 @@ export default {
             }
             axios.post('/api/users/userrole', data, {
                 headers: {
+                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
                     'Content-Type': 'application/x-www-form-urlencoded'
                 }
             }).then(response => {
@@ -345,6 +348,9 @@ export default {
             this.$confirm('确认删除该用户？')
                 .then(() => {
                     axios.post('/api/users/delete', data, {
+                        headers: {
+                            "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
+                        },
                         params: {
                             actor: this.realName
                         },

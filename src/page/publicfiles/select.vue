@@ -19,7 +19,7 @@ export default {
         }
     },
     created() {
-        axios.get('https://localhost:8443/api/users/get_teacher')
+        axios.get('/api/users/get_teacher')
             .then(res => {
                 const { userName, realName } = res.data.body;
                 this.alloptions = userName.map((name, index) => ({

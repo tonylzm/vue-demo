@@ -75,7 +75,11 @@ export default {
     },
     methods: {
         fetchLogs() {
-            axios.get('/api/log/logs') // 这里的'/logs'应该是你后端接口的路径
+            axios.get('/api/log/logs', {
+                headers: {
+                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
+                }
+            }) // 这里的'/logs'应该是你后端接口的路径
                 .then(response => {
                     this.errorlogs = response.data.logs.split('\n'); // 假设日志是以换行符分隔的
                     this.warnlogs = response.data.warn_logs.split('\n');

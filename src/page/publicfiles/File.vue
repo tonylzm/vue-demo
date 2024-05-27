@@ -8,14 +8,20 @@
 			<el-button type="warning" @click="reset">重置<el-icon>
 					<Refresh />
 				</el-icon></el-button>
-
-
-
 		</div>
 		<div style="margin: 10px 0">
 			<el-button type="primary" @click="opendrawer">试卷信息填写<el-icon>
 					<Promotion />
-				</el-icon></el-button>
+				</el-icon>
+			</el-button>
+			<!-- <el-button type="primary" @click="takeprivatekey">获取密钥<el-icon>
+					<Key />
+				</el-icon>
+			</el-button>
+			<el-button type="primary" @click="analysiskey">解析私钥<el-icon>
+					<Stamp />
+				</el-icon>
+			</el-button> -->
 			<el-drawer v-model="drawer" title="试卷信息登记表格" :append-to-body="true" :before-close="handleClose" size="40%">
 				<div style="margin-top: -20px;">
 					<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
@@ -401,6 +407,7 @@ export default {
 			var xhr = new XMLHttpRequest();
 			this.showProgress = true;
 			xhr.open('POST', 'https://192.168.101.6:8443/api/upload/upload');
+			xhr.setRequestHeader("Authorization", "Bearer " + JSON.parse(localStorage.getItem('user')).token);
 			// xhr.open('POST', 'https://47.121.138.212:8443/api/upload/upload');
 			// 上传完成后的回调函数
 			xhr.onload = function () {
@@ -447,7 +454,11 @@ export default {
 		//https://47.121.138.212:8443
 		async getPublicKeyFromServer() {
 			try {
-				const response = await fetch('https://192.168.101.6:8443/api/upload/public');
+				const response = await fetch('https://192.168.101.6:8443/api/upload/public', {
+					headers: {
+						"Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token
+					}
+				});
 				if (!response.ok) {
 					throw new Error(`HTTP error! status: ${response.status}`);
 				}
@@ -458,9 +469,7 @@ export default {
 				// 返回解码后的公钥
 				return publicKey;
 			} catch (error) {
-				// 捕获并处理任何异常
-				console.error('Failed to fetch public key from server', error);
-				// 返回一个空的值或者一个默认值，具体根据你的需求来决定
+				this.$message.error('获取公钥失败');
 				return null;
 			}
 		},
@@ -484,7 +493,6 @@ export default {
 				const username = this.username;
 				const time = this.getCurrentTime();
 				const ipAddress = await this.getIPAddress(); // 这里假设你有一个获取 IP 地址的方法
-				console.log(hashedPassword)
 				// 构建发送给后端的数据
 				const data = {
 					hashedPassword,
@@ -493,10 +501,8 @@ export default {
 					ipAddress
 					// 可以根据需要添加其他信息
 				};
-
 				// 发送 POST 请求给后端
 				const response = await axios.post('/api/users/test', data);
-
 				// 清除定时器
 				clearTimeout(timerId);
 				loading.close();
@@ -536,6 +542,9 @@ export default {
 		},
 		loadData() {
 			axios.get('/api/files/pageByProduced', {
+				headers: {
+					"Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token
+				},
 				params: {
 					pageNum: this.pageNum,
 					pageSize: this.pageSize,
@@ -581,6 +590,41 @@ export default {
 			this.form.name = name;
 			this.reloadname = filename;
 		},
+		// takeprivatekey() {
+		// 	axios.post('/api/users/find_public_key', {
+		// 		username: this.username
+		// 	}).then(response => {
+		// 		this.$message.success('密钥获取成功');
+		// 		console.log(response.data);
+		// 		const privateKey = response.data; // 直接使用 response.data 作为私钥
+		// 		const blob = new Blob([privateKey], { type: 'text/plain' });
+		// 		const url = window.URL.createObjectURL(blob);
+		// 		const link = document.createElement('a');
+		// 		link.href = url;
+		// 		link.download = 'privateKey.pem';
+		// 		link.click();
+		// 	}).catch(error => {
+		// 		console.error('Error loading data:', error);
+		// 	});
+		// },
+		// analysiskey() {
+		// 	const input = document.createElement('input');
+		// 	input.type = 'file';
+		// 	input.accept = '.pem';
+		// 	input.onchange = event => {
+		// 		const file = event.target.files[0];
+		// 		const reader = new FileReader();
+		// 		reader.onload = e => {
+		// 			console.log(e.target.result); // 输出文件内容
+		// 			console.log(this.encryptAESKeyWithPublicKey(e.target.result, 'ecbMPBXK8UsRtAfO8MAYR653hp4NpSYDK/M634Hv03kGxYvDURywu5aXWw='));
+		// 		};
+		// 		reader.onerror = e => {
+		// 			console.error('Error reading file:', e);
+		// 		};
+		// 		reader.readAsText(file);
+		// 	};
+		// 	input.click();
+		// },
 		getcheckuser(value) {
 			this.form.classCheck = '';
 			this.form.collegeCheck = '';
@@ -588,10 +632,10 @@ export default {
 				college: value
 			}, {
 				headers: {
+					'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('user')).token,
 					'Content-Type': 'application/x-www-form-urlencoded'
 				}
 			}).then(response => {
-				console.log(response.data.body)
 				sessionStorage.setItem('checkuser', JSON.stringify(response.data.body));
 				const storedData = sessionStorage.getItem('checkuser');
 				if (storedData) {
@@ -601,13 +645,16 @@ export default {
 					this.collegeOptions = parsedData.college_check.filter(name => name !== myName);
 				}
 			}).catch(error => {
-				console.error('Error loading data:', error);
+				this.$message.error('获取审核人员失败');
 			});
 		},
 		// https://localhost:8443
 		getteachercourse(value) {
 			this.form.class = '';
 			axios.get("/api/course/find_teacher", {
+				headers: {
+					"Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token
+				},
 				params: {
 					teacher: value
 				}
