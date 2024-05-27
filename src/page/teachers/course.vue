@@ -10,16 +10,39 @@
                 </el-icon></el-button>
         </div>
 
-        <div>
+        <div style="display: flex; align-items: center;">
+            <el-upload
+                class="ml-5"
+                action="#"
+                :show-file-list="false"
+                :before-upload="beforeUpload"
+            >
+                <el-button type="success">课程导入<el-icon>
+                        <Upload />
+                    </el-icon>
+                </el-button>
+            </el-upload>
+
+            <el-button type="danger"  @click="resetallcourse" style="margin-left: 10px;">重置所有课程<el-icon>
+                    <Refresh />
+                </el-icon>
+            </el-button>
+            <el-button type="danger" @click="resetallTeacher" style="margin-left: 10px;">重置老师<el-icon>
+                <Refresh />
+                </el-icon>
+            </el-button>
+        </div>
+        <!-- <div>
             <el-progress v-if="showProgress" :text-inside="true" :stroke-width="26" :percentage="uploadProgress"
                 :color="progressColor" :format="formatText"></el-progress>
-        </div>
+        </div> -->
+
         <el-table :data="tableData" border stripe :header-cell-class-name="'headerBg'"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="75"></el-table-column>
-            <el-table-column prop="id" label="课程编号" width="250"></el-table-column>
-            <el-table-column prop="name" label="课程名称" width="400"></el-table-column>
-            <el-table-column prop="produced" label="任课老师" width="400"></el-table-column>
+            <el-table-column prop="course_id" label="课程编号" width="250"></el-table-column>
+            <el-table-column prop="courseName" label="课程名称" width="400"></el-table-column>
+            <el-table-column prop="courseTeacher" label="任课老师" width="400"></el-table-column>
 
             <el-table-column label="操作"  align="center">
         <template v-slot="scope">
@@ -27,6 +50,16 @@
               <View />
             </el-icon>
             选择老师</el-button>
+
+            <el-popconfirm width="220" confirm-button-text='确定' cancel-button-text='取消' icon="el-icon-info"
+                        icon-color="red" title="确定要删除这门课程吗？" @confirm="handledelete(scope.row.course_id)">
+                        <template #reference>
+                            <el-button type="danger" slot="reference" ><el-icon>
+                                <Delete />
+                                </el-icon>删除课程
+                            </el-button>
+                        </template>
+                    </el-popconfirm>
         </template>
       </el-table-column>
         </el-table>
@@ -35,18 +68,19 @@
     <el-form label-width="100px">
     <div class="course-info">
     <el-form-item label="课程编号：" class="course-id">
-        <span>{{ selectedRow.id }}</span>
+        <span>{{ selectedRow.course_id }}</span>
     </el-form-item>
     <el-form-item label="课程名称：" class="course-name">
-        <span>{{ selectedRow.name }}</span>
+        <span>{{ selectedRow.courseName }}</span>
     </el-form-item>
     </div>
     <el-form-item label="任课老师：" class="teacher-select">
     <div style="width: 40%;">
-    <el-select v-model="selectedTeacher" placeholder="请选择老师">
-      <el-option v-for="teacher in teachers" :key="teacher.id" :label="teacher.name" :value="teacher.name">
-      </el-option>
-    </el-select>
+        <el-select v-model="selectedTeacher" filterable :filter-method="filterMethod" placeholder="请选择">
+            <el-option v-for="item in options" :key="item.label" :label="item.label" :value="item.selectedTeacher">
+            </el-option>
+        </el-select>
+
 </div>
     </el-form-item>
   </el-form>
@@ -72,8 +106,8 @@ export default {
     data() {
         return {
             tableData: [ // 假设这是你的表格数据
-        { id: 1, name: '课程A', produced: '老师1' },
-        { id: 2, name: '课程B', produced: '老师2' },
+        // { id: 1, name: '课程A', produced: '老师1' },
+        // { id: 2, name: '课程B', produced: '老师2' },
         // 其他行...
         ],
             name: '',
@@ -88,13 +122,15 @@ export default {
             progressColor: '',
             dialogVisible: false, // 弹窗可见性
             selectedRow: {}, // 选中的行数据
-            teachers: [ // 所有老师的数据，假设从后端获取
-            { id: 1, name: '老师1' },
-            { id: 2, name: '老师2' },
-        // 其他老师...
-            ],
-            selectedTeacher: '' // 选中的老师
+          
+            selectedTeacher: '', // 选中的老师
+            alloptions: [],//获取所有的老师
+            options: [],//取所有老师中的前10项
         }
+    },
+    created() {
+       this.getallTeacher();
+       this.getallCourse();
     },
 
     methods: {
@@ -145,11 +181,11 @@ export default {
         },
         handlePageChange(pageNum) {
             this.pageNum = pageNum;
-            this.loadData();
+            this.getallCourse();
         },
         handleSizeChange(pageSize) {
             this.pageSize = pageSize;
-            this.loadData();
+            this.getallCourse();
         },
 
         handleViewHistory(rowData) {
@@ -192,14 +228,6 @@ export default {
             });
         },
         open2(opinion) {
-            // setTimeout(() => {
-            //     this.$notify({
-            //         title: '审批意见',
-            //         message: opinion ? opinion : '无',
-            //         duration: 20000
-            //     });
-            // }, 0);
-            // alert(opinion ? opinion : '无');
             this.$alert(opinion ? opinion : '无', '审核意见', {
                 confirmButtonText: '确定',
                 callback: action => {
@@ -211,13 +239,182 @@ export default {
             this.selectedRow = row; // 将选中行的数据保存
             this.dialogVisible = true; // 打开弹窗
         },
+
         confirmTeacher() {
             // 在这里可以进行一些逻辑判断或数据处理
-            const index = this.tableData.findIndex(item => item.id === this.selectedRow.id);
+            const index = this.tableData.findIndex(item => item.course_id === this.selectedRow.course_id);
             if (index !== -1) {
-                this.tableData[index].produced = this.selectedTeacher; // 更新表格数据中的任课老师信息
+                this.tableData[index].courseTeacher = this.selectedTeacher; // 更新表格数据中的任课老师信息
             }
+            const data={
+    
+                Id: this.selectedRow.course_id,
+                teacher: this.selectedTeacher
+                
+            }
+            axios.post('https://localhost:8443/api/course/update_teacher',data ,{
+                headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            })
+            .then(response => {
+                if (response.data.body === "success") {
+                    this.$message.success('更新成功');
+                } else {
+                    this.$message.error('更新失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading file:', error);
+                this.$message.error('更新出错了');
+            });
             this.dialogVisible = false; // 关闭弹窗
+        },
+
+        handledelete(row) {
+        const data={
+            course_id:row
+        }
+            axios.post('https://localhost:8443/api/course/delete_course',data,
+            {
+                headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+                }
+        })
+        .then(response => {
+            if (response.data.body === "success") {
+                this.$message.success('删除成功');
+                this.getallCourse();
+            } else {
+                this.$message.error('删除失败');
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading file:', error);
+            this.$message.error('课程删除时出错');
+        });
+
+        },
+        beforeUpload(file) {
+            // 获取文件后缀名
+            const extension = file.name.split('.').pop().toLowerCase();
+            // 判断文件类型是否为 Excel 文件
+             if (extension !== 'xls' && extension !== 'xlsx') {
+            this.$message.error('请上传 Excel 文件');
+             return false; // 阻止上传
+         }
+        // 调用上传方法
+        this.handleUpload(file);
+        return false; // 阻止上传
+        },
+
+        handleUpload(file) {
+            // 创建一个 FormData 对象
+            const formData = new FormData();
+            // 将文件添加到 FormData 对象中
+            formData.append('file', file);
+            // 发送 POST 请求
+            axios.post('https://localhost:8443/api/course/add_more_course', formData, {
+            
+            })
+            .then(response => {
+                if (response.data.body === "success") {
+                    this.$message.success('导入成功');
+                    this.getallCourse();
+                } else {
+                    this.$message.error('导入失败');
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading file:', error);
+                this.$message.error('上传文件时出错');
+            });
+            
+        },
+        resetallcourse(){
+            this.tableData=[];
+            this.pageNum=0;
+            this.pageSize =10;
+            this.total=0;
+            axios.post('https://localhost:8443/api/course/delete_all', {
+            
+        })
+        .then(response => {
+            if (response.data.body === "success") {
+                this.$message.success('重置成功');
+            } else {
+                this.$message.error('重置失败');
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading file:', error);
+            this.$message.error('课程重置时出错');
+        });
+        },
+
+        resetallTeacher(){ 
+            axios.post('https://localhost:8443/api/course/reset_all_teachers', {
+            
+        })
+        .then(response => {
+            if (response.data.body === "success") {
+                this.$message.success('重置成功');
+                this.getallCourse();
+            } else {
+                this.$message.error('重置失败');
+            }
+        })
+        .catch(error => {
+            console.error('Error uploading file:', error);
+            this.$message.error('老师重置时出错');
+        });},
+
+        getallCourse(){
+            axios.get('https://localhost:8443/api/course/all_page', {
+                params: {
+                    pageNum: this.pageNum-1,
+                    pageSize: this.pageSize,
+                }
+            }).then(response => {
+                const {
+                    content,
+                    totalElements,
+                    number
+                } = response.data.body;
+                console.log(content)
+                this.tableData = content;
+               
+                // this.popoverContent = this.buildPopoverContent();
+                this.total = totalElements;
+                this.pageNum = number + 1;
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        },
+        getallTeacher(){
+            axios.get('https://localhost:8443/api/users/get_teacher')
+            .then(res => {
+                const { userName, realName } = res.data.body;
+                this.alloptions = userName.map((name, index) => ({
+                    selectedTeacher: name,
+                    label: realName[index] + '(' + name + ')'
+                }));
+            })
+            .catch(err => {
+                console.log(err);
+            })
+        },
+        filterMethod(query) {
+            if (query == '') {
+                this.options = this.alloptions.slice(0, 10); // 使用 this.options 而不是 options
+            } else {
+                let result = [];
+                this.alloptions.forEach(val => { // 使用 this.options 而不是 options
+                    if (val.label.indexOf(query) != -1) result.push(val);
+                });
+                this.options = result.slice(0, 10); // 只取前10个
+            }
         }
     }
 }
