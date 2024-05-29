@@ -406,7 +406,7 @@ export default {
 			var that = this;
 			var xhr = new XMLHttpRequest();
 			this.showProgress = true;
-			xhr.open('POST', 'https://192.168.101.6:8443/api/upload/upload');
+			xhr.open('POST', 'https://www.goto-moon.cn:8443/api/upload/upload');
 			xhr.setRequestHeader("Authorization", "Bearer " + JSON.parse(localStorage.getItem('user')).token);
 			// xhr.open('POST', 'https://47.121.138.212:8443/api/upload/upload');
 			// 上传完成后的回调函数
@@ -454,7 +454,7 @@ export default {
 		//https://47.121.138.212:8443
 		async getPublicKeyFromServer() {
 			try {
-				const response = await fetch('https://192.168.101.6:8443/api/upload/public', {
+				const response = await fetch('https://www.goto-moon.cn:8443/api/upload/public', {
 					headers: {
 						"Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token
 					}

@@ -4,6 +4,10 @@
     <Sidebar v-if="!hideSidebar" />
     <div class="content" :class="{ 'full-width': hideSidebar }">
       <router-view></router-view>
+      <div style="position:fixed;text-align:center;bottom:0;margin:0 auto;width:100%;color: #ffff">
+        <a target="_blank" style="color: #ffff" href="https://beian.miit.gov.cn/">湘ICP备2024065718号-1</a>
+        &nbsp; @2024-2025 Tonylin
+      </div>
     </div>
   </div>
 </template>
