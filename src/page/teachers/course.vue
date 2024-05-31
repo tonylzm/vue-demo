@@ -140,7 +140,37 @@ export default {
                 })
                 .catch(_ => { });
         },
-
+        loadData() {
+            axios.get('https://localhost:8443/api/files/pageByProduced', {
+                params: {
+                    pageNum: this.pageNum,
+                    pageSize: this.pageSize,
+                    produced: this.username,
+                    name: this.name
+                }
+            }).then(response => {
+                console.log(response.data)
+                const {
+                    content,
+                    totalPages,
+                    totalElements,
+                    number
+                } = response.data.body;
+                console.log(content)
+                this.tableData = content;
+                this.tableData.forEach((item) => {
+                    item.status = item.check.checkStatus;
+                    item.class_check = item.check.classCheck;
+                    item.college_check = item.check.collegeCheck;
+                    item.opinion = item.check.opinion;
+                });
+                // this.popoverContent = this.buildPopoverContent();
+                this.total = totalElements;
+                this.pageNum = number + 1;
+            }).catch(error => {
+                console.error('Error loading data:', error);
+            });
+        },
         handlePageChange(pageNum) {
             this.pageNum = pageNum;
             this.getallCourse();
