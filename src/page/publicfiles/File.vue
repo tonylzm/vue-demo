@@ -14,14 +14,6 @@
 					<Promotion />
 				</el-icon>
 			</el-button>
-			<!-- <el-button type="primary" @click="takeprivatekey">获取密钥<el-icon>
-					<Key />
-				</el-icon>
-			</el-button>
-			<el-button type="primary" @click="analysiskey">解析私钥<el-icon>
-					<Stamp />
-				</el-icon>
-			</el-button> -->
 			<el-drawer v-model="drawer" title="试卷信息登记表格" :append-to-body="true" :before-close="handleClose" size="40%">
 				<div style="margin-top: -20px;">
 					<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
@@ -70,10 +62,7 @@
 					</el-form-item>
 					<el-form-item label="所属院系" prop="college">
 						<el-select v-model="form.college" placeholder="请选择院系" @change="getcheckuser">
-							<el-option label="电子与信息工程学院" value="电子与信息工程学院"></el-option>
-							<el-option label="马克思主义学院" value="马克思主义学院"></el-option>
-							<el-option label="环境工程学院" value="环境工程学院"></el-option>
-							<el-option label="天平学院" value="天平学院"></el-option>
+							<el-option :label="college" :value="college"></el-option>
 						</el-select>
 					</el-form-item>
 					<el-form-item label="选择审核主任" prop="classCheck">
@@ -154,7 +143,75 @@
 					</el-button>
 				</template>
 			</el-table-column>
+			<el-table-column label="归档">
+				<template v-slot="scope">
+					<el-button type="primary" :disabled="!scope.row.checkStatus.includes('院长审核通过')"
+						@click="topigeonhole(scope.row.testname, scope.row.classes)">
+						<el-icon>
+							<Refresh />
+						</el-icon>
+						归档
+					</el-button>
+				</template>
+			</el-table-column>
 		</el-table>
+
+		<div>
+			<el-drawer v-model="pigeonholedawer" title="试卷归档登记表格" :append-to-body="true" :before-close="handleClose"
+				size="40%">
+				<div style="margin-top: -20px;">
+					<el-progress v-if="showProgress" :text-inside="true" :stroke-width="26"
+						:percentage="uploadProgress"></el-progress>
+				</div>
+				<div style="margin-bottom: 20px;">
+					<el-tag type="pigeonhole"><span v-if="countdown > 0">请在{{ countdown }}秒内完成操作</span>
+						<span v-else>倒计时结束</span></el-tag>
+					<el-tooltip class="box-item" effect="light" content="当倒计时开始后，你需要在120秒内完成上传操作，否则将会取消上传"
+						placement="bottom">
+						<el-icon color="#1E90FF">
+							<InfoFilled />
+						</el-icon>
+					</el-tooltip>
+				</div>
+				<el-form ref="pigeonhole" :model="form" label-width="120px">
+					<el-form-item label="考试名称" prop="name">
+						<el-input :value="pigeonhole.name" disabled></el-input>
+					</el-form-item>
+					<el-form-item label="试卷上传">
+						<el-button type="primary" slot="reference" @click="handleUpload">上传文件 <el-icon>
+								<Document />
+							</el-icon></el-button>
+						<template v-if="this.encryptedFile !== null">
+							<el-icon color="green">
+								<SuccessFilled />
+							</el-icon>
+						</template>
+						<template v-else>
+							<el-icon color="red">
+								<CircleCloseFilled />
+							</el-icon>
+						</template>
+					</el-form-item>
+					<el-form-item label="考试课程" prop="class">
+						<el-input v-model="pigeonhole.class" disabled></el-input>
+					</el-form-item>
+					<el-form-item label="所属学院" prop="college">
+						<el-input :value="college" disabled></el-input>
+					</el-form-item>
+					<el-form-item>
+						<el-button type="primary" @click="onpigeonhole('pigeonhole')">信息上传<el-icon>
+								<UploadFilled />
+							</el-icon></el-button>
+						<el-button @click="handleClose">取消<el-icon>
+								<Close />
+							</el-icon></el-button>
+					</el-form-item>
+				</el-form>
+			</el-drawer>
+		</div>
+
+
+
 		<div style="padding: 10px 0">
 			<el-pagination @size-change="handleSizeChange" @current-change="handlePageChange" :current-page="pageNum"
 				:page-sizes="[2, 5, 10, 20]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper"
@@ -192,8 +249,15 @@ export default {
 			showProgress: false, // 是否显示进度条 
 			innerDrawer: false,
 			drawer: false,
+			pigeonholedawer: false,
 			reload: false,
 			uploadParams: null,
+			pigeonhole: {
+				name: '',
+				class: '',
+				college: JSON.parse(localStorage.getItem('user')).college,
+				realName: JSON.parse(localStorage.getItem('user')).realName,
+			},
 			form: {
 				name: '',
 				class: '',
@@ -254,15 +318,12 @@ export default {
 			courseOptions: []
 		}
 	},
-
-
 	created() {
 		this.loadData();
 	},
 	methods: {
 		opendrawer() {
 			this.drawer = true;
-			// this.getcheckuser(this.college);
 			this.getteachercourse(this.username);
 
 		},
@@ -289,7 +350,13 @@ export default {
 							desc: ''
 						};
 					}
-					this.reloadname = '';
+					this.pigeonhole = {
+						name: '',
+						class: '',
+						college: JSON.parse(localStorage.getItem('user')).college,
+						realName: JSON.parse(localStorage.getItem('user')).realName,
+					},
+						this.reloadname = '';
 					this.encryptedFile = null;
 					this.countdown = 120;
 					clearInterval(this.timer);;
@@ -309,11 +376,11 @@ export default {
 			});
 			//console.log('submit!');
 		},
+		onpigeonhole(formName) {
+			this.pigeonholeUpload();
+		},
 		async handleUpload() {
-			// 用户选择文件
 			const data = await this.sendVerifyInfo();
-			//console.log(data);
-			//如果非法登录，文件删除
 			if (data == '非法登录') {
 				this.$message.error('请检查你的IP地址');
 				return;
@@ -327,7 +394,6 @@ export default {
 					this.$message.error('文件与原文件不符，请重新上传');
 					return;
 				}
-				//console.log('fileName', this.fileName);
 				return new Promise(async (resolve, reject) => {
 					const reader = new FileReader();
 					reader.onload = async (event) => {
@@ -339,14 +405,12 @@ export default {
 						//console.log('md5Value', this.md5Value);
 						try {
 							// 生成加密密钥
-							//console.log(window.crypto);
 							const key = await window.crypto.subtle.generateKey(
 								{ name: 'AES-GCM', length: 256 },
 								true,
 								['encrypt', 'decrypt']
 							);
 							// 导出密钥为字符串格式
-							//console.log('key', key);
 							const exportedKey = await window.crypto.subtle.exportKey('raw', key);
 							const keyString = btoa(String.fromCharCode.apply(null, new Uint8Array(exportedKey)));
 							const fileBuffer = arrayBuffer;
@@ -440,6 +504,53 @@ export default {
 			};
 			xhr.send(formData);
 		},
+		pigeonholeUpload() {
+			const formData = new FormData();
+			this.uploadProgress = 0;
+			// 将需要加密的文件或文件信息放入 FormData 对象
+			formData.append('encryptedFile', this.encryptedFile);
+			formData.append('md5', this.md5Value);
+			formData.append('fileName', this.fileName);
+			formData.append('aesKey', this.encryptedAESKey);
+			formData.append('username', this.username);
+			formData.append('info', JSON.stringify(this.pigeonhole));
+			var that = this;
+			var xhr = new XMLHttpRequest();
+			this.showProgress = true;
+			xhr.open('POST', 'https://localhost:8443/api/upload/pigeonhole');
+			xhr.setRequestHeader("Authorization", "Bearer " + JSON.parse(localStorage.getItem('user')).token);
+			// xhr.open('POST', 'https://47.121.138.212:8443/api/upload/upload');
+			// 上传完成后的回调函数
+			xhr.onload = function () {
+				if (xhr.status === 200) {
+					//弹出上传成功
+					that.$message.success('上传成功');
+					setTimeout(() => {
+						that.showProgress = false;
+					}, 1000);
+					that.loadData();
+					that.encryptedFile = null;
+					clearInterval(that.timer); // 上传成功后暂停计时
+					that.countdown = 120; // 重置倒计时
+					that.drawer = false;
+				} else {
+					that.progressColor = 'OrangeRed';
+					that.$message.error('上传失败！' + xhr.responseText);
+					setTimeout(() => {
+						that.showProgress = false;
+					}, 2000);
+					console.log('上传出错');
+				}
+			};
+			// 获取上传进度
+			xhr.upload.onprogress = function (event) {
+				if (event.lengthComputable) {
+					var percent = Math.floor(event.loaded / event.total * 100);
+					that.uploadProgress = parseInt(percent);
+				}
+			};
+			xhr.send(formData);
+		},
 
 		formatText(percentage) {
 			// 自定义格式化文本
@@ -454,7 +565,7 @@ export default {
 		//https://47.121.138.212:8443
 		async getPublicKeyFromServer() {
 			try {
-				const response = await fetch('https://www.goto-moon.cn:8443/api/upload/public', {
+				const response = await fetch('https://localhost:8443/api/upload/public', {
 					headers: {
 						"Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token
 					}
@@ -590,41 +701,12 @@ export default {
 			this.form.name = name;
 			this.reloadname = filename;
 		},
-		// takeprivatekey() {
-		// 	axios.post('/api/users/find_public_key', {
-		// 		username: this.username
-		// 	}).then(response => {
-		// 		this.$message.success('密钥获取成功');
-		// 		console.log(response.data);
-		// 		const privateKey = response.data; // 直接使用 response.data 作为私钥
-		// 		const blob = new Blob([privateKey], { type: 'text/plain' });
-		// 		const url = window.URL.createObjectURL(blob);
-		// 		const link = document.createElement('a');
-		// 		link.href = url;
-		// 		link.download = 'privateKey.pem';
-		// 		link.click();
-		// 	}).catch(error => {
-		// 		console.error('Error loading data:', error);
-		// 	});
-		// },
-		// analysiskey() {
-		// 	const input = document.createElement('input');
-		// 	input.type = 'file';
-		// 	input.accept = '.pem';
-		// 	input.onchange = event => {
-		// 		const file = event.target.files[0];
-		// 		const reader = new FileReader();
-		// 		reader.onload = e => {
-		// 			console.log(e.target.result); // 输出文件内容
-		// 			console.log(this.encryptAESKeyWithPublicKey(e.target.result, 'ecbMPBXK8UsRtAfO8MAYR653hp4NpSYDK/M634Hv03kGxYvDURywu5aXWw='));
-		// 		};
-		// 		reader.onerror = e => {
-		// 			console.error('Error reading file:', e);
-		// 		};
-		// 		reader.readAsText(file);
-		// 	};
-		// 	input.click();
-		// },
+		topigeonhole(name, classes) {
+			this.pigeonholedawer = true;
+			this.pigeonhole.name = name;
+			this.pigeonhole.class = classes;
+
+		},
 		getcheckuser(value) {
 			this.form.classCheck = '';
 			this.form.collegeCheck = '';
