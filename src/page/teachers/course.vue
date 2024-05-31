@@ -354,11 +354,15 @@ export default {
                 })
         },
         getallTeacher() {
-            axios.get('/api/users/get_teacher', {
-                headers: {
-                    "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
-                }
-            })
+            axios.get('/api/users/get_teacher',
+                {
+                    headers: {
+                        "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
+                    },
+                    params: {
+                        college: this.college
+                    }
+                })
                 .then(res => {
                     const { userName, realName } = res.data.body;
                     this.alloptions = userName.map((name, index) => ({

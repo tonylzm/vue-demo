@@ -28,8 +28,8 @@
                             <Download />
                         </el-icon>
                         下载</el-button>
-                    <el-button type="primary" @click="reload(scope.row.name)" :disabled="!scope.row.delete"><el-icon>
-                            <Download />
+                    <el-button type="danger" @click="reload(scope.row.name)" :disabled="!scope.row.delete"><el-icon>
+                            <CloseBold />
                         </el-icon>
                         要求重传</el-button>
                 </template>
@@ -81,7 +81,8 @@ export default {
             let params = {
                 college: this.college,
                 pageNum: this.pageNum - 1,
-                pageSize: this.pageSize
+                pageSize: this.pageSize,
+                name: this.name
             }
             axios.get('/api/pigeonhole/find_all', {
                 params: params,
@@ -119,8 +120,8 @@ export default {
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
                 this.deleted(name);
-                this.$message.success('下载成功');
                 this.loadData();
+                this.$message.success('下载成功');
             }).catch(error => {
                 console.error('Error downloading file:', error);
                 this.$message.error('下载失败');

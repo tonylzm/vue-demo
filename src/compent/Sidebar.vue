@@ -49,8 +49,6 @@
                         </template>
                         <el-menu-item-group title="院长管理">
                             <el-menu-item index="4-1" @click="gotoItemEight">院长管理</el-menu-item>
-                            <el-menu-item index="4-2" @click="gotoItemZero">课程分配</el-menu-item>
-                            <el-menu-item index="4-3" @click="gotoItemthreeteen">归档管理</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
                     <el-sub-menu v-show="pubulicshow()" index="5">
@@ -65,7 +63,7 @@
                             <el-menu-item index="5-2" @click="gotoItemNine">个人中心2</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
-                    <el-sub-menu v-show="show('college')" index="6">
+                    <el-sub-menu v-show="show('admin')" index="6">
                         <template #title>
                             <el-icon>
                                 <Message />
@@ -76,6 +74,18 @@
                             <el-menu-item index="6-1" @click="gotoItemTen">服务器日志</el-menu-item>
                             <el-menu-item index="6-2" @click="gotoItemEleven">服务器日志中心demo</el-menu-item>
                             <el-menu-item index="6-3" @click="gotoItemTwelve">系统日志</el-menu-item>
+                        </el-menu-item-group>
+                    </el-sub-menu>
+                    <el-sub-menu v-show="show('manage')" index="7">
+                        <template #title>
+                            <el-icon>
+                                <MessageBox />
+                            </el-icon>
+                            <span>课程与归档管理</span>
+                        </template>
+                        <el-menu-item-group title="课程与归档管理">
+                            <el-menu-item index="7-2" @click="gotoItemZero">课程分配</el-menu-item>
+                            <el-menu-item index="7-3" @click="gotoItemthreeteen">归档管理</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
                 </el-menu>

@@ -145,10 +145,11 @@
 			</el-table-column>
 			<el-table-column label="归档">
 				<template v-slot="scope">
-					<el-button type="primary" :disabled="!scope.row.checkStatus.includes('院长审核通过')"
+					<el-button type="success"
+						:disabled="!(scope.row.checkStatus.includes('院长审核通过') && !scope.row.pigeonhole)"
 						@click="topigeonhole(scope.row.testname, scope.row.classes, scope.row.name)">
 						<el-icon>
-							<Refresh />
+							<MessageBox />
 						</el-icon>
 						归档
 					</el-button>
