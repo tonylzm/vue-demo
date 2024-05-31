@@ -229,6 +229,7 @@ export default {
             const formData = new FormData();
             // 将文件添加到 FormData 对象中
             formData.append('file', file);
+            formData.append('college', this.college);
             // 发送 POST 请求
             axios.post('/api/course/add_more_course', formData, {
                 headers: {
@@ -251,9 +252,13 @@ export default {
 
         },
         resetallcourse() {
-            axios.post('/api/course/delete_all', {}, {
+            const data = {
+                college: this.college
+            }
+            axios.post('/api/course/delete_all', data, {
                 headers: {
                     "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 },
             }).then(response => {
                 if (response.data.body === "success") {
@@ -298,7 +303,8 @@ export default {
                 params: {
                     pageNum: this.pageNum - 1,
                     pageSize: this.pageSize,
-                    name: this.name
+                    name: this.name,
+                    college: this.college
                 }
             }).then(response => {
                 const {

@@ -50,6 +50,7 @@
                         <el-menu-item-group title="院长管理">
                             <el-menu-item index="4-1" @click="gotoItemEight">院长管理</el-menu-item>
                             <el-menu-item index="4-2" @click="gotoItemZero">课程分配</el-menu-item>
+                            <el-menu-item index="4-3" @click="gotoItemthreeteen">归档管理</el-menu-item>
                         </el-menu-item-group>
                     </el-sub-menu>
                     <el-sub-menu v-show="pubulicshow()" index="5">
@@ -133,6 +134,9 @@ export default {
         },
         gotoItemTwelve() {
             this.$router.push('/syslog')
+        },
+        gotoItemthreeteen() {
+            this.$router.push('/merge')
         },
         handleOpen(key, keyPath) {
             console.log(key, keyPath);

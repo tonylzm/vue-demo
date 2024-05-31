@@ -146,7 +146,7 @@
 			<el-table-column label="归档">
 				<template v-slot="scope">
 					<el-button type="primary" :disabled="!scope.row.checkStatus.includes('院长审核通过')"
-						@click="topigeonhole(scope.row.testname, scope.row.classes)">
+						@click="topigeonhole(scope.row.testname, scope.row.classes, scope.row.name)">
 						<el-icon>
 							<Refresh />
 						</el-icon>
@@ -325,7 +325,6 @@ export default {
 		opendrawer() {
 			this.drawer = true;
 			this.getteachercourse(this.username);
-
 		},
 		changeEnable(row) {
 			console.log(row);
@@ -374,7 +373,6 @@ export default {
 					return false;
 				}
 			});
-			//console.log('submit!');
 		},
 		onpigeonhole(formName) {
 			this.pigeonholeUpload();
@@ -701,10 +699,11 @@ export default {
 			this.form.name = name;
 			this.reloadname = filename;
 		},
-		topigeonhole(name, classes) {
+		topigeonhole(name, classes, filename) {
 			this.pigeonholedawer = true;
 			this.pigeonhole.name = name;
 			this.pigeonhole.class = classes;
+			this.reloadname = filename;
 
 		},
 		getcheckuser(value) {
