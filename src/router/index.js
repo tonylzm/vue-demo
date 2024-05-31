@@ -55,7 +55,7 @@ const routes = [
 		meta: { requiresAuth: true, requiredRoles: ['college'] }
 
 	},
-	
+
 	{
 		path: '/course',
 		name: 'course',
@@ -141,6 +141,13 @@ const routes = [
 		name: 'select',
 		component: () => import( /*webpackChunkName:'Login'*/ '@/page/publicfiles/select.vue'),
 		meta: { requiresAuth: true, requiredRoles: ['college'] }
+
+	},
+	{
+		path: '/merge',
+		name: 'merge',
+		component: () => import( /*webpackChunkName:'Login'*/ '@/page/manage/merge.vue'),
+		//meta: { requiresAuth: true, requiredRoles: [''] }
 
 	}
 ]

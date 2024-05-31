@@ -72,10 +72,10 @@
                 <template v-slot="scope">
                     <el-button type="primary" @click="handleUpdata(scope.row.username, 'college')"><el-icon>
                             <Discount />
-                        </el-icon>晋升院长</el-button>
+                        </el-icon>确认为院长</el-button>
                     <el-button type="warning" @click="handleUpdata(scope.row.username, 'user')"><el-icon>
                             <Bell />
-                        </el-icon>降级</el-button>
+                        </el-icon>撤销权限</el-button>
                     <el-button type="danger" @click="handleDelete(scope.row.username)"><el-icon>
                             <CloseBold />
                         </el-icon>删除</el-button>

@@ -106,7 +106,7 @@ export default {
                     });
                 }
                 // var socket = new SockJS('https://47.121.138.212:8443/websocket');
-                var socket = new SockJS('https://47.121.138.212:8443/websocket');
+                var socket = new SockJS('https://www.goto-moon.cn:8443/websocket');
                 this.stompClient = Stomp.over(socket);
                 this.stompClient.connect({}, frame => {
                     this.stompClient.send('/app/hello', {}, JSON.stringify({ 'name': 'hello' }));

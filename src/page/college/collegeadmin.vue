@@ -70,7 +70,7 @@
                 <template v-slot="scope">
                     <el-button type="warning" @click="handleUpdata(scope.row.username)"><el-icon>
                             <Bell />
-                        </el-icon>降级审核员</el-button>
+                        </el-icon>撤销权限</el-button>
                     <el-button type="danger" @click="handleDelete(scope.row.username)"><el-icon>
                             <CloseBold />
                         </el-icon>删除</el-button>
@@ -243,7 +243,7 @@ export default {
                 role: 'check'
             }
             //弹出确认框
-            this.$confirm('确认降级该用户？')
+            this.$confirm('确认撤销该用户权限？')
                 .then(() => {
                     axios.post('/api/users/role', data, {
                         headers: {
@@ -251,15 +251,14 @@ export default {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
                     }).then(response => {
-                        this.$message.success('降级成功');
+                        this.$message.success('撤销成功');
                         this.loadData();
                     }).catch(error => {
-                        console.error('Error loading data:', error);
-                        this.$message.error('降级失败');
+                        this.$message.error('撤销失败');
                     });
                 })
                 .catch(() => {
-                    this.$message.info('取消降级');
+                    this.$message.info('取消');
                 });
         },
         //提交注册方法
@@ -297,7 +296,6 @@ export default {
                 this.$message.error('注册失败' + response.data);
                 this.loadData();
             });
-            //console.log('submit!');
         },
         //后端返回用户列表
         loadData() {

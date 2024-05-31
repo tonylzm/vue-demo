@@ -72,7 +72,7 @@
                 <template v-slot="scope">
                     <el-button type="primary" @click="handleUpdata(scope.row.username)"><el-icon>
                             <Discount />
-                        </el-icon>晋升审批员</el-button>
+                        </el-icon>确认为审批员</el-button>
                     <el-button type="danger" @click="handleDelete(scope.row.username)"><el-icon>
                             <CloseBold />
                         </el-icon>删除</el-button>
@@ -244,7 +244,7 @@ export default {
                 role: 'check'
             }
             //弹出确认框
-            this.$confirm('确认晋升该用户为审核员？')
+            this.$confirm('确认更改该用户角色为审核员？')
                 .then(() => {
                     axios.post('/api/users/role', data, {
                         headers: {
@@ -252,16 +252,14 @@ export default {
                             'Content-Type': 'application/x-www-form-urlencoded'
                         }
                     }).then(response => {
-                        this.$message.success('晋升成功');
+                        this.$message.success('修改成功');
                         this.loadData();
                     }).catch(error => {
-                        console.error('Error loading data:', error);
-                        this.$message.error('晋升失败');
-                        this.loadData();
+                        this.$message.error('修改失败');
                     });
                 })
                 .catch(() => {
-                    this.$message.info('取消晋升');
+                    this.$message.info('取消修改');
                 });
         },
         //提交注册方法
@@ -294,7 +292,6 @@ export default {
                 this.$message.success('注册成功');
                 this.loadData();
             }).catch(error => {
-                console.error('Error loading data:', error);
                 loading.close();
                 this.$message.error('注册失败,用户名重复或者服务器繁忙');
             });
