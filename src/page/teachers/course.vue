@@ -148,37 +148,7 @@ export default {
                 })
                 .catch(_ => { });
         },
-        loadData() {
-            axios.get('https://localhost:8443/api/files/pageByProduced', {
-                params: {
-                    pageNum: this.pageNum,
-                    pageSize: this.pageSize,
-                    produced: this.username,
-                    name: this.name
-                }
-            }).then(response => {
-                console.log(response.data)
-                const {
-                    content,
-                    totalPages,
-                    totalElements,
-                    number
-                } = response.data.body;
-                console.log(content)
-                this.tableData = content;
-                this.tableData.forEach((item) => {
-                    item.status = item.check.checkStatus;
-                    item.class_check = item.check.classCheck;
-                    item.college_check = item.check.collegeCheck;
-                    item.opinion = item.check.opinion;
-                });
-                // this.popoverContent = this.buildPopoverContent();
-                this.total = totalElements;
-                this.pageNum = number + 1;
-            }).catch(error => {
-                console.error('Error loading data:', error);
-            });
-        },
+       
         handlePageChange(pageNum) {
             this.pageNum = pageNum;
             this.getallCourse();
@@ -197,36 +167,7 @@ export default {
             // 打开抽屉
             this.innerDrawer = true;
         }, 
-        fetchHistoryData(fileName) {
-            const data = {
-                pageNum: this.pageNum,
-                pageSize: this.pageSize,
-                produced: this.username,
-                name: fileName, // 使用传入的 fileName 参数
-            }
-            axios.post('https://localhost:8443/api/history/findHistoryfile', data, {
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                }
-            }).then(response => {
-                console.log(response.data)
-                const {
-                    content,
-                    totalPages,
-                    totalElements,
-                    number
-                } = response.data;
-                console.log(content)
-                this.historyData = content;
-                this.historyData.forEach((item) => {
-                    item.opinion = item.check.opinion;
-                });
-                this.total = totalElements;
-                this.pageNum = number + 1;
-            }).catch(error => {
-                console.error('Error loading data:', error);
-            });
-        },
+       
         open2(opinion) {
             this.$alert(opinion ? opinion : '无', '审核意见', {
                 confirmButtonText: '确定',
