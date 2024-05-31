@@ -11,9 +11,9 @@ import 'element-plus/dist/index.css'
 import axios from 'axios'
 
 
-// axios.defaults.baseURL = 'https://www.goto-moon.cn:8443';
+axios.defaults.baseURL = 'https://www.goto-moon.cn:8443';
 // axios.defaults.baseURL = 'https://192.168.101.6:8443';
-axios.defaults.baseURL = 'https://localhost:8443';
+// axios.defaults.baseURL = 'https://localhost:8443';
 const app = createApp(App)
 app.use(router)
 app.use(ElementPlus, {
