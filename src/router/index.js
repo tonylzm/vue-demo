@@ -73,19 +73,19 @@ const routes = [
 		path: '/teacher',
 		name: 'teacher',
 		component: () => import( /*webpackChunkName:'Login'*/ '@/page/teachers/teacher.vue'),
-		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college'] }
+		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college','manage','admin'] }
 	},
 	{
 		path: '/audit',
 		name: 'audit',
 		component: () => import( /*webpackChunkName:'Login'*/ '@/page/teachers/audit.vue'),
-		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college'] }
+		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college','manage','admin'] }
 	},
 	{
 		path: '/personalcentre',
 		name: 'personalcentre',
 		component: () => import( /*webpackChunkName:'Home'*/ '@/page/publicfiles/personalcentre.vue'),
-		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college'] }
+		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college','manage','admin'] }
 	}, {
 		path: '/unauthorized',
 		name: '404',
