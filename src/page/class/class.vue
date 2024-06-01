@@ -471,7 +471,7 @@ export default {
                 const workbook = XLSX.utils.book_new();
                 XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
                 // 导出Excel文件
-                XLSX.writeFile(workbook, "output.xlsx");
+                XLSX.writeFile(workbook, "统计表.xlsx");
             }).catch(error => {
                 console.error("Error fetching data:", error);
             });
