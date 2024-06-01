@@ -124,9 +124,6 @@
 <script>
 import axios from 'axios';
 import qs from 'qs';
-import md5 from 'js-md5';
-import JSEncrypt from 'jsencrypt';
-import CryptoJS from 'crypto-js';
 import { ElLoading } from 'element-plus';
 import * as XLSX from 'xlsx';
 export default {
