@@ -49,6 +49,7 @@
                     <el-table-column prop="name" label="文件名称"></el-table-column>
                     <el-table-column prop="status" label="审核状态"></el-table-column>
                     <el-table-column prop="date" label="审核时间"></el-table-column>
+                    <el-table-column prop="intervalTime" label="审核用时"></el-table-column>
                     <el-table-column label="审批意见" align="center">
                         <template v-slot="scope">
                             <el-button type="success" plain @click="open2(scope.row.opinion)">

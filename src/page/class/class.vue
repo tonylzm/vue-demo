@@ -8,6 +8,12 @@
             <el-button type="warning" @click="reset">重置<el-icon>
                     <Refresh />
                 </el-icon></el-button>
+            <el-button type="success" @click="exportToExcel">统计上传<el-icon>
+                    <DataAnalysis />
+                </el-icon></el-button>
+            <el-button type="success" @click="exportToExcels">统计详细上传记录<el-icon>
+                    <DataAnalysis />
+                </el-icon></el-button>
         </div>
 
         <div>
@@ -35,7 +41,7 @@
             <el-table-column label="加载预览">
                 <template v-slot="scope">
                     <el-button type="primary"
-                        @click="preview(scope.row.name, scope.row.decrypt, scope.row.produced)">加载预览<el-icon>
+                        @click="preview(scope.row.name, scope.row.decrypt, scope.row.produced, scope.row.uploadTime)">加载预览<el-icon>
                             <Monitor />
                         </el-icon></el-button>
                 </template>
@@ -151,6 +157,7 @@ export default {
             reason: '',
             checkfilename: '',
             checkfileproduced: '',
+            uploadTime: '',
             form: {
                 name: '',
                 class: '',
@@ -194,7 +201,8 @@ export default {
                 fileName: this.checkfilename,
                 classCheck: this.realName,
                 status: this.approvalStatus,
-                opinion: this.reason
+                opinion: this.reason,
+                starttime: this.uploadTime
             }
             //console.log(data);
             axios.post('/api/checked/classChecked', data, {
@@ -396,7 +404,7 @@ export default {
                     this.$message.error('验证失败');
                 });
         },
-        preview(fileName, decrypt, produced) {
+        preview(fileName, decrypt, produced, uploadTime) {
             axios.get(`/api/files/preview?fileName=${fileName}&Actor=${this.realName}`, {
                 headers: {
                     "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token
@@ -419,11 +427,97 @@ export default {
                     this.canclick = decrypt;
                     this.checkfilename = fileName;
                     this.checkfileproduced = produced;
+                    this.uploadTime = uploadTime;
                 })
                 .catch(error => {
                     this.$message.error('加载预览失败');
                 });
-        }
+        },
+        exportToExcel() {
+            // try {
+            // 发送GET请求
+            axios.get('/api/checked/findUploadFile', {
+                headers: {
+                    'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('user')).token
+                },
+                params: {
+                    college: this.college,
+                },
+            }
+            ).then(response => {
+                console.log(response.data.body);
+                // // 处理响应数据
+                const data = response.data.body;
+                // 规范化数据
+                const normalizedData = data.map(item => ({
+                    "ID": item.id,
+                    "文件名": item.name,
+                    "上传者": item.produced,
+                    "考试课程": item.classes,
+                    "检查主任": item.check.classCheck,
+                    "检查院长": item.check.collegeCheck,
+                    "归属学院": item.college,
+                    "审核状态": item.check.checkStatus,
+                    "归档状态": item.pigeonhole ? "是" : "否",
+                    "考试时间": item.testtime,
+                    "考试类型": item.testtype,
+                    "考试名称": item.testname,
+                    "解密状态": item.decrypt ? "是" : "否",
+                    "文件类型": item.type,
+                    "文件大小(kb)": item.size,
+                    "上传时间": item.uploadTime,
+                    "检查意见": item.check.opinion,
+                }));
+                //创建工作表
+                const worksheet = XLSX.utils.json_to_sheet(normalizedData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+                // 导出Excel文件
+                XLSX.writeFile(workbook, "output.xlsx");
+            }).catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
+
+        exportToExcels() {
+            // try {
+            // 发送GET请求
+            axios.get('/api/history/findCollegeHistoryfile', {
+                headers: {
+                    'Authorization': 'Bearer ' + JSON.parse(localStorage.getItem('user')).token
+                },
+                params: {
+                    college: this.college,
+                },
+            }
+            ).then(response => {
+                // // 处理响应数据
+                const data = response.data.body;
+                // 规范化数据
+                const normalizedData = data.map(item => ({
+                    "ID": item.id,
+                    "文件名": item.name,
+                    "上传者": item.produced,
+                    "考试课程": item.classes,
+                    "审核状态": item.status,
+                    "审核间隔时间": item.intervalTime,
+                    "审核意见": item.opinion,
+                    "审核日期": item.date,
+                    "所属学院": item.college,
+                    "文件类型": item.type,
+                    "文件大小": item.size,
+                }));
+                //创建工作表
+                const worksheet = XLSX.utils.json_to_sheet(normalizedData);
+                const workbook = XLSX.utils.book_new();
+                XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+                // 导出Excel文件
+                XLSX.writeFile(workbook, "详细统计表.xlsx");
+            }).catch(error => {
+                console.error("Error fetching data:", error);
+            });
+        },
+
     }
 }
 </script>
