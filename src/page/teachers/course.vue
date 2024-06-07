@@ -35,11 +35,12 @@
         <el-table :data="tableData" border stripe :header-cell-class-name="'headerBg'"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="75"></el-table-column>
+            <el-table-column prop="college" label="学院名称" width="200"></el-table-column>
             <el-table-column prop="course_id" label="课程编号" width="200"></el-table-column>
             <el-table-column prop="courseName" label="课程名称" width="300"></el-table-column>
-            <el-table-column prop="courseTeacher" label="任课老师" width="300"></el-table-column>
+            <el-table-column prop="courseTeacher" label="任课老师" width="200"></el-table-column>
 
-            <el-table-column label="操作" width="400" align="center">
+            <el-table-column label="操作" width="300" align="center">
                 <template v-slot="scope">
                     <el-button type="primary" @click="handleSelectTeacher(scope.row)"><el-icon>
                             <View />
