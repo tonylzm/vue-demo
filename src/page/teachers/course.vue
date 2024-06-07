@@ -18,19 +18,49 @@
                 </el-button>
             </el-upload>
 
+            <el-button type="success" @click="addcourse" style="margin-left: 10px;"> 新增课程<el-icon>
+                        <Plus />
+                </el-icon>
+            </el-button>
+
             <el-button type="danger" @click="resetallcourse" style="margin-left: 10px;">重置所有课程<el-icon>
                     <Refresh />
                 </el-icon>
             </el-button>
+
             <el-button type="danger" @click="resetallTeacher" style="margin-left: 10px;">重置老师<el-icon>
                     <Refresh />
                 </el-icon>
             </el-button>
+
+           
         </div>
         <!-- <div>
             <el-progress v-if="showProgress" :text-inside="true" :stroke-width="26" :percentage="uploadProgress"
                 :color="progressColor" :format="formatText"></el-progress>
         </div> -->
+
+        <el-dialog title="新增课程" v-model="addcoursedialogVisible" width="30%">
+      <el-form :model="courseForm">
+        <el-form-item label="课程 ID">
+          <el-input v-model="courseForm.courseId"></el-input>
+        </el-form-item>
+        <el-form-item label="课程名称">
+          <el-input v-model="courseForm.courseName"></el-input>
+        </el-form-item>
+        <el-form-item label="任课老师">
+            <el-select v-model="selectedTeacher" filterable :filter-method="filterMethod" placeholder="请选择">
+                            <el-option v-for="item in options" :key="item.label" :label="item.label"
+                                :value="item.selectedTeacher">
+                            </el-option>
+            </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="addcoursedialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="submitCourse">确定</el-button>
+      </div>
+    </el-dialog>
 
         <el-table :data="tableData" border stripe :header-cell-class-name="'headerBg'"
             @selection-change="handleSelectionChange">
@@ -119,6 +149,12 @@ export default {
             selectedTeacher: '', // 选中的老师
             alloptions: [],//获取所有的老师
             options: [],//取所有老师中的前10项
+            addcoursedialogVisible: false,
+            courseForm: {
+                courseId: '',
+                courseName: '',
+                selectedTeacher: ''
+            }
         }
     },
     created() {
@@ -375,7 +411,43 @@ export default {
                 });
                 this.options = result.slice(0, 10); // 只取前10个
             }
-        }
+        },
+        addcourse() {
+             this.addcoursedialogVisible = true;
+        },
+        submitCourse() {
+            const courseData = {
+        course_id: this.courseForm.courseId,
+        course_name: this.courseForm.courseName,
+        course_teacher: this.selectedTeacher
+        };
+            axios.post('/api/course/add_course', courseData,
+                {
+                    headers: {
+                        "Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token,
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then(response => {
+                    if (response.data.body === "success") {
+                        this.$message.success('新增成功');
+                        this.getallCourse();
+                    } else {
+                        this.$message.error('新增失败');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error uploading file:', error);
+                    this.$message.error('课程增加时出错');
+                });
+        },
+        resetForm() {
+        this.courseForm = {
+            courseId: '',
+            courseName: '',
+            selectedTeacher: ''
+        };
+        },
     }
 }
 </script>
