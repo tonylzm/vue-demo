@@ -59,8 +59,8 @@
         <el-table :data="tableData" border stripe :header-cell-class-name="'headerBg'"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" width="80"></el-table-column>
-            <el-table-column prop="realName" label="真实姓名"></el-table-column>
+            <el-table-column prop="id" label="ID" width="50"></el-table-column>
+            <el-table-column prop="realName" label="真实姓名" width="100"></el-table-column>
             <el-table-column prop="username" label="用户名"></el-table-column>
             <!-- <el-table-column prop="password" label="密码"></el-table-column> -->
             <el-table-column prop="college" label="学院"></el-table-column>
@@ -68,9 +68,9 @@
             <el-table-column prop="email" label="邮箱"></el-table-column>
 
 
-            <el-table-column label="操作" width="300" align="center">
+            <el-table-column label="操作" width="400" align="center">
                 <template v-slot="scope">
-                    <el-button type="primary" @click="handleUpdata(scope.row.username)"><el-icon>
+                    <el-button type="primary" @click="handleUpdata(scope.row.username, 'check')"><el-icon>
                             <Discount />
                         </el-icon>确认为审批员</el-button>
                     <el-button type="danger" @click="handleDelete(scope.row.username)"><el-icon>
@@ -236,12 +236,12 @@ export default {
                 })
                 .catch(_ => { });
         },
-        handleUpdata(username) {
+        handleUpdata(username, role) {
             //console.log(username);
             const data = {
                 Actor: this.realName,
                 username: username,
-                role: 'check'
+                role: role
             }
             //弹出确认框
             this.$confirm('确认更改该用户角色为审核员？')

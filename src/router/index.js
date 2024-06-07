@@ -26,7 +26,7 @@ const routes = [
 		path: '/files',
 		name: 'files',
 		component: () => import( /*webpackChunkName:'Home'*/ '@/page/publicfiles/File.vue'),
-		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college'] }
+		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college','manage','admin'] }
 
 	},
 	// 	, {
@@ -60,37 +60,37 @@ const routes = [
 		path: '/course',
 		name: 'course',
 		component: () => import(/*webpackChunkName:'Login'*/ '@/page/teachers/course.vue'),
-		// meta: { requiresAuth: true, requiredRoles: ['user', 'check','college'] }
+		meta: { requiresAuth: true, requiredRoles: ['manage'] }
 	},
 
 	{
 		path: '/college',
 		name: 'college',
 		component: () => import( /*webpackChunkName:'Login'*/ '@/page/college/college.vue'),
-		//meta: { requiresAuth: true, requiredRoles: ['college'] }
+		meta: { requiresAuth: true, requiredRoles: ['college'] }
 	},
 	{
 		path: '/teacher',
 		name: 'teacher',
 		component: () => import( /*webpackChunkName:'Login'*/ '@/page/teachers/teacher.vue'),
-		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college'] }
+		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college','manage','admin'] }
 	},
 	{
 		path: '/audit',
 		name: 'audit',
 		component: () => import( /*webpackChunkName:'Login'*/ '@/page/teachers/audit.vue'),
-		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college'] }
+		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college','manage','admin'] }
 	},
 	{
 		path: '/personalcentre',
 		name: 'personalcentre',
 		component: () => import( /*webpackChunkName:'Home'*/ '@/page/publicfiles/personalcentre.vue'),
-		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college'] }
+		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college','manage','admin'] }
 	}, {
 		path: '/unauthorized',
 		name: '404',
 		component: () => import( /*webpackChunkName:'Login'*/ '@/page/error/404.vue'),
-		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college'] }
+		meta: { requiresAuth: true, requiredRoles: ['user', 'check', 'college','manage','admin'] }
 	},
 	{
 		path: '/class',
@@ -117,7 +117,7 @@ const routes = [
 		path: '/log',
 		name: 'log',
 		component: () => import( /*webpackChunkName:'Login'*/ '@/page/log/log.vue'),
-		meta: { requiresAuth: true, requiredRoles: ['college'] }
+		meta: { requiresAuth: true, requiredRoles: ['admin'] }
 
 	}
 	,
@@ -125,14 +125,14 @@ const routes = [
 		path: '/logt',
 		name: 'logt',
 		component: () => import( /*webpackChunkName:'Login'*/ '@/page/log/test.vue'),
-		meta: { requiresAuth: true, requiredRoles: ['college'] }
+		meta: { requiresAuth: true, requiredRoles: ['admin'] }
 	}
 	,
 	{
 		path: '/syslog',
 		name: 'syslog',
 		component: () => import( /*webpackChunkName:'Login'*/ '@/page/log/Syslog.vue'),
-		meta: { requiresAuth: true, requiredRoles: ['college'] }
+		meta: { requiresAuth: true, requiredRoles: ['admin'] }
 
 	}
 	,
@@ -147,7 +147,7 @@ const routes = [
 		path: '/merge',
 		name: 'merge',
 		component: () => import( /*webpackChunkName:'Login'*/ '@/page/manage/merge.vue'),
-		//meta: { requiresAuth: true, requiredRoles: [''] }
+		meta: { requiresAuth: true, requiredRoles: ['manage'] }
 
 	}
 ]

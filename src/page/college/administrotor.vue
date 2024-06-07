@@ -59,8 +59,8 @@
         <el-table :data="tableData" border stripe :header-cell-class-name="'headerBg'"
             @selection-change="handleSelectionChange">
             <el-table-column type="selection" width="55"></el-table-column>
-            <el-table-column prop="id" label="ID" width="80"></el-table-column>
-            <el-table-column prop="realName" label="真实姓名"></el-table-column>
+            <el-table-column prop="id" label="ID" width="50"></el-table-column>
+            <el-table-column prop="realName" label="真实姓名" width="100"></el-table-column>
             <el-table-column prop="username" label="用户名"></el-table-column>
             <!-- <el-table-column prop="password" label="密码"></el-table-column> -->
             <el-table-column prop="college" label="学院"></el-table-column>
@@ -68,7 +68,7 @@
             <el-table-column prop="email" label="邮箱"></el-table-column>
 
 
-            <el-table-column label="操作" width="300" align="center">
+            <el-table-column label="操作" width="400" align="center">
                 <template v-slot="scope">
                     <el-button type="primary" @click="handleUpdata(scope.row.username, 'college')"><el-icon>
                             <Discount />

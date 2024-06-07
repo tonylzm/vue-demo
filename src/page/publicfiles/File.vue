@@ -145,10 +145,11 @@
 			</el-table-column>
 			<el-table-column label="归档">
 				<template v-slot="scope">
-					<el-button type="primary" :disabled="!scope.row.checkStatus.includes('院长审核通过')"
-						@click="topigeonhole(scope.row.testname, scope.row.classes)">
+					<el-button type="success"
+						:disabled="!(scope.row.checkStatus.includes('院长审核通过') && !scope.row.pigeonhole)"
+						@click="topigeonhole(scope.row.testname, scope.row.classes, scope.row.name)">
 						<el-icon>
-							<Refresh />
+							<MessageBox />
 						</el-icon>
 						归档
 					</el-button>
@@ -325,7 +326,6 @@ export default {
 		opendrawer() {
 			this.drawer = true;
 			this.getteachercourse(this.username);
-
 		},
 		changeEnable(row) {
 			console.log(row);
@@ -374,7 +374,6 @@ export default {
 					return false;
 				}
 			});
-			//console.log('submit!');
 		},
 		onpigeonhole(formName) {
 			this.pigeonholeUpload();
@@ -517,7 +516,7 @@ export default {
 			var that = this;
 			var xhr = new XMLHttpRequest();
 			this.showProgress = true;
-			xhr.open('POST', 'https://localhost:8443/api/upload/pigeonhole');
+			xhr.open('POST', 'https://www.goto-moon.cn:8443/api/upload/pigeonhole');
 			xhr.setRequestHeader("Authorization", "Bearer " + JSON.parse(localStorage.getItem('user')).token);
 			// xhr.open('POST', 'https://47.121.138.212:8443/api/upload/upload');
 			// 上传完成后的回调函数
@@ -565,7 +564,7 @@ export default {
 		//https://47.121.138.212:8443
 		async getPublicKeyFromServer() {
 			try {
-				const response = await fetch('https://localhost:8443/api/upload/public', {
+				const response = await fetch('https://www.goto-moon.cn:8443/api/upload/public', {
 					headers: {
 						"Authorization": "Bearer " + JSON.parse(localStorage.getItem('user')).token
 					}
@@ -701,10 +700,11 @@ export default {
 			this.form.name = name;
 			this.reloadname = filename;
 		},
-		topigeonhole(name, classes) {
+		topigeonhole(name, classes, filename) {
 			this.pigeonholedawer = true;
 			this.pigeonhole.name = name;
 			this.pigeonhole.class = classes;
+			this.reloadname = filename;
 
 		},
 		getcheckuser(value) {
